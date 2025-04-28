@@ -1,4 +1,4 @@
-Steps to recompile:
+Steps to recompile after making changes in treeple:
 
 - pip uninstall treeple
 - cd ~/Documents/GitHub/treeple
