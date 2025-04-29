@@ -3,6 +3,7 @@
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: initializedcheck=False
+# cython: profile=True
 
 import numpy as np
 
