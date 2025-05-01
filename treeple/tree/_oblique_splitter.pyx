@@ -13,6 +13,7 @@ from libcpp.vector cimport vector
 from .._lib.sklearn.tree._criterion cimport Criterion
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 from ._utils cimport fisher_yates_shuffle
+from libc.time cimport clock, clock_t, CLOCKS_PER_SEC
 
 
 cdef float64_t INFINITY = np.inf
