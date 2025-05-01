@@ -26,6 +26,7 @@ from scipy.sparse import csr_matrix
 
 from ._utils cimport safe_realloc
 from ._utils cimport sizet_ptr_to_ndarray
+from libc.time cimport clock, CLOCKS_PER_SEC
 
 
 cdef extern from "numpy/arrayobject.h":
@@ -745,8 +746,20 @@ cdef class BestFirstTreeBuilder(TreeBuilder):
         # Initial capacity
         cdef intp_t init_capacity = max_split_nodes + max_leaf_nodes
         tree._resize(init_capacity)
+        # Clark: ====================
+        cdef double start_time = clock()
+        cdef double t_line1, t_line2, t_line3
+        cdef int iter_count=0
+        cdef double t_start, t_end
+        cdef int max_iters = 1000000  # upper bound on number of while iterations
+        cdef double* loop_times = <double*>malloc(max_iters * sizeof(double))
+        # ===========================
 
         with nogil:
+            # Clark: ====================
+            t_line1 = clock()
+            #============================
+
             # add root to frontier
             rc = self._add_split_node(
                 splitter=splitter,
@@ -763,7 +776,15 @@ cdef class BestFirstTreeBuilder(TreeBuilder):
             if rc >= 0:
                 _add_to_frontier(split_node_left, frontier)
 
+            # Clark: ====================
+            t_line2 = clock()
+            #============================
+
             while not frontier.empty():
+                # Clark: ====================
+                t_start = clock()
+                #============================
+
                 pop_heap(frontier.begin(), frontier.end(), &_compare_records)
                 record = frontier.back()
                 frontier.pop_back()
@@ -865,12 +886,35 @@ cdef class BestFirstTreeBuilder(TreeBuilder):
                 if record.depth > max_depth_seen:
                     max_depth_seen = record.depth
 
+                # Clark: ====================
+                t_end = clock()
+                if iter_count < max_iters:
+                    loop_times[iter_count] = (t_end - t_start) / CLOCKS_PER_SEC
+                iter_count += 1
+                # ============================
+            # Clark:
+            t_line3 = clock()
+            
             if rc >= 0:
                 rc = tree._resize_c(tree.node_count)
 
             if rc >= 0:
                 tree.max_depth = max_depth_seen
 
+        # Clark: ===================================================
+        cdef double elapsed = (clock() - start_time) / CLOCKS_PER_SEC
+        print(f"Loop took {elapsed} seconds inside sklearn BestFirstTreeBuilder.build")
+
+        
+        print("Line 1 time:", (t_line2 - t_line1) / CLOCKS_PER_SEC)
+        print("Line 2 time, inside while loop:", (t_line3 - t_line2) / CLOCKS_PER_SEC)
+        print(f"Loop ran {iter_count} iterations")
+        for i in range(min(iter_count, 10)):  # show first 10
+            print(f"Iteration {i}: {loop_times[i]:.6f} sec")
+
+        free(loop_times)  # free memory
+        # ==========================================================
+        
         if rc == -1:
             raise MemoryError()
 
