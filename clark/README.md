@@ -19,3 +19,10 @@ Notes on changes in source code
 | treeple/_lib/sklearn/tree/_tree.pyx | line 16 | Add an additional profile line | from cython cimport profile, original: NA |
 | treeple/_lib/sklearn/tree/_tree.pyx | line 706 | Add an additional profile line | @profile(True), original: NA |
 | treeple/meson.build | line 105 | modify False to True| -X profile=False|
+
+
+Profile using AMD uProf:
+/opt/AMDuProf_5.0-1479/bin/AMDuProfCLI collect \
+  --output-dir ./clark/experiments/result/uProf_reports \
+  python3 clark/test_profile.py
+
