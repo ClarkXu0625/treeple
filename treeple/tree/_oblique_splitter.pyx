@@ -197,6 +197,14 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         self.X = X
 
         # create a helper array for allowing efficient Fisher-Yates
+        # clark: this is the problem code, index too large, 2048x2048 array every time goes to Fisher Yates
+        # matrix dimension: max_features x n_features
+        # no need to materialize the array, Ariel build on per-row basis
+        # by collision - eliminate
+        # Fisher Yates requires memory proportional to the domain because of the swap
+        # Pick again if picking the same indicies
+        # TODO: every index picked, put to hash table, if repeated, pick again.
+        # try different implementations
         self.indices_to_sample = np.arange(self.max_features * self.n_features,
                                            dtype=np.intp)
 

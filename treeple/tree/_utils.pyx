@@ -35,9 +35,11 @@ cdef inline void fisher_yates_shuffle(
     cdef intp_t i, j
 
     # XXX: should this be `i` or `i+1`? for valid Fisher-Yates?
+    # clark: replace the whole for loop with numpy sampling, 
+    # index overflow
     for i in range(0, grid_size - 1):
-        j = rand_int(i, grid_size, random_state)
-        indices_to_sample[j], indices_to_sample[i] = \
+        j = rand_int(i, grid_size, random_state)    # clark: replace with numpy sampling, say numpy.random.randint
+        indices_to_sample[j], indices_to_sample[i] = \ 
             indices_to_sample[i], indices_to_sample[j]
 
 
