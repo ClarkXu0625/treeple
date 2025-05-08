@@ -309,22 +309,22 @@
         "values": [
             {
                 "keys": [
+                    8,
+                    3,
+                    14,
                     15,
+                    2,
                     12,
                     10,
                     6,
                     4,
-                    2,
                     11,
                     13,
                     0,
                     5,
                     7,
                     9,
-                    1,
-                    14,
-                    3,
-                    8
+                    1
                 ],
                 "values": [
                     [
@@ -397,14 +397,14 @@
     },
     "generatedDBs": [
         {
-            "category": 8192,
-            "categoryName": "callstack",
-            "databaseName": "callstack"
-        },
-        {
             "category": 1,
             "categoryName": "cpu",
             "databaseName": "cpu"
+        },
+        {
+            "category": 8192,
+            "categoryName": "callstack",
+            "databaseName": "callstack"
         }
     ],
     "hpc": {
