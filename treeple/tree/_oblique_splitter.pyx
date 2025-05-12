@@ -238,7 +238,7 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         cdef intp_t[::1] indices_to_sample = self.indices_to_sample
         cdef intp_t grid_size = self.max_features * self.n_features
 
-        # shuffle indices over the 2D grid to sample using Fisher-Yates
+        # shuffle indices over the 2D grid to sample using Fisher-Yates1
         fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
 
         # sample 'n_non_zeros' in a mtry X n_features projection matrix
