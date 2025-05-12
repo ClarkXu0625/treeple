@@ -39,7 +39,7 @@ cdef inline void fisher_yates_shuffle(
     # index overflow
     for i in range(0, grid_size - 1):
         j = rand_int(i, grid_size, random_state)    # clark: replace with numpy sampling, say numpy.random.randint
-        indices_to_sample[j], indices_to_sample[i] = \ 
+        indices_to_sample[j], indices_to_sample[i] = \
             indices_to_sample[i], indices_to_sample[j]
 
 
