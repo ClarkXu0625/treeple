@@ -12,7 +12,8 @@ from libcpp.vector cimport vector
 
 from .._lib.sklearn.tree._criterion cimport Criterion
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
-from ._utils cimport fisher_yates_shuffle
+#from ._utils cimport fisher_yates_shuffle
+from ._utils cimport floyd_sample_indices
 from libc.time cimport clock, clock_t, CLOCKS_PER_SEC
 
 
@@ -205,8 +206,10 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         # Pick again if picking the same indicies
         # TODO: every index picked, put to hash table, if repeated, pick again.
         # try different implementations
-        self.indices_to_sample = np.arange(self.max_features * self.n_features,
-                                           dtype=np.intp)
+        #self.indices_to_sample = np.arange(self.max_features * self.n_features,
+        #                                   dtype=np.intp)
+        self.indices_to_sample = np.arange(self.n_non_zeros, dtype=np.intp)
+        #self.sampled_indices = np.empty(self.n_non_zeros, dtype=np.intp)
 
         # XXX: Just to initialize stuff
         # self.feature_weights = np.ones((self.n_features,), dtype=float32_t) / self.n_features
@@ -248,14 +251,20 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         cdef intp_t[::1] indices_to_sample = self.indices_to_sample
         cdef intp_t grid_size = self.max_features * self.n_features
 
+        # Clark: new
+        #cdef intp_t[::1] sampled_indices = np.empty(self.n_non_zeros, dtype=np.intp)
+        #cdef intp_t[::1] sampled_indices = self.sampled_indices
+        floyd_sample_indices(indices_to_sample, n_non_zeros, grid_size, random_state)
+
         # shuffle indices over the 2D grid to sample using Fisher-Yates
-        fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
+        #fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
 
         # sample 'n_non_zeros' in a mtry X n_features projection matrix
         # which consists of +/- 1's chosen at a 1/2s rate
         for i in range(0, n_non_zeros):
             # get the next index from the shuffled index array
             rand_vec_index = indices_to_sample[i]
+            #rand_vec_index = sampled_indices[i] # clark: new
 
             # get the projection index (i.e. row of the projection matrix) and
             # feature index (i.e. column of the projection matrix)

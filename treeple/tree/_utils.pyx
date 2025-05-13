@@ -12,8 +12,10 @@ cimport numpy as cnp
 cnp.import_array()
 
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
+from libcpp.unordered_set cimport unordered_set
+from libc.stdint cimport uint32_t
 
-
+'''
 cdef inline void fisher_yates_shuffle(
     vector_or_memview indices_to_sample,
     intp_t grid_size,
@@ -41,6 +43,27 @@ cdef inline void fisher_yates_shuffle(
         j = rand_int(i, grid_size, random_state)    # clark: replace with numpy sampling, say numpy.random.randint
         indices_to_sample[j], indices_to_sample[i] = \
             indices_to_sample[i], indices_to_sample[j]
+'''
+
+
+cdef void floyd_sample_indices(
+    intp_t[::1] out,
+    intp_t k,
+    intp_t n,
+    uint32_t* random_state
+) noexcept nogil:
+    cdef unordered_set[intp_t] seen
+    cdef intp_t i, r, count = 0
+
+    for i in range(n - k, n):
+        r = rand_int(0, i + 1, random_state)
+        if seen.find(r) == seen.end():
+            seen.insert(r)
+            out[count] = r
+        else:
+            seen.insert(i)
+            out[count] = i
+        count += 1
 
 
 cdef inline int rand_weighted_binary(
