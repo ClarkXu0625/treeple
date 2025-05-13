@@ -14,33 +14,6 @@ cnp.import_array()
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 from libcpp.unordered_set cimport unordered_set
 
-''''
-cdef inline void fisher_yates_shuffle(
-    vector_or_memview indices_to_sample,
-    intp_t grid_size,
-    uint32_t* random_state,
-) noexcept nogil:
-    """Shuffle the indices in place using the Fisher-Yates algorithm.
-    Parameters
-    ----------
-    indices_to_sample : A C++ vector or 1D memoryview
-        The indices to shuffle.
-    grid_size : intp_t
-        The size of the grid to shuffle. This is explicitly passed in
-        to support the templated `vector_or_memview` type, which allows
-        for both C++ vectors and Cython memoryviews. Getitng the length
-        of both types uses different API.
-    random_state : uint32_t*
-        The random state.
-    """
-    cdef intp_t i, j
-
-    # XXX: should this be `i` or `i+1`? for valid Fisher-Yates?
-    for i in range(0, grid_size - 1):
-        j = rand_int(i, grid_size, random_state)
-        indices_to_sample[j], indices_to_sample[i] = \
-            indices_to_sample[i], indices_to_sample[j]
-'''
 
 cdef void floyd_sample_indices(
     intp_t[::1] out,
