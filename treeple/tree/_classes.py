@@ -7,9 +7,8 @@ from scipy.sparse import issparse
 from sklearn.base import ClusterMixin, TransformerMixin
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.utils import check_random_state
-from sklearn.utils._param_validation import Interval
+from sklearn.utils._param_validation import Interval, StrOptions
 from sklearn.utils.validation import check_is_fitted, validate_data
-from sklearn.utils._param_validation import StrOptions
 
 from .._lib.sklearn.tree import (
     BaseDecisionTree,
@@ -1059,7 +1058,7 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
                 random_state,
                 monotonic_cst,
                 self.feature_combinations_,
-                self.sampling_method
+                self.sampling_method,
             )
 
         # Use BestFirst if max_leaf_nodes given; use DepthFirst otherwise
