@@ -984,11 +984,6 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
             )
 
         self.tree_ = ObliqueTree(self.n_features_in_, self.n_classes_, self.n_outputs_)
-        ###################################################
-        # Clark:
-        print("------------------------------------------------------------")
-        print("Time to initialize Trees", time.perf_counter() - start)
-        ###################################################
 
 
         # Use BestFirst if max_leaf_nodes given; use DepthFirst otherwise
@@ -1012,24 +1007,11 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
                 self.min_impurity_decrease,
             )
 
-        ########################################
-        # Clark:
-        start_build=time.perf_counter()
-        ########################################
-        builder.build(self.tree_, X, y, sample_weight, None)
-        ###################################################
-        # Clark:
-        print("Time taken for builder.build", time.perf_counter() - start_build)
-        ###################################################
-
+        builder.build(self.tree_, X, y, sample_weight, None)    # Clark: main loop
 
         if self.n_outputs_ == 1:
             self.n_classes_ = self.n_classes_[0]
             self.classes_ = self.classes_[0]
-        ###################################################
-        # Clark:
-        print("_build_tree total time spent: ", time.perf_counter() - start)
-        ###################################################
 
         return self
 
