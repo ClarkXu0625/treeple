@@ -11,8 +11,9 @@ cimport numpy as cnp
 
 cnp.import_array()
 
-from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 from libcpp.unordered_set cimport unordered_set
+
+from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 
 ''''
 cdef inline void fisher_yates_shuffle(
