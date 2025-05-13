@@ -132,7 +132,7 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         object random_state,
         const int8_t[:] monotonic_cst,
         float64_t feature_combinations,
-        object sampling_method,
+        #object sampling_method,
         *argv
     ):
         """
@@ -185,10 +185,11 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         self.n_non_zeros = max(<intp_t>(self.max_features * self.feature_combinations), 1)
 
         # sampling_method: 1- floyd, 0- fisher
-        if sampling_method == b"floyd":
-            self.sampling_method = 1
-        else:
-            self.sampling_method = 0
+        #if sampling_method == b"floyd":
+        #    self.sampling_method = 1
+        #else:
+        #    self.sampling_method = 0
+        self.sampling_method=1
 
     cdef int init(
         self,
