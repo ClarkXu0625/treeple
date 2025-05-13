@@ -74,7 +74,7 @@ def profiling_fit(n_estimators, n_dim, n_samples, max_features, feature_combinat
 
 def constant_nNonzeros_simulation_treeple(n_tree,                   
                                 params_treeple,
-                                target_non_zeros,
+                                target_non_zeros_per_row,
                                 n_rows,
                                 n_columns,
                                 n_samples=2000, 
@@ -104,7 +104,7 @@ def constant_nNonzeros_simulation_treeple(n_tree,
 
         for j, n_row in enumerate(n_rows):
             # n_rows matches number of projections            
-            feature_combination = target_non_zeros / n_row
+            feature_combination = target_non_zeros_per_row
             params_treeple1["max_features"] = n_row
             params_treeple1["feature_combinations"] = feature_combination
   
@@ -116,7 +116,7 @@ def constant_nNonzeros_simulation_treeple(n_tree,
                 random_state=1)
 
             print("-----------------------------------------")        
-            print(f"Constants: n_dim: {n_dim} | n_tree: {n_tree} | n_samples: {n_samples} | target_non_zeros: {target_non_zeros} | n_rep: {n_rep}")
+            print(f"Constants: n_dim: {n_dim} | n_tree: {n_tree} | n_samples: {n_samples} | target_non_zeros per row: {target_non_zeros_per_row} | n_rep: {n_rep}")
             print(f"Projection matrix: n_row: {n_row} | n_column: {n_column} | treeple_non_zeros: {treeple_n_nonzeros}")
             print(f"Feature combinations: {feature_combination} | max_features: {n_row}")
 
