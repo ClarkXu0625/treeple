@@ -205,7 +205,7 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         if self.sampling_method == 0:
             self.indices_to_sample = np.arange(self.max_features * self.n_features,
                                                dtype=np.intp)
-        else:                                    
+        else:
             self.indices_to_sample = np.arange(self.n_non_zeros, dtype=np.intp)
 
         # XXX: Just to initialize stuff
