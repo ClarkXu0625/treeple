@@ -15,9 +15,9 @@ ctypedef fused vector_or_memview:
     intp_t[:]
 
 cdef void floyd_sample_indices(
-    intp_t[::1] out, 
-    intp_t k, 
-    intp_t n, 
+    intp_t[::1] out,
+    intp_t k,
+    intp_t n,
     uint32_t* random_state
 ) noexcept nogil
 
