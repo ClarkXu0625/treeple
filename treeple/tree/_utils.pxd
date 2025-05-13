@@ -14,11 +14,19 @@ ctypedef fused vector_or_memview:
     intp_t[::1]
     intp_t[:]
 
-
+'''
 cdef void fisher_yates_shuffle(
     vector_or_memview indices_to_sample,
     intp_t grid_size,
     uint32_t* random_state,
+) noexcept nogil
+'''
+
+cdef void floyd_sample_indices(
+    intp_t[::1] out, 
+    intp_t k, 
+    intp_t n, 
+    uint32_t* random_state
 ) noexcept nogil
 
 
