@@ -446,8 +446,8 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
         # with open("/home/clark/Documents/GitHub/treeple/clark/experiments/result/python_profile_reports/build_tree_profile.txt", "w") as f:
         #     ps = pstats.Stats(pr, stream=f).sort_stats('cumtime')
         #     ps.print_stats()
-        with open("/home/clark/Documents/GitHub/treeple/clark/experiments/result/python_profile_reports/build_tree_lineprofile.txt", "w") as f:
-            profiler.print_stats(stream=f)
+        # with open("/home/clark/Documents/GitHub/treeple/clark/experiments/result/python_profile_reports/build_tree_lineprofile.txt", "w") as f:
+        #     profiler.print_stats(stream=f)
         ########################################
 
         return self

@@ -887,10 +887,12 @@ cdef class BestFirstTreeBuilder(TreeBuilder):
                     max_depth_seen = record.depth
 
                 # Clark: ====================
+                '''
                 t_end = clock()
                 if iter_count < max_iters:
                     loop_times[iter_count] = (t_end - t_start) / CLOCKS_PER_SEC
                 iter_count += 1
+                '''
                 # ============================
             # Clark:
             t_line3 = clock()
@@ -902,6 +904,7 @@ cdef class BestFirstTreeBuilder(TreeBuilder):
                 tree.max_depth = max_depth_seen
 
         # Clark: ===================================================
+        '''
         cdef double elapsed = (clock() - start_time) / CLOCKS_PER_SEC
         print(f"Loop took {elapsed} seconds inside sklearn BestFirstTreeBuilder.build")
 
@@ -913,6 +916,7 @@ cdef class BestFirstTreeBuilder(TreeBuilder):
             print(f"Iteration {i}: {loop_times[i]:.6f} sec")
 
         free(loop_times)  # free memory
+        '''
         # ==========================================================
         
         if rc == -1:
