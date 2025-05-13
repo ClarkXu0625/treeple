@@ -189,7 +189,7 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         #    self.sampling_method = 1
         #else:
         #    self.sampling_method = 0
-        self.sampling_method=1
+        #self.sampling_method=1
 
     cdef int init(
         self,
@@ -203,11 +203,11 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         self.X = X
 
         # create a helper array for allowing efficient Fisher-Yates
-        if self.sampling_method == 0:
-            self.indices_to_sample = np.arange(self.max_features * self.n_features,
-                                               dtype=np.intp)
-        else:
-            self.indices_to_sample = np.arange(self.n_non_zeros, dtype=np.intp)
+        #if self.sampling_method == 0:
+        #    self.indices_to_sample = np.arange(self.max_features * self.n_features,
+        #                                       dtype=np.intp)
+        #else:
+        self.indices_to_sample = np.arange(self.n_non_zeros, dtype=np.intp) # zeros
 
         # XXX: Just to initialize stuff
         # self.feature_weights = np.ones((self.n_features,), dtype=float32_t) / self.n_features
@@ -252,10 +252,10 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         # shuffle indices over the 2D grid to sample using Fisher-Yates1
         # fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
         # Update Fisher Yates Shuffle to Floyd's method
-        if self.sampling_method == 0:
-            fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
-        else:
-            floyd_sample_indices(indices_to_sample, n_non_zeros, grid_size, random_state)
+        #if self.sampling_method == 0:
+            #fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
+        #else:
+        floyd_sample_indices(indices_to_sample, n_non_zeros, grid_size, random_state)
 
         # sample 'n_non_zeros' in a mtry X n_features projection matrix
         # which consists of +/- 1's chosen at a 1/2s rate
