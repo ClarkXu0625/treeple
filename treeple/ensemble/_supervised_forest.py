@@ -281,6 +281,7 @@ class ObliqueRandomForestClassifier(
             list,
             None,
         ],
+        "sampling_method": [StrOptions({"fisher", "floyd"})],
     }
     _parameter_constraints.pop("splitter")
 
@@ -305,6 +306,7 @@ class ObliqueRandomForestClassifier(
         class_weight=None,
         max_samples=None,
         feature_combinations=None,
+        sampling_method="floyd",
     ):
         super().__init__(
             estimator=ObliqueDecisionTreeClassifier(),
@@ -320,6 +322,7 @@ class ObliqueRandomForestClassifier(
                 "min_impurity_decrease",
                 "random_state",
                 "feature_combinations",
+                "sampling_method",
             ),
             bootstrap=bootstrap,
             oob_score=oob_score,
@@ -336,6 +339,7 @@ class ObliqueRandomForestClassifier(
         self.min_samples_leaf = min_samples_leaf
         self.max_features = max_features
         self.feature_combinations = feature_combinations
+        self.sampling_method = sampling_method  # new parameters
 
         # unused by oblique forests
         self.min_weight_fraction_leaf = min_weight_fraction_leaf
