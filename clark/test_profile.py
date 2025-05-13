@@ -84,7 +84,7 @@ report_njobs1 = profiling_fit(
     max_features=2048,
     feature_combinations=2.0,
     max_depth=10,
-    n_jobs=4,
+    n_jobs=8,
     max_leaf_nodes=30,
     treeple_params=params_treeple
 )
