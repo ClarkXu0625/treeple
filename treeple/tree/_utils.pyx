@@ -54,7 +54,7 @@ cdef void floyd_sample_indices(
 
     for i in range(n - k, n):
         r = rand_int(0, i + 1, random_state)
-        if seen.find(r) == seen.end():
+        if seen.find(r) != seen.end():
             seen.insert(r)
             out[count] = r
         else:
