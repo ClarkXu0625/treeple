@@ -132,7 +132,6 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         object random_state,
         const int8_t[:] monotonic_cst,
         float64_t feature_combinations,
-        #object sampling_method,
         *argv
     ):
         """
@@ -184,12 +183,6 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         # or max w/ 1...
         self.n_non_zeros = max(<intp_t>(self.max_features * self.feature_combinations), 1)
 
-        # sampling_method: 1- floyd, 0- fisher
-        #if sampling_method == b"floyd":
-        #    self.sampling_method = 1
-        #else:
-        #    self.sampling_method = 0
-        #self.sampling_method=1
 
     cdef int init(
         self,
@@ -202,12 +195,8 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
 
         self.X = X
 
-        # create a helper array for allowing efficient Fisher-Yates
-        #if self.sampling_method == 0:
-        #    self.indices_to_sample = np.arange(self.max_features * self.n_features,
-        #                                       dtype=np.intp)
-        #else:
-        self.indices_to_sample = np.empty(self.n_non_zeros, dtype=np.intp)
+        # create a helper array for allowing efficient Fisher-Yates/ Floyd's method
+        self.indices_to_sample = np.zeros(self.n_non_zeros, dtype=np.intp)
 
         # XXX: Just to initialize stuff
         # self.feature_weights = np.ones((self.n_features,), dtype=float32_t) / self.n_features
@@ -249,12 +238,7 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         cdef intp_t[::1] indices_to_sample = self.indices_to_sample
         cdef intp_t grid_size = self.max_features * self.n_features
 
-        # shuffle indices over the 2D grid to sample using Fisher-Yates1
-        # fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
-        # Update Fisher Yates Shuffle to Floyd's method
-        #if self.sampling_method == 0:
-            #fisher_yates_shuffle(indices_to_sample, grid_size, random_state)
-        #else:
+        # draw n_non_zeros random indices from the mTry x n_features set of indices
         floyd_sample_indices(indices_to_sample, n_non_zeros, grid_size, random_state)
 
         # sample 'n_non_zeros' in a mtry X n_features projection matrix

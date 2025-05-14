@@ -840,7 +840,6 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
             Interval(Real, 1.0, None, closed="left"),
             None,
         ],
-        #"sampling_method": [StrOptions({"floyd", "fisher"})],
     }
 
     def __init__(
@@ -858,7 +857,6 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
         min_impurity_decrease=0.0,
         class_weight=None,
         feature_combinations=None,
-        #sampling_method="floyd",
         ccp_alpha=0.0,
         store_leaf_values=False,
         monotonic_cst=None,
@@ -881,7 +879,6 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
         )
 
         self.feature_combinations = feature_combinations
-        #self.sampling_method = sampling_method
 
     def _build_tree(
         self,
@@ -976,7 +973,6 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
                 random_state,
                 monotonic_cst,
                 self.feature_combinations_,
-                #self.sampling_method,
             )
 
         self.tree_ = ObliqueTree(self.n_features_in_, self.n_classes_, self.n_outputs_)
@@ -1058,7 +1054,6 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
                 random_state,
                 monotonic_cst,
                 self.feature_combinations_,
-                #self.sampling_method,
             )
 
         # Use BestFirst if max_leaf_nodes given; use DepthFirst otherwise
