@@ -7,7 +7,7 @@ from scipy.sparse import issparse
 from sklearn.base import ClusterMixin, TransformerMixin
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.utils import check_random_state
-from sklearn.utils._param_validation import Interval, StrOptions
+from sklearn.utils._param_validation import Interval
 from sklearn.utils.validation import check_is_fitted, validate_data
 
 from .._lib.sklearn.tree import (
