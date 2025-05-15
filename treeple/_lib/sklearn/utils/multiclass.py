@@ -26,9 +26,7 @@ def _unique_multiclass(y, xp=None):
 
 def _unique_indicator(y, xp=None):
     xp, _ = get_namespace(y, xp=xp)
-    return xp.arange(
-        check_array(y, input_name="y", accept_sparse=["csr", "csc", "coo"]).shape[1]
-    )
+    return xp.arange(check_array(y, input_name="y", accept_sparse=["csr", "csc", "coo"]).shape[1])
 
 
 _FN_UNIQUE_LABELS = {
@@ -88,16 +86,9 @@ def unique_labels(*ys):
     # Check consistency for the indicator format
     if (
         label_type == "multilabel-indicator"
-        and len(
-            set(
-                check_array(y, accept_sparse=["csr", "csc", "coo"]).shape[1] for y in ys
-            )
-        )
-        > 1
+        and len(set(check_array(y, accept_sparse=["csr", "csc", "coo"]).shape[1] for y in ys)) > 1
     ):
-        raise ValueError(
-            "Multi-label binary indicator input with different numbers of labels"
-        )
+        raise ValueError("Multi-label binary indicator input with different numbers of labels")
 
     # Get the unique set of labels
     _unique_labels = _FN_UNIQUE_LABELS.get(label_type, None)
@@ -109,9 +100,7 @@ def unique_labels(*ys):
         unique_ys = xp.concat([_unique_labels(y, xp=xp) for y in ys])
         return xp.unique_values(unique_ys)
 
-    ys_labels = set(
-        chain.from_iterable((i for i in _unique_labels(y, xp=xp)) for y in ys)
-    )
+    ys_labels = set(chain.from_iterable((i for i in _unique_labels(y, xp=xp)) for y in ys))
     # Check that we don't mix string type with number type
     if len(set(isinstance(label, str) for label in ys_labels)) > 1:
         raise ValueError("Mix of label input types (string and number)")
@@ -305,9 +294,7 @@ def type_of_target(y, input_name=""):
     )
 
     if not valid:
-        raise ValueError(
-            "Expected array-like (array or non-string sequence), got %r" % y
-        )
+        raise ValueError("Expected array-like (array or non-string sequence), got %r" % y)
 
     sparse_pandas = y.__class__.__name__ in ["SparseSeries", "SparseArray"]
     if sparse_pandas:
@@ -489,9 +476,7 @@ def class_distribution(y, sample_weight=None):
                 nz_samp_weight = None
                 zeros_samp_weight_sum = y.shape[0] - y_nnz[k]
 
-            classes_k, y_k = np.unique(
-                y.data[y.indptr[k] : y.indptr[k + 1]], return_inverse=True
-            )
+            classes_k, y_k = np.unique(y.data[y.indptr[k] : y.indptr[k + 1]], return_inverse=True)
             class_prior_k = np.bincount(y_k, weights=nz_samp_weight)
 
             # An explicit zero was found, combine its weight with the weight
@@ -558,7 +543,5 @@ def _ovr_decision_function(predictions, confidences, n_classes):
     # The motivation is to use confidence levels as a way to break ties in
     # the votes without switching any decision made based on a difference
     # of 1 vote.
-    transformed_confidences = sum_of_confidences / (
-        3 * (np.abs(sum_of_confidences) + 1)
-    )
+    transformed_confidences = sum_of_confidences / (3 * (np.abs(sum_of_confidences) + 1))
     return votes + transformed_confidences

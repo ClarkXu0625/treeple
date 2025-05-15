@@ -136,9 +136,7 @@ def sag_sparse(
     random_state=0,
 ):
     if step_size * alpha == 1.0:
-        raise ZeroDivisionError(
-            "Sparse sag does not handle the case step_size * alpha == 1"
-        )
+        raise ZeroDivisionError("Sparse sag does not handle the case step_size * alpha == 1")
     n_samples, n_features = X.shape[0], X.shape[1]
 
     weights = np.zeros(n_features)
@@ -188,10 +186,7 @@ def sag_sparse(
             if saga:
                 for j in range(n_features):
                     weights[j] -= (
-                        gradient_correction[j]
-                        * step_size
-                        * (1 - 1.0 / len(seen))
-                        / wscale
+                        gradient_correction[j] * step_size * (1 - 1.0 / len(seen)) / wscale
                     )
 
             if fit_intercept:
@@ -218,9 +213,9 @@ def sag_sparse(
                     if last_updated[j] == 0:
                         weights[j] -= c_sum[counter] * sum_gradient[j]
                     else:
-                        weights[j] -= (
-                            c_sum[counter] - c_sum[last_updated[j] - 1]
-                        ) * sum_gradient[j]
+                        weights[j] -= (c_sum[counter] - c_sum[last_updated[j] - 1]) * sum_gradient[
+                            j
+                        ]
                     last_updated[j] = counter + 1
                 c_sum[counter] = 0
                 weights *= wscale
@@ -232,9 +227,7 @@ def sag_sparse(
         if last_updated[j] == 0:
             weights[j] -= c_sum[counter - 1] * sum_gradient[j]
         else:
-            weights[j] -= (
-                c_sum[counter - 1] - c_sum[last_updated[j] - 1]
-            ) * sum_gradient[j]
+            weights[j] -= (c_sum[counter - 1] - c_sum[last_updated[j] - 1]) * sum_gradient[j]
     weights *= wscale
     return weights, intercept
 
@@ -515,9 +508,7 @@ def test_get_auto_step_size():
                 step_size_log = 1 / (2 * L_log + mun_log)
             else:
                 step_size_sqr = 1.0 / (max_squared_sum + alpha + int(fit_intercept))
-                step_size_log = 4.0 / (
-                    max_squared_sum + 4.0 * alpha + int(fit_intercept)
-                )
+                step_size_log = 4.0 / (max_squared_sum + 4.0 * alpha + int(fit_intercept))
 
             step_size_sqr_ = get_auto_step_size(
                 max_squared_sum_,
@@ -827,8 +818,7 @@ def test_step_size_alpha_error():
     fit_intercept = False
     alpha = 1.0
     msg = re.escape(
-        "Current sag implementation does not handle the case"
-        " step_size * alpha_scaled == 1"
+        "Current sag implementation does not handle the case" " step_size * alpha_scaled == 1"
     )
 
     clf1 = LogisticRegression(solver="sag", C=1.0 / alpha, fit_intercept=fit_intercept)

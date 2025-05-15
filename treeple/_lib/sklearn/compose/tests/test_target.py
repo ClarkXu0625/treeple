@@ -98,9 +98,7 @@ def test_transform_target_regressor_functions():
     # check the transformer output
     y_tran = regr.transformer_.transform(y.reshape(-1, 1)).squeeze()
     assert_allclose(np.log(y), y_tran)
-    assert_allclose(
-        y, regr.transformer_.inverse_transform(y_tran.reshape(-1, 1)).squeeze()
-    )
+    assert_allclose(y, regr.transformer_.inverse_transform(y_tran.reshape(-1, 1)).squeeze())
     assert y.shape == y_pred.shape
     assert_allclose(y_pred, regr.inverse_func(regr.regressor_.predict(X)))
     # check the regressor output
@@ -134,12 +132,8 @@ def test_transform_target_regressor_1d_transformer(X, y):
     # validate=False lift this constraint without checking that the input is a
     # 2D vector. We check the consistency of the data shape using a 1D and 2D y
     # array.
-    transformer = FunctionTransformer(
-        func=lambda x: x + 1, inverse_func=lambda x: x - 1
-    )
-    regr = TransformedTargetRegressor(
-        regressor=LinearRegression(), transformer=transformer
-    )
+    transformer = FunctionTransformer(func=lambda x: x + 1, inverse_func=lambda x: x - 1)
+    regr = TransformedTargetRegressor(regressor=LinearRegression(), transformer=transformer)
     y_pred = regr.fit(X, y).predict(X)
     assert y.shape == y_pred.shape
     # consistency forward transform
@@ -164,9 +158,7 @@ def test_transform_target_regressor_2d_transformer(X, y):
     # Check consistency with transformer accepting only 2D array and a 1D/2D y
     # array.
     transformer = StandardScaler()
-    regr = TransformedTargetRegressor(
-        regressor=LinearRegression(), transformer=transformer
-    )
+    regr = TransformedTargetRegressor(regressor=LinearRegression(), transformer=transformer)
     y_pred = regr.fit(X, y).predict(X)
     assert y.shape == y_pred.shape
     # consistency forward transform
@@ -200,9 +192,7 @@ def test_transform_target_regressor_2d_transformer_multioutput():
     X = friedman[0]
     y = np.vstack((friedman[1], friedman[1] ** 2 + 1)).T
     transformer = StandardScaler()
-    regr = TransformedTargetRegressor(
-        regressor=LinearRegression(), transformer=transformer
-    )
+    regr = TransformedTargetRegressor(regressor=LinearRegression(), transformer=transformer)
     y_pred = regr.fit(X, y).predict(X)
     assert y.shape == y_pred.shape
     # consistency forward transform
@@ -234,9 +224,7 @@ def test_transform_target_regressor_3d_target():
         return data.reshape(data.shape[0], -1, 2)
 
     transformer = FunctionTransformer(func=flatten_data, inverse_func=unflatten_data)
-    regr = TransformedTargetRegressor(
-        regressor=LinearRegression(), transformer=transformer
-    )
+    regr = TransformedTargetRegressor(regressor=LinearRegression(), transformer=transformer)
     y_pred = regr.fit(X, y).predict(X)
     assert y.shape == y_pred.shape
 
@@ -252,9 +240,7 @@ def test_transform_target_regressor_multi_to_single():
     def inverse_func(y):
         return y
 
-    tt = TransformedTargetRegressor(
-        func=func, inverse_func=inverse_func, check_inverse=False
-    )
+    tt = TransformedTargetRegressor(func=func, inverse_func=inverse_func, check_inverse=False)
     tt.fit(X, y)
     y_pred_2d_func = tt.predict(X)
     assert y_pred_2d_func.shape == (100, 1)
@@ -263,9 +249,7 @@ def test_transform_target_regressor_multi_to_single():
     def func(y):
         return np.sqrt(y[:, 0] ** 2 + y[:, 1] ** 2)
 
-    tt = TransformedTargetRegressor(
-        func=func, inverse_func=inverse_func, check_inverse=False
-    )
+    tt = TransformedTargetRegressor(func=func, inverse_func=inverse_func, check_inverse=False)
     tt.fit(X, y)
     y_pred_1d_func = tt.predict(X)
     assert y_pred_1d_func.shape == (100, 1)
@@ -337,9 +321,7 @@ def test_transform_target_regressor_count_fit(check_inverse):
     # regression test for gh-issue #11618
     # check that we only call a single time fit for the transformer
     X, y = friedman
-    ttr = TransformedTargetRegressor(
-        transformer=DummyTransformer(), check_inverse=check_inverse
-    )
+    ttr = TransformedTargetRegressor(transformer=DummyTransformer(), check_inverse=check_inverse)
     ttr.fit(X, y)
     assert ttr.transformer_.fit_counter == 1
 

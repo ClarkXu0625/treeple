@@ -64,9 +64,7 @@ def _fit_estimator(estimator, X, y, sample_weight=None, **fit_params):
     return estimator
 
 
-def _partial_fit_estimator(
-    estimator, X, y, classes=None, partial_fit_params=None, first_time=True
-):
+def _partial_fit_estimator(estimator, X, y, classes=None, partial_fit_params=None, first_time=True):
     partial_fit_params = {} if partial_fit_params is None else partial_fit_params
     if first_time:
         estimator = clone(estimator)
@@ -172,12 +170,8 @@ class _MultiOutputEstimator(MetaEstimatorMixin, BaseEstimator, metaclass=ABCMeta
                 **partial_fit_params,
             )
         else:
-            if sample_weight is not None and not has_fit_parameter(
-                self.estimator, "sample_weight"
-            ):
-                raise ValueError(
-                    "Underlying estimator does not support sample weights."
-                )
+            if sample_weight is not None and not has_fit_parameter(self.estimator, "sample_weight"):
+                raise ValueError("Underlying estimator does not support sample weights.")
 
             if sample_weight is not None:
                 routed_params = Bunch(
@@ -259,12 +253,8 @@ class _MultiOutputEstimator(MetaEstimatorMixin, BaseEstimator, metaclass=ABCMeta
                 **fit_params,
             )
         else:
-            if sample_weight is not None and not has_fit_parameter(
-                self.estimator, "sample_weight"
-            ):
-                raise ValueError(
-                    "Underlying estimator does not support sample weights."
-                )
+            if sample_weight is not None and not has_fit_parameter(self.estimator, "sample_weight"):
+                raise ValueError("Underlying estimator does not support sample weights.")
 
             fit_params_validated = _check_method_params(X, params=fit_params)
             routed_params = Bunch(estimator=Bunch(fit=fit_params_validated))
@@ -272,9 +262,7 @@ class _MultiOutputEstimator(MetaEstimatorMixin, BaseEstimator, metaclass=ABCMeta
                 routed_params.estimator.fit["sample_weight"] = sample_weight
 
         self.estimators_ = Parallel(n_jobs=self.n_jobs)(
-            delayed(_fit_estimator)(
-                self.estimator, X, y[:, i], **routed_params.estimator.fit
-            )
+            delayed(_fit_estimator)(self.estimator, X, y[:, i], **routed_params.estimator.fit)
             for i in range(y.shape[1])
         )
 
@@ -303,9 +291,7 @@ class _MultiOutputEstimator(MetaEstimatorMixin, BaseEstimator, metaclass=ABCMeta
         if not hasattr(self.estimators_[0], "predict"):
             raise ValueError("The base estimator should implement a predict method")
 
-        y = Parallel(n_jobs=self.n_jobs)(
-            delayed(e.predict)(X) for e in self.estimators_
-        )
+        y = Parallel(n_jobs=self.n_jobs)(delayed(e.predict)(X) for e in self.estimators_)
 
         return np.asarray(y).T
 
@@ -643,9 +629,7 @@ class _BaseChain(BaseEstimator, metaclass=ABCMeta):
         "verbose": ["boolean"],
     }
 
-    def __init__(
-        self, base_estimator, *, order=None, cv=None, random_state=None, verbose=False
-    ):
+    def __init__(self, base_estimator, *, order=None, cv=None, random_state=None, verbose=False):
         self.base_estimator = base_estimator
         self.order = order
         self.cv = cv
@@ -973,9 +957,7 @@ class ClassifierChain(MetaEstimatorMixin, ClassifierMixin, _BaseChain):
         "chain_method": [
             list,
             tuple,
-            StrOptions(
-                {"predict", "predict_proba", "predict_log_proba", "decision_function"}
-            ),
+            StrOptions({"predict", "predict_proba", "predict_log_proba", "decision_function"}),
         ],
     }
 

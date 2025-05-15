@@ -113,9 +113,9 @@ def murmurhash3_32(key, seed=0, positive=False):
             return murmurhash3_bytes_s32(key, seed)
     elif isinstance(key, unicode):
         if positive:
-            return murmurhash3_bytes_u32(key.encode('utf-8'), seed)
+            return murmurhash3_bytes_u32(key.encode("utf-8"), seed)
         else:
-            return murmurhash3_bytes_s32(key.encode('utf-8'), seed)
+            return murmurhash3_bytes_s32(key.encode("utf-8"), seed)
     elif isinstance(key, int) or isinstance(key, np.int32):
         if positive:
             return murmurhash3_int_u32(<int32_t>key, seed)

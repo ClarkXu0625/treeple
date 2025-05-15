@@ -443,8 +443,7 @@ def test_check_docstring_parameters():
             "+ ['a', 'b']",
         ],
         [
-            "In function: "
-            + "sklearn.utils.tests.test_testing.f_too_many_param_docstring",
+            "In function: " + "sklearn.utils.tests.test_testing.f_too_many_param_docstring",
             (
                 "Parameters in function docstring have more items w.r.t. function"
                 " signature, first extra item: c"
@@ -475,8 +474,7 @@ def test_check_docstring_parameters():
             "+ []",
         ],
         [
-            "In function: "
-            + f"sklearn.utils.tests.test_testing.{mock_meta_name}.predict",
+            "In function: " + f"sklearn.utils.tests.test_testing.{mock_meta_name}.predict",
             (
                 "There's a parameter name mismatch in function docstring w.r.t."
                 " function signature, at index 0 diff: 'X' != 'y'"
@@ -496,8 +494,7 @@ def test_check_docstring_parameters():
             "--------- in ",
         ],
         [
-            "In function: "
-            + f"sklearn.utils.tests.test_testing.{mock_meta_name}.score",
+            "In function: " + f"sklearn.utils.tests.test_testing.{mock_meta_name}.score",
             "potentially wrong underline length... ",
             "Parameters ",
             "--------- in ",
@@ -638,17 +635,12 @@ def test_assert_docstring_consistency_arg_checks(objects, kwargs, error):
 @pytest.mark.parametrize(
     "objects, kwargs, error, warn",
     [
-        pytest.param(
-            [f_one, f_two], {"include_params": ["a"]}, "", "", id="whitespace"
-        ),
+        pytest.param([f_one, f_two], {"include_params": ["a"]}, "", "", id="whitespace"),
         pytest.param([f_one, f_two], {"include_returns": True}, "", "", id="incl_all"),
         pytest.param(
             [f_one, f_two, f_three],
             {"include_params": ["a"]},
-            (
-                r"The description of Parameter 'a' is inconsistent between "
-                r"\['f_one',\n'f_two'\]"
-            ),
+            (r"The description of Parameter 'a' is inconsistent between " r"\['f_one',\n'f_two'\]"),
             "",
             id="2-1 group",
         ),
@@ -909,9 +901,7 @@ def test_convert_container(
 
 def test_convert_container_categories_pandas():
     pytest.importorskip("pandas")
-    df = _convert_container(
-        [["x"]], "dataframe", ["A"], categorical_feature_names=["A"]
-    )
+    df = _convert_container([["x"]], "dataframe", ["A"], categorical_feature_names=["A"])
     assert df.dtypes.iloc[0] == "category"
 
 
@@ -981,9 +971,7 @@ def test_raises():
     assert not cm.raised_and_matched
 
     # proper type but bad match
-    with pytest.raises(
-        AssertionError, match="should contain one of the following patterns"
-    ):
+    with pytest.raises(AssertionError, match="should contain one of the following patterns"):
         with raises(TypeError, match="hello") as cm:
             raise TypeError("Bad message")
     assert not cm.raised_and_matched

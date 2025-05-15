@@ -137,9 +137,7 @@ class KernelDensity(BaseEstimator):
         "algorithm": [StrOptions(set(TREE_DICT.keys()) | {"auto"})],
         "kernel": [StrOptions(set(VALID_KERNELS))],
         "metric": [
-            StrOptions(
-                set(itertools.chain(*[VALID_METRICS[alg] for alg in TREE_DICT.keys()]))
-            )
+            StrOptions(set(itertools.chain(*[VALID_METRICS[alg] for alg in TREE_DICT.keys()])))
         ],
         "atol": [Interval(Real, 0, None, closed="left")],
         "rtol": [Interval(Real, 0, None, closed="left")],
@@ -220,9 +218,7 @@ class KernelDensity(BaseEstimator):
             if self.bandwidth == "scott":
                 self.bandwidth_ = X.shape[0] ** (-1 / (X.shape[1] + 4))
             elif self.bandwidth == "silverman":
-                self.bandwidth_ = (X.shape[0] * (X.shape[1] + 2) / 4) ** (
-                    -1 / (X.shape[1] + 4)
-                )
+                self.bandwidth_ = (X.shape[0] * (X.shape[1] + 2) / 4) ** (-1 / (X.shape[1] + 4))
         else:
             self.bandwidth_ = self.bandwidth
 
@@ -352,9 +348,7 @@ class KernelDensity(BaseEstimator):
             X = rng.normal(size=(n_samples, dim))
             s_sq = row_norms(X, squared=True)
             correction = (
-                gammainc(0.5 * dim, 0.5 * s_sq) ** (1.0 / dim)
-                * self.bandwidth_
-                / np.sqrt(s_sq)
+                gammainc(0.5 * dim, 0.5 * s_sq) ** (1.0 / dim) * self.bandwidth_ / np.sqrt(s_sq)
             )
             return data[i] + X * correction[:, np.newaxis]
 

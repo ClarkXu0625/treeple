@@ -244,9 +244,7 @@ def test_nmf_transform_custom_init(Estimator, solver):
     H_init = np.abs(avg * random_state.randn(n_components, 5))
     W_init = np.abs(avg * random_state.randn(6, n_components))
 
-    m = Estimator(
-        n_components=n_components, init="custom", random_state=0, tol=1e-3, **solver
-    )
+    m = Estimator(n_components=n_components, init="custom", random_state=0, tol=1e-3, **solver)
     m.fit_transform(A, W=W_init, H=H_init)
     m.transform(A)
 
@@ -884,9 +882,7 @@ def test_minibatch_nmf_partial_fit():
     mbnmf2 = MiniBatchNMF(n_components=n_components, init="custom", random_state=0)
 
     # Force the same init of H (W is recomputed anyway) to be able to compare results.
-    W, H = nmf._initialize_nmf(
-        X, n_components=n_components, init="random", random_state=0
-    )
+    W, H = nmf._initialize_nmf(X, n_components=n_components, init="random", random_state=0)
 
     mbnmf1.fit(X, W=W, H=H)
     for i in range(max_iter):
@@ -971,9 +967,7 @@ def test_nmf_non_negative_factorization_n_components_auto():
     X = rng.random_sample((6, 5))
     W_init = rng.random_sample((6, 2))
     H_init = rng.random_sample((2, 5))
-    W, H, _ = non_negative_factorization(
-        X, W=W_init, H=H_init, init="custom", n_components="auto"
-    )
+    W, H, _ = non_negative_factorization(X, W=W_init, H=H_init, init="custom", n_components="auto")
     assert H.shape == H_init.shape
     assert W.shape == W_init.shape
 
@@ -1009,18 +1003,14 @@ def test_nmf_w_h_not_used_warning():
         RuntimeWarning,
         match="When init!='custom', provided W or H are ignored",
     ):
-        non_negative_factorization(
-            X, W=W_init, H=H_init, update_H=True, n_components="auto"
-        )
+        non_negative_factorization(X, W=W_init, H=H_init, update_H=True, n_components="auto")
 
     with pytest.warns(
         RuntimeWarning, match="When update_H=False, the provided initial W is not used."
     ):
         # When update_H is False, W is ignored regardless of init
         # TODO: use the provided W when init="custom".
-        non_negative_factorization(
-            X, W=W_init, H=H_init, update_H=False, n_components="auto"
-        )
+        non_negative_factorization(X, W=W_init, H=H_init, update_H=False, n_components="auto")
 
 
 def test_nmf_custom_init_shape_error():

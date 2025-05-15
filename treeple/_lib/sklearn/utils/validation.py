@@ -86,9 +86,7 @@ def _deprecate_positional_args(func=None, *, version="1.3"):
     return _inner_deprecate_positional_args
 
 
-def _assert_all_finite(
-    X, allow_nan=False, msg_dtype=None, estimator_name=None, input_name=""
-):
+def _assert_all_finite(X, allow_nan=False, msg_dtype=None, estimator_name=None, input_name=""):
     """Like assert_all_finite, but only for ndarray."""
 
     xp, is_array_api = get_namespace(X)
@@ -130,9 +128,7 @@ def _assert_all_finite_element_wise(
     X, *, xp, allow_nan, msg_dtype=None, estimator_name=None, input_name=""
 ):
     # Cython implementation doesn't support FP16 or complex numbers
-    use_cython = (
-        xp is np and X.data.contiguous and X.dtype.type in {np.float32, np.float64}
-    )
+    use_cython = xp is np and X.data.contiguous and X.dtype.type in {np.float32, np.float64}
     if use_cython:
         out = cy_isfinite(X.reshape(-1), allow_nan=allow_nan)
         has_nan_error = False if allow_nan else out == FiniteStatus.has_nan
@@ -214,9 +210,7 @@ def assert_all_finite(
     )
 
 
-def as_float_array(
-    X, *, copy=True, force_all_finite="deprecated", ensure_all_finite=None
-):
+def as_float_array(X, *, copy=True, force_all_finite="deprecated", ensure_all_finite=None):
     """Convert an array-like to an array of floats.
 
     The new dtype will be np.float32 or np.float64, depending on the original
@@ -278,9 +272,7 @@ def as_float_array(
     """
     ensure_all_finite = _deprecate_force_all_finite(force_all_finite, ensure_all_finite)
 
-    if isinstance(X, np.matrix) or (
-        not isinstance(X, np.ndarray) and not sp.issparse(X)
-    ):
+    if isinstance(X, np.matrix) or (not isinstance(X, np.ndarray) and not sp.issparse(X)):
         return check_array(
             X,
             accept_sparse=["csr", "csc", "coo"],
@@ -395,9 +387,7 @@ def _num_samples(x):
 
     if hasattr(x, "shape") and x.shape is not None:
         if len(x.shape) == 0:
-            raise TypeError(
-                "Singleton array %r cannot be considered a valid collection." % x
-            )
+            raise TypeError("Singleton array %r cannot be considered a valid collection." % x)
         # Check that shape is returning an integer or default to len
         # Dask dataframes may not return numeric shape[0] value
         if isinstance(x.shape[0], numbers.Integral):
@@ -931,9 +921,7 @@ def check_array(
             # Force object if any of the dtypes is an object
             dtype_orig = object
 
-    elif (_is_extension_array_dtype(array) or hasattr(array, "iloc")) and hasattr(
-        array, "dtype"
-    ):
+    elif (_is_extension_array_dtype(array) or hasattr(array, "iloc")) and hasattr(array, "dtype"):
         # array is a pandas series
         type_if_series = type(array)
         pandas_requires_conversion = _pandas_dtype_needs_early_conversion(array.dtype)
@@ -944,11 +932,7 @@ def check_array(
             dtype_orig = None
 
     if dtype_numeric:
-        if (
-            dtype_orig is not None
-            and hasattr(dtype_orig, "kind")
-            and dtype_orig.kind == "O"
-        ):
+        if dtype_orig is not None and hasattr(dtype_orig, "kind") and dtype_orig.kind == "O":
             # if input is object, convert to float.
             dtype = xp.float64
         else:
@@ -1097,8 +1081,7 @@ def check_array(
             )
         if not allow_nd and array.ndim >= 3:
             raise ValueError(
-                "Found array with dim %d. %s expected <= 2."
-                % (array.ndim, estimator_name)
+                "Found array with dim %d. %s expected <= 2." % (array.ndim, estimator_name)
             )
 
         if ensure_all_finite:
@@ -1113,14 +1096,10 @@ def check_array(
             if _is_numpy_namespace(xp):
                 # only make a copy if `array` and `array_orig` may share memory`
                 if np.may_share_memory(array, array_orig):
-                    array = _asarray_with_order(
-                        array, dtype=dtype, order=order, copy=True, xp=xp
-                    )
+                    array = _asarray_with_order(array, dtype=dtype, order=order, copy=True, xp=xp)
             else:
                 # always make a copy for non-numpy arrays
-                array = _asarray_with_order(
-                    array, dtype=dtype, order=order, copy=True, xp=xp
-                )
+                array = _asarray_with_order(array, dtype=dtype, order=order, copy=True, xp=xp)
 
     if ensure_min_samples > 0:
         n_samples = _num_samples(array)
@@ -1359,9 +1338,7 @@ def check_X_y(
             estimator_name = "estimator"
         else:
             estimator_name = _check_estimator_name(estimator)
-        raise ValueError(
-            f"{estimator_name} requires y to be passed, but the target y is None"
-        )
+        raise ValueError(f"{estimator_name} requires y to be passed, but the target y is None")
 
     ensure_all_finite = _deprecate_force_all_finite(force_all_finite, ensure_all_finite)
 
@@ -1470,9 +1447,7 @@ def column_or_1d(y, *, dtype=None, warn=False):
             )
         return _asarray_with_order(xp.reshape(y, (-1,)), order="C", xp=xp)
 
-    raise ValueError(
-        "y should be a 1d array, got an array of shape {} instead.".format(shape)
-    )
+    raise ValueError("y should be a 1d array, got an array of shape {} instead.".format(shape))
 
 
 def check_random_state(seed):
@@ -1503,9 +1478,7 @@ def check_random_state(seed):
         return np.random.RandomState(seed)
     if isinstance(seed, np.random.RandomState):
         return seed
-    raise ValueError(
-        "%r cannot be used to seed a numpy.random.RandomState instance" % seed
-    )
+    raise ValueError("%r cannot be used to seed a numpy.random.RandomState instance" % seed)
 
 
 def has_fit_parameter(estimator, parameter):
@@ -1580,9 +1553,7 @@ def check_symmetric(array, *, tol=1e-10, raise_warning=True, raise_exception=Fal
         with 6 stored elements and shape (3, 3)>
     """
     if (array.ndim != 2) or (array.shape[0] != array.shape[1]):
-        raise ValueError(
-            "array must be 2-dimensional and square. shape = {0}".format(array.shape)
-        )
+        raise ValueError("array must be 2-dimensional and square. shape = {0}".format(array.shape))
 
     if sp.issparse(array):
         diff = array - array.T
@@ -1645,9 +1616,7 @@ def _is_fitted(estimator, attributes=None, all_or_any=all):
     if hasattr(estimator, "__sklearn_is_fitted__"):
         return estimator.__sklearn_is_fitted__()
 
-    fitted_attrs = [
-        v for v in vars(estimator) if v.endswith("_") and not v.startswith("__")
-    ]
+    fitted_attrs = [v for v in vars(estimator) if v.endswith("_") and not v.startswith("__")]
     return len(fitted_attrs) > 0
 
 
@@ -1850,8 +1819,7 @@ def check_scalar(
             target_type_str = type_name(target_type)
 
         raise TypeError(
-            f"{name} must be an instance of {target_type_str}, not"
-            f" {type(x).__qualname__}."
+            f"{name} must be an instance of {target_type_str}, not" f" {type(x).__qualname__}."
         )
 
     expected_include_boundaries = ("left", "right", "both", "neither")
@@ -1873,18 +1841,14 @@ def check_scalar(
             "is inconsistent."
         )
 
-    comparison_operator = (
-        operator.lt if include_boundaries in ("left", "both") else operator.le
-    )
+    comparison_operator = operator.lt if include_boundaries in ("left", "both") else operator.le
     if min_val is not None and comparison_operator(x, min_val):
         raise ValueError(
             f"{name} == {x}, must be"
             f" {'>=' if include_boundaries in ('left', 'both') else '>'} {min_val}."
         )
 
-    comparison_operator = (
-        operator.gt if include_boundaries in ("right", "both") else operator.ge
-    )
+    comparison_operator = operator.gt if include_boundaries in ("right", "both") else operator.ge
     if max_val is not None and comparison_operator(x, max_val):
         raise ValueError(
             f"{name} == {x}, must be"
@@ -2028,10 +1992,7 @@ def _check_psd_eigenvalues(lambdas, enable_warnings=False):
 
     else:
         min_eig = lambdas.min()
-        if (
-            min_eig < -significant_neg_ratio * max_eig
-            and min_eig < -significant_neg_value
-        ):
+        if min_eig < -significant_neg_ratio * max_eig and min_eig < -significant_neg_value:
             raise ValueError(
                 "There are significant negative eigenvalues (%g"
                 " of the maximum positive). Either the matrix is "
@@ -2067,9 +2028,7 @@ def _check_psd_eigenvalues(lambdas, enable_warnings=False):
     return lambdas
 
 
-def _check_sample_weight(
-    sample_weight, X, dtype=None, copy=False, ensure_non_negative=False
-):
+def _check_sample_weight(sample_weight, X, dtype=None, copy=False, ensure_non_negative=False):
     """Validate sample weights.
 
     Note that passing sample_weight=None will output an array of ones.
@@ -2131,9 +2090,7 @@ def _check_sample_weight(
 
         if sample_weight.shape != (n_samples,):
             raise ValueError(
-                "sample_weight.shape == {}, expected {}!".format(
-                    sample_weight.shape, (n_samples,)
-                )
+                "sample_weight.shape == {}, expected {}!".format(sample_weight.shape, (n_samples,))
             )
 
     if ensure_non_negative:
@@ -2176,9 +2133,7 @@ def _allclose_dense_sparse(x, y, rtol=1e-7, atol=1e-9):
         )
     elif not sp.issparse(x) and not sp.issparse(y):
         return np.allclose(x, y, rtol=rtol, atol=atol)
-    raise ValueError(
-        "Can only compare two sparse matrices, not a sparse matrix and an array"
-    )
+    raise ValueError("Can only compare two sparse matrices, not a sparse matrix and an array")
 
 
 def _check_response_method(estimator, response_method):
@@ -2401,9 +2356,7 @@ def _check_feature_names_in(estimator, input_features=None, *, generate_names=Tr
 
     if input_features is not None:
         input_features = np.asarray(input_features, dtype=object)
-        if feature_names_in_ is not None and not np.array_equal(
-            feature_names_in_, input_features
-        ):
+        if feature_names_in_ is not None and not np.array_equal(feature_names_in_, input_features):
             raise ValueError("input_features is not equal to feature_names_in_")
 
         if n_features_in_ is not None and len(input_features) != n_features_in_:
@@ -2450,9 +2403,7 @@ def _generate_get_feature_names_out(estimator, n_features_out, input_features=No
     """
     _check_feature_names_in(estimator, input_features, generate_names=False)
     estimator_name = estimator.__class__.__name__.lower()
-    return np.asarray(
-        [f"{estimator_name}{i}" for i in range(n_features_out)], dtype=object
-    )
+    return np.asarray([f"{estimator_name}{i}" for i in range(n_features_out)], dtype=object)
 
 
 def _check_monotonic_cst(estimator, monotonic_cst=None):

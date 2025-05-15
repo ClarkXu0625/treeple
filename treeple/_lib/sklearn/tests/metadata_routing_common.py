@@ -68,9 +68,7 @@ def check_recorded_metadata(obj, method, parent, split_params=tuple(), **kwargs)
     **kwargs : dict
         passed metadata
     """
-    all_records = (
-        getattr(obj, "_records", dict()).get(method, dict()).get(parent, list())
-    )
+    all_records = getattr(obj, "_records", dict()).get(method, dict()).get(parent, list())
     for record in all_records:
         # first check that the names of the metadata passed are the same as
         # expected. The names are stored as keys in `record`.
@@ -166,30 +164,22 @@ class ConsumingRegressor(RegressorMixin, BaseEstimator):
         if self.registry is not None:
             self.registry.append(self)
 
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return self
 
     def fit(self, X, y, sample_weight="default", metadata="default"):
         if self.registry is not None:
             self.registry.append(self)
 
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return self
 
     def predict(self, X, y=None, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return np.zeros(shape=(len(X),))
 
     def score(self, X, y, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return 1
 
 
@@ -261,15 +251,11 @@ class ConsumingClassifier(ClassifierMixin, BaseEstimator):
         self.alpha = alpha
         self.registry = registry
 
-    def partial_fit(
-        self, X, y, classes=None, sample_weight="default", metadata="default"
-    ):
+    def partial_fit(self, X, y, classes=None, sample_weight="default", metadata="default"):
         if self.registry is not None:
             self.registry.append(self)
 
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         _check_partial_fit_first_call(self, classes)
         return self
 
@@ -277,51 +263,39 @@ class ConsumingClassifier(ClassifierMixin, BaseEstimator):
         if self.registry is not None:
             self.registry.append(self)
 
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
 
         self.classes_ = np.unique(y)
         self.coef_ = np.ones_like(X)
         return self
 
     def predict(self, X, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         y_score = np.empty(shape=(len(X),), dtype="int8")
         y_score[len(X) // 2 :] = 0
         y_score[: len(X) // 2] = 1
         return y_score
 
     def predict_proba(self, X, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         y_proba = np.empty(shape=(len(X), 2))
         y_proba[: len(X) // 2, :] = np.asarray([1.0, 0.0])
         y_proba[len(X) // 2 :, :] = np.asarray([0.0, 1.0])
         return y_proba
 
     def predict_log_proba(self, X, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return np.zeros(shape=(len(X), 2))
 
     def decision_function(self, X, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         y_score = np.empty(shape=(len(X),))
         y_score[len(X) // 2 :] = 0
         y_score[: len(X) // 2] = 1
         return y_score
 
     def score(self, X, y, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return 1
 
 
@@ -344,15 +318,11 @@ class ConsumingTransformer(TransformerMixin, BaseEstimator):
         if self.registry is not None:
             self.registry.append(self)
 
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return self
 
     def transform(self, X, sample_weight="default", metadata="default"):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return X + 1
 
     def fit_transform(self, X, y, sample_weight="default", metadata="default"):
@@ -360,17 +330,13 @@ class ConsumingTransformer(TransformerMixin, BaseEstimator):
         # ``TransformerMixin.fit_transform`` doesn't route any metadata to
         # ``transform``, while here we want ``transform`` to receive
         # ``sample_weight`` and ``metadata``.
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return self.fit(X, y, sample_weight=sample_weight, metadata=metadata).transform(
             X, sample_weight=sample_weight, metadata=metadata
         )
 
     def inverse_transform(self, X, sample_weight=None, metadata=None):
-        record_metadata_not_default(
-            self, sample_weight=sample_weight, metadata=metadata
-        )
+        record_metadata_not_default(self, sample_weight=sample_weight, metadata=metadata)
         return X - 1
 
 

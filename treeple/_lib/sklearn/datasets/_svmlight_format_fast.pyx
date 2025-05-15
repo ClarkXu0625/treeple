@@ -11,8 +11,8 @@ from libc.string cimport strchr
 import numpy as np
 
 
-cdef bytes COMMA = u','.encode('ascii')
-cdef bytes COLON = u':'.encode('ascii')
+cdef bytes COMMA = u",".encode("ascii")
+cdef bytes COLON = u":".encode("ascii")
 
 
 def _load_svmlight_file(f, dtype, bint multilabel, bint zero_based,
@@ -23,7 +23,7 @@ def _load_svmlight_file(f, dtype, bint multilabel, bint zero_based,
     cdef char *line_cstr
     cdef int idx, prev_idx
     cdef Py_ssize_t i
-    cdef bytes qid_prefix = b'qid'
+    cdef bytes qid_prefix = b"qid"
     cdef Py_ssize_t n_features
     cdef long long offset_max = offset + length if length > 0 else -1
 
@@ -235,9 +235,9 @@ def _dump_svmlight_file(
             if y_is_sp:
                 col_start = y.indptr[i]
                 col_end = y.indptr[i+1]
-                labels_str = ','.join(tuple(label_pattern % y.indices[j] for j in range(col_start, col_end) if y.data[j] != 0))
+                labels_str = ",".join(tuple(label_pattern % y.indices[j] for j in range(col_start, col_end) if y.data[j] != 0))
             else:
-                labels_str = ','.join(label_pattern % j for j in range(num_labels) if y[i, j] != 0)
+                labels_str = ",".join(label_pattern % j for j in range(num_labels) if y[i, j] != 0)
         else:
             if y_is_sp:
                 labels_str = label_pattern % y.data[i]

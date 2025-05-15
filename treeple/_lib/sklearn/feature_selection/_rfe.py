@@ -40,12 +40,8 @@ def _rfe_single_fit(rfe, estimator, X, y, train, test, scorer, routed_params):
     """
     X_train, y_train = _safe_split(estimator, X, y, train)
     X_test, y_test = _safe_split(estimator, X, y, test, train)
-    fit_params = _check_method_params(
-        X, params=routed_params.estimator.fit, indices=train
-    )
-    score_params = _check_method_params(
-        X=X, params=routed_params.scorer.score, indices=test
-    )
+    fit_params = _check_method_params(X, params=routed_params.estimator.fit, indices=train)
+    score_params = _check_method_params(X=X, params=routed_params.scorer.score, indices=test)
 
     rfe._fit(
         X_train,
@@ -417,9 +413,7 @@ class RFE(SelectorMixin, MetaEstimatorMixin, BaseEstimator):
         else:
             routed_params = Bunch(estimator=Bunch(predict={}))
 
-        return self.estimator_.predict(
-            self.transform(X), **routed_params.estimator.predict
-        )
+        return self.estimator_.predict(self.transform(X), **routed_params.estimator.predict)
 
     @available_if(_estimator_has("score"))
     def score(self, X, y, **score_params):
@@ -458,9 +452,7 @@ class RFE(SelectorMixin, MetaEstimatorMixin, BaseEstimator):
         else:
             routed_params = Bunch(estimator=Bunch(score=score_params))
 
-        return self.estimator_.score(
-            self.transform(X), y, **routed_params.estimator.score
-        )
+        return self.estimator_.score(self.transform(X), y, **routed_params.estimator.score)
 
     def _get_support_mask(self):
         check_is_fitted(self)

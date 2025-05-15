@@ -144,9 +144,7 @@ def test_binary_search():
     desired_perplexity = 25.0
     P = _binary_search_perplexity(distances, desired_perplexity, verbose=0)
     P = np.maximum(P, np.finfo(np.double).eps)
-    mean_perplexity = np.mean(
-        [np.exp(-np.sum(P[i] * np.log(P[i]))) for i in range(P.shape[0])]
-    )
+    mean_perplexity = np.mean([np.exp(-np.sum(P[i] * np.log(P[i]))) for i in range(P.shape[0])])
     assert_almost_equal(mean_perplexity, desired_perplexity, decimal=3)
 
 
@@ -183,10 +181,7 @@ def test_binary_search_neighbors():
 
     indptr = distance_graph.indptr
     P1_nn = np.array(
-        [
-            P1[k, distance_graph.indices[indptr[k] : indptr[k + 1]]]
-            for k in range(n_samples)
-        ]
+        [P1[k, distance_graph.indices[indptr[k] : indptr[k + 1]]] for k in range(n_samples)]
     )
     assert_array_almost_equal(P1_nn, P2, decimal=4)
 
@@ -455,9 +450,7 @@ def test_sparse_precomputed_distance(sparse_container):
     assert sp.issparse(D_sparse)
     assert_almost_equal(D_sparse.toarray(), D)
 
-    tsne = TSNE(
-        metric="precomputed", random_state=0, init="random", learning_rate="auto"
-    )
+    tsne = TSNE(metric="precomputed", random_state=0, init="random", learning_rate="auto")
     Xt_dense = tsne.fit_transform(D)
 
     Xt_sparse = tsne.fit_transform(sparse_container(D_sparse))
@@ -582,13 +575,9 @@ def test_answer_gradient_two_points(csr_container):
     # These tests & answers have been checked against the reference
     # implementation by LvdM.
     pos_input = np.array([[1.0, 0.0], [0.0, 1.0]])
-    pos_output = np.array(
-        [[-4.961291e-05, -1.072243e-04], [9.259460e-05, 2.702024e-04]]
-    )
+    pos_output = np.array([[-4.961291e-05, -1.072243e-04], [9.259460e-05, 2.702024e-04]])
     neighbors = np.array([[1], [0]])
-    grad_output = np.array(
-        [[-2.37012478e-05, -6.29044398e-05], [2.37012478e-05, 6.29044398e-05]]
-    )
+    grad_output = np.array([[-2.37012478e-05, -6.29044398e-05], [2.37012478e-05, 6.29044398e-05]])
     _run_answer_test(pos_input, pos_output, neighbors, grad_output, csr_container)
 
 
@@ -646,9 +635,7 @@ def test_skip_num_points_gradient(csr_container):
             [-2.58720939e-09, 7.52706374e-09],
         ]
     )
-    _run_answer_test(
-        pos_input, pos_output, neighbors, grad_output, csr_container, False, 0.1, 2
-    )
+    _run_answer_test(pos_input, pos_output, neighbors, grad_output, csr_container, False, 0.1, 2)
 
 
 def _run_answer_test(
@@ -786,9 +773,7 @@ def test_barnes_hut_angle():
 
         n_neighbors = n_samples - 1
         distances_csr = (
-            NearestNeighbors()
-            .fit(data)
-            .kneighbors_graph(n_neighbors=n_neighbors, mode="distance")
+            NearestNeighbors().fit(data).kneighbors_graph(n_neighbors=n_neighbors, mode="distance")
         )
         P_bh = _joint_probabilities_nn(distances_csr, perplexity, verbose=0)
         kl_bh, grad_bh = _kl_divergence_bh(
@@ -873,9 +858,7 @@ def test_min_grad_norm():
 
     # Compute how often the gradient norm is smaller than min_grad_norm
     gradient_norm_values = np.array(gradient_norm_values)
-    n_smaller_gradient_norms = len(
-        gradient_norm_values[gradient_norm_values <= min_grad_norm]
-    )
+    n_smaller_gradient_norms = len(gradient_norm_values[gradient_norm_values <= min_grad_norm])
 
     # The gradient norm can be smaller than min_grad_norm at most once,
     # because in the moment it becomes smaller the optimization stops
@@ -1015,9 +998,7 @@ def test_gradient_bh_multithread_match_sequential():
 
     n_neighbors = n_samples - 1
     distances_csr = (
-        NearestNeighbors()
-        .fit(data)
-        .kneighbors_graph(n_neighbors=n_neighbors, mode="distance")
+        NearestNeighbors().fit(data).kneighbors_graph(n_neighbors=n_neighbors, mode="distance")
     )
     P_bh = _joint_probabilities_nn(distances_csr, perplexity, verbose=0)
     kl_sequential, grad_sequential = _kl_divergence_bh(
@@ -1148,9 +1129,7 @@ def test_tsne_with_mahalanobis_distance():
         tsne.fit_transform(X)
 
     precomputed_X = squareform(pdist(X, metric="mahalanobis"), checks=True)
-    X_trans_expected = TSNE(metric="precomputed", **default_params).fit_transform(
-        precomputed_X
-    )
+    X_trans_expected = TSNE(metric="precomputed", **default_params).fit_transform(precomputed_X)
 
     X_trans = TSNE(
         metric="mahalanobis", metric_params={"V": np.cov(X.T)}, **default_params

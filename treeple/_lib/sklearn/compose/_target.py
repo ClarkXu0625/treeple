@@ -178,9 +178,7 @@ class TransformedTargetRegressor(RegressorMixin, BaseEstimator):
                 self.func is None and self.inverse_func is not None
             ):
                 lacking_param, existing_param = (
-                    ("func", "inverse_func")
-                    if self.func is None
-                    else ("inverse_func", "func")
+                    ("func", "inverse_func") if self.func is None else ("inverse_func", "func")
                 )
                 raise ValueError(
                     f"When '{existing_param}' is provided, '{lacking_param}' must also"
@@ -335,11 +333,7 @@ class TransformedTargetRegressor(RegressorMixin, BaseEstimator):
             pred_trans = self.transformer_.inverse_transform(pred.reshape(-1, 1))
         else:
             pred_trans = self.transformer_.inverse_transform(pred)
-        if (
-            self._training_dim == 1
-            and pred_trans.ndim == 2
-            and pred_trans.shape[1] == 1
-        ):
+        if self._training_dim == 1 and pred_trans.ndim == 2 and pred_trans.shape[1] == 1:
             pred_trans = pred_trans.squeeze(axis=1)
 
         return pred_trans
@@ -360,9 +354,7 @@ class TransformedTargetRegressor(RegressorMixin, BaseEstimator):
             check_is_fitted(self)
         except NotFittedError as nfe:
             raise AttributeError(
-                "{} object has no n_features_in_ attribute.".format(
-                    self.__class__.__name__
-                )
+                "{} object has no n_features_in_ attribute.".format(self.__class__.__name__)
             ) from nfe
 
         return self.regressor_.n_features_in_

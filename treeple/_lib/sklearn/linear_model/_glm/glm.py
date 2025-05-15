@@ -253,9 +253,7 @@ class _GeneralizedLinearRegressor(RegressorMixin, BaseEstimator):
         else:
             coef = linear_loss.init_zero_coef(X, dtype=loss_dtype)
             if self.fit_intercept:
-                coef[-1] = linear_loss.base_loss.link.link(
-                    np.average(y, weights=sample_weight)
-                )
+                coef[-1] = linear_loss.base_loss.link.link(np.average(y, weights=sample_weight))
 
         l2_reg_strength = self.alpha
         n_threads = _openmp_effective_n_threads()
@@ -566,9 +564,7 @@ class PoissonRegressor(_GeneralizedLinearRegressor):
     array([10.676..., 21.875...])
     """
 
-    _parameter_constraints: dict = {
-        **_GeneralizedLinearRegressor._parameter_constraints
-    }
+    _parameter_constraints: dict = {**_GeneralizedLinearRegressor._parameter_constraints}
 
     def __init__(
         self,
@@ -698,9 +694,7 @@ class GammaRegressor(_GeneralizedLinearRegressor):
     array([19.483..., 35.795...])
     """
 
-    _parameter_constraints: dict = {
-        **_GeneralizedLinearRegressor._parameter_constraints
-    }
+    _parameter_constraints: dict = {**_GeneralizedLinearRegressor._parameter_constraints}
 
     def __init__(
         self,

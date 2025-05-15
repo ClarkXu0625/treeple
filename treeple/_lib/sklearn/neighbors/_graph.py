@@ -452,9 +452,7 @@ class KNeighborsTransformer(
         """
         check_is_fitted(self)
         add_one = self.mode == "distance"
-        return self.kneighbors_graph(
-            X, mode=self.mode, n_neighbors=self.n_neighbors + add_one
-        )
+        return self.kneighbors_graph(X, mode=self.mode, n_neighbors=self.n_neighbors + add_one)
 
     def fit_transform(self, X, y=None):
         """Fit to data, then transform it.
@@ -482,9 +480,7 @@ class KNeighborsTransformer(
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
-        tags._xfail_checks = {
-            "check_methods_sample_order_invariance": "check is not applicable."
-        }
+        tags._xfail_checks = {"check_methods_sample_order_invariance": "check is not applicable."}
         return tags
 
 
@@ -712,7 +708,5 @@ class RadiusNeighborsTransformer(
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
-        tags._xfail_checks = {
-            "check_methods_sample_order_invariance": "check is not applicable."
-        }
+        tags._xfail_checks = {"check_methods_sample_order_invariance": "check is not applicable."}
         return tags

@@ -37,8 +37,7 @@ def _check_weights(weights, n_components):
     if any(np.less(weights, 0.0)) or any(np.greater(weights, 1.0)):
         raise ValueError(
             "The parameter 'weights' should be in the range "
-            "[0, 1], but got max value %.5f, min value %.5f"
-            % (np.min(weights), np.max(weights))
+            "[0, 1], but got max value %.5f, min value %.5f" % (np.min(weights), np.max(weights))
         )
 
     # check normalization
@@ -81,12 +80,8 @@ def _check_precision_positivity(precision, covariance_type):
 
 def _check_precision_matrix(precision, covariance_type):
     """Check a precision matrix is symmetric and positive-definite."""
-    if not (
-        np.allclose(precision, precision.T) and np.all(linalg.eigvalsh(precision) > 0.0)
-    ):
-        raise ValueError(
-            "'%s precision' should be symmetric, positive-definite" % covariance_type
-        )
+    if not (np.allclose(precision, precision.T) and np.all(linalg.eigvalsh(precision) > 0.0)):
+        raise ValueError("'%s precision' should be symmetric, positive-definite" % covariance_type)
 
 
 def _check_precisions_full(precisions, covariance_type):
@@ -131,9 +126,7 @@ def _check_precisions(precisions, covariance_type, n_components, n_features):
         "diag": (n_components, n_features),
         "spherical": (n_components,),
     }
-    _check_shape(
-        precisions, precisions_shape[covariance_type], "%s precision" % covariance_type
-    )
+    _check_shape(precisions, precisions_shape[covariance_type], "%s precision" % covariance_type)
 
     _check_precisions = {
         "full": _check_precisions_full,
@@ -328,18 +321,14 @@ def _compute_precision_cholesky(covariances, covariance_type):
                 cov_chol = linalg.cholesky(covariance, lower=True)
             except linalg.LinAlgError:
                 raise ValueError(estimate_precision_error_message)
-            precisions_chol[k] = linalg.solve_triangular(
-                cov_chol, np.eye(n_features), lower=True
-            ).T
+            precisions_chol[k] = linalg.solve_triangular(cov_chol, np.eye(n_features), lower=True).T
     elif covariance_type == "tied":
         _, n_features = covariances.shape
         try:
             cov_chol = linalg.cholesky(covariances, lower=True)
         except linalg.LinAlgError:
             raise ValueError(estimate_precision_error_message)
-        precisions_chol = linalg.solve_triangular(
-            cov_chol, np.eye(n_features), lower=True
-        ).T
+        precisions_chol = linalg.solve_triangular(cov_chol, np.eye(n_features), lower=True).T
     else:
         if np.any(np.less_equal(covariances, 0.0)):
             raise ValueError(estimate_precision_error_message)
@@ -394,9 +383,7 @@ def _compute_precision_cholesky_from_precisions(precisions, covariance_type):
             ]
         )
     elif covariance_type == "tied":
-        precisions_cholesky = _flipudlr(
-            linalg.cholesky(_flipudlr(precisions), lower=True)
-        )
+        precisions_cholesky = _flipudlr(linalg.cholesky(_flipudlr(precisions), lower=True))
     else:
         precisions_cholesky = np.sqrt(precisions)
     return precisions_cholesky
@@ -741,9 +728,7 @@ class GaussianMixture(BaseMixture):
             self.weights_init = _check_weights(self.weights_init, self.n_components)
 
         if self.means_init is not None:
-            self.means_init = _check_means(
-                self.means_init, self.n_components, n_features
-            )
+            self.means_init = _check_means(self.means_init, self.n_components, n_features)
 
         if self.precisions_init is not None:
             self.precisions_init = _check_precisions(
@@ -757,9 +742,7 @@ class GaussianMixture(BaseMixture):
         # If all the initial parameters are all provided, then there is no need to run
         # the initialization.
         compute_resp = (
-            self.weights_init is None
-            or self.means_init is None
-            or self.precisions_init is None
+            self.weights_init is None or self.means_init is None or self.precisions_init is None
         )
         if compute_resp:
             super()._initialize_parameters(X, random_state)
@@ -852,9 +835,7 @@ class GaussianMixture(BaseMixture):
                 self.precisions_[k] = np.dot(prec_chol, prec_chol.T)
 
         elif self.covariance_type == "tied":
-            self.precisions_ = np.dot(
-                self.precisions_cholesky_, self.precisions_cholesky_.T
-            )
+            self.precisions_ = np.dot(self.precisions_cholesky_, self.precisions_cholesky_.T)
         else:
             self.precisions_ = self.precisions_cholesky_**2
 
@@ -888,9 +869,7 @@ class GaussianMixture(BaseMixture):
         bic : float
             The lower the better.
         """
-        return -2 * self.score(X) * X.shape[0] + self._n_parameters() * np.log(
-            X.shape[0]
-        )
+        return -2 * self.score(X) * X.shape[0] + self._n_parameters() * np.log(X.shape[0])
 
     def aic(self, X):
         """Akaike information criterion for the current model on the input X.

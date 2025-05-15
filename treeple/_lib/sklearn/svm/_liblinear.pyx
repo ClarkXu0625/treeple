@@ -128,11 +128,11 @@ def train_wrap(
     if bias > 0:
         nr_feature = nr_feature + 1
     if nr_class == 2 and solver_type != 4:  # solver is not Crammer-Singer
-        w = np.empty((1, nr_feature), order='F')
+        w = np.empty((1, nr_feature), order="F")
         copy_w(&w[0, 0], model, nr_feature)
     else:
         len_w = (nr_class) * nr_feature
-        w = np.empty((nr_class, nr_feature), order='F')
+        w = np.empty((nr_class, nr_feature), order="F")
         copy_w(&w[0, 0], model, len_w)
 
     free_and_destroy_model(&model)

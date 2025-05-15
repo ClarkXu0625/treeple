@@ -473,9 +473,7 @@ def test_fast_predict():
     n_samples = 10**3
     # X values over the -10,10 range
     X_train = 20.0 * rng.rand(n_samples) - 10
-    y_train = (
-        np.less(rng.rand(n_samples), expit(X_train)).astype("int64").astype("float64")
-    )
+    y_train = np.less(rng.rand(n_samples), expit(X_train)).astype("int64").astype("float64")
 
     weights = rng.rand(n_samples)
     # we also want to test that everything still works when some weights are 0
@@ -516,9 +514,7 @@ def test_isotonic_dtype(dtype):
 
     for sample_weight in (None, weights.astype(np.float32), weights):
         y_np = np.array(y, dtype=dtype)
-        expected_dtype = check_array(
-            y_np, dtype=[np.float64, np.float32], ensure_2d=False
-        ).dtype
+        expected_dtype = check_array(y_np, dtype=[np.float64, np.float32], ensure_2d=False).dtype
 
         res = isotonic_regression(y_np, sample_weight=sample_weight)
         assert res.dtype == expected_dtype

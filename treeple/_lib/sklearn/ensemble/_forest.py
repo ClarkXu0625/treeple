@@ -148,9 +148,7 @@ def _generate_sample_indices(random_state, n_samples, n_samples_bootstrap):
     Private function used to _parallel_build_trees function."""
 
     random_instance = check_random_state(random_state)
-    sample_indices = random_instance.randint(
-        0, n_samples, n_samples_bootstrap, dtype=np.int32
-    )
+    sample_indices = random_instance.randint(0, n_samples, n_samples_bootstrap, dtype=np.int32)
 
     return sample_indices
 
@@ -158,9 +156,7 @@ def _generate_sample_indices(random_state, n_samples, n_samples_bootstrap):
 def _generate_unsampled_indices(random_state, n_samples, n_samples_bootstrap):
     """
     Private function used to forest._set_oob_score function."""
-    sample_indices = _generate_sample_indices(
-        random_state, n_samples, n_samples_bootstrap
-    )
+    sample_indices = _generate_sample_indices(random_state, n_samples, n_samples_bootstrap)
     sample_counts = np.bincount(sample_indices, minlength=n_samples)
     unsampled_mask = sample_counts == 0
     indices_range = np.arange(n_samples)
@@ -195,9 +191,7 @@ def _parallel_build_trees(
         else:
             curr_sample_weight = sample_weight.copy()
 
-        indices = _generate_sample_indices(
-            tree.random_state, n_samples, n_samples_bootstrap
-        )
+        indices = _generate_sample_indices(tree.random_state, n_samples, n_samples_bootstrap)
         sample_counts = np.bincount(indices, minlength=n_samples)
         curr_sample_weight *= sample_counts
 
@@ -249,9 +243,7 @@ def _parallel_update_trees(
 
     if bootstrap:
         n_samples = X.shape[0]
-        indices = _generate_sample_indices(
-            tree.random_state, n_samples, n_samples_bootstrap
-        )
+        indices = _generate_sample_indices(tree.random_state, n_samples, n_samples_bootstrap)
 
         tree.partial_fit(
             X[indices, :],
@@ -399,10 +391,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
             n_jobs=self.n_jobs,
             verbose=self.verbose,
             prefer="threads",
-        )(
-            delayed(tree.decision_path)(X, check_input=False)
-            for tree in self.estimators_
-        )
+        )(delayed(tree.decision_path)(X, check_input=False) for tree in self.estimators_)
 
         n_nodes = [0]
         n_nodes.extend([i.shape[1] for i in indicators])
@@ -459,10 +448,8 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
         # values. Only the criterion is required to determine if the tree supports
         # missing values.
         estimator = type(self.estimator)(criterion=self.criterion)
-        missing_values_in_feature_mask = (
-            estimator._compute_missing_values_in_feature_mask(
-                X, estimator_name=self.__class__.__name__
-            )
+        missing_values_in_feature_mask = estimator._compute_missing_values_in_feature_mask(
+            X, estimator_name=self.__class__.__name__
         )
 
         if sample_weight is not None:
@@ -583,10 +570,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
             )
 
         elif n_more_estimators == 0:
-            warn(
-                "Warm-start fitting without increasing n_estimators does not "
-                "fit new trees."
-            )
+            warn("Warm-start fitting without increasing n_estimators does not " "fit new trees.")
         else:
             if self.warm_start and len(self.estimators_) > 0:
                 # We draw from the random state to get the random state we
@@ -605,13 +589,10 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
                 n_more_estimators,
             )
 
-        if self.oob_score and (
-            n_more_estimators > 0 or not hasattr(self, "oob_score_")
-        ):
+        if self.oob_score and (n_more_estimators > 0 or not hasattr(self, "oob_score_")):
             y_type = type_of_target(y)
             if y_type == "unknown" or (
-                self._estimator_type == "classifier"
-                and y_type == "multiclass-multioutput"
+                self._estimator_type == "classifier" and y_type == "multiclass-multioutput"
             ):
                 # FIXME: we could consider to support multiclass-multioutput if
                 # we introduce or reuse a constructor parameter (e.g.
@@ -625,9 +606,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
                 )
 
             if callable(self.oob_score):
-                self._set_oob_score_and_attributes(
-                    X, y, scoring_function=self.oob_score
-                )
+                self._set_oob_score_and_attributes(X, y, scoring_function=self.oob_score)
             else:
                 self._set_oob_score_and_attributes(X, y)
 
@@ -875,9 +854,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
             for multi-output regressors.
         """
         if not self.store_leaf_values:
-            raise RuntimeError(
-                "Quantile prediction is not available when store_leaf_values=False"
-            )
+            raise RuntimeError("Quantile prediction is not available when store_leaf_values=False")
         check_is_fitted(self)
         # Check data
         X = self._validate_X_predict(X)
@@ -898,9 +875,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
 
         # avoid storing the output of every estimator by summing them here
         if self.n_outputs_ > 1:
-            y_hat = np.zeros(
-                (X.shape[0], len(quantiles), self.n_outputs_), dtype=np.float64
-            )
+            y_hat = np.zeros((X.shape[0], len(quantiles), self.n_outputs_), dtype=np.float64)
         else:
             y_hat = np.zeros((X.shape[0], len(quantiles)), dtype=np.float64)
 
@@ -922,9 +897,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
 
             # get quantiles across all leaf node samples
             try:
-                y_hat[idx, ...] = np.quantile(
-                    leaf_node_samples, quantiles, axis=0, method=method
-                )
+                y_hat[idx, ...] = np.quantile(leaf_node_samples, quantiles, axis=0, method=method)
             except TypeError:
                 y_hat[idx, ...] = np.quantile(
                     leaf_node_samples, quantiles, axis=0, interpolation=method
@@ -934,18 +907,12 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
                 if self.n_outputs_ == 1:
                     for i in range(len(quantiles)):
                         class_pred_per_sample = y_hat[idx, i, :].squeeze().astype(int)
-                        y_hat[idx, ...] = self.classes_.take(
-                            class_pred_per_sample, axis=0
-                        )
+                        y_hat[idx, ...] = self.classes_.take(class_pred_per_sample, axis=0)
                 else:
                     for k in range(self.n_outputs_):
                         for i in range(len(quantiles)):
-                            class_pred_per_sample = (
-                                y_hat[idx, i, k].squeeze().astype(int)
-                            )
-                            y_hat[idx, i, k] = self.classes_[k].take(
-                                class_pred_per_sample, axis=0
-                            )
+                            class_pred_per_sample = y_hat[idx, i, k].squeeze().astype(int)
+                            y_hat[idx, i, k] = self.classes_[k].take(class_pred_per_sample, axis=0)
         return y_hat
 
     def get_leaf_node_samples(self, X):
@@ -965,9 +932,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
             variable. Each array-like has shape (n_leaf_node_samples, n_outputs).
         """
         if not self.store_leaf_values:
-            raise RuntimeError(
-                "Leaf node samples are not available when store_leaf_values=False"
-            )
+            raise RuntimeError("Leaf node samples are not available when store_leaf_values=False")
 
         check_is_fitted(self)
         # Check data
@@ -1007,9 +972,7 @@ class BaseForest(MultiOutputMixin, BaseEnsemble, metaclass=ABCMeta):
                 seed = tree.random_state
                 # Operations accessing random_state must be performed identically
                 # to those in `_parallel_build_trees()`
-                yield _generate_sample_indices(
-                    seed, self._n_samples, self._n_samples_bootstrap
-                )
+                yield _generate_sample_indices(seed, self._n_samples, self._n_samples_bootstrap)
 
     @property
     def estimators_samples_(self):
@@ -1151,9 +1114,7 @@ class ForestClassifier(ClassifierMixin, BaseForest, metaclass=ABCMeta):
         if scoring_function is None:
             scoring_function = accuracy_score
 
-        self.oob_score_ = scoring_function(
-            y, np.argmax(self.oob_decision_function_, axis=1)
-        )
+        self.oob_score_ = scoring_function(y, np.argmax(self.oob_decision_function_, axis=1))
 
     def _validate_y_class_weight(self, y, classes=None):
         check_classification_targets(y)
@@ -1179,14 +1140,10 @@ class ForestClassifier(ClassifierMixin, BaseForest, metaclass=ABCMeta):
 
             for i in range(y.shape[0]):
                 for j in range(self.n_outputs_):
-                    y_store_unique_indices[i, j] = np.where(
-                        self.classes_[j] == y[i, j]
-                    )[0][0]
+                    y_store_unique_indices[i, j] = np.where(self.classes_[j] == y[i, j])[0][0]
         else:
             for k in range(self.n_outputs_):
-                classes_k, y_store_unique_indices[:, k] = np.unique(
-                    y[:, k], return_inverse=True
-                )
+                classes_k, y_store_unique_indices[:, k] = np.unique(y[:, k], return_inverse=True)
                 self.classes_.append(classes_k)
                 self.n_classes_.append(classes_k.shape[0])
 
@@ -1435,9 +1392,7 @@ class ForestClassifier(ClassifierMixin, BaseForest, metaclass=ABCMeta):
                 )
 
             if callable(self.oob_score):
-                self._set_oob_score_and_attributes(
-                    X, y, scoring_function=self.oob_score
-                )
+                self._set_oob_score_and_attributes(X, y, scoring_function=self.oob_score)
             else:
                 self._set_oob_score_and_attributes(X, y)
 
@@ -1480,9 +1435,7 @@ class ForestClassifier(ClassifierMixin, BaseForest, metaclass=ABCMeta):
             predictions = np.empty((n_samples, self.n_outputs_), dtype=class_type)
 
             for k in range(self.n_outputs_):
-                predictions[:, k] = self.classes_[k].take(
-                    np.argmax(proba[k], axis=1), axis=0
-                )
+                predictions[:, k] = self.classes_[k].take(np.argmax(proba[k], axis=1), axis=0)
 
             return predictions
 
@@ -1525,8 +1478,7 @@ class ForestClassifier(ClassifierMixin, BaseForest, metaclass=ABCMeta):
 
         # avoid storing the output of every estimator by summing them here
         all_proba = [
-            np.zeros((X.shape[0], j), dtype=np.float64)
-            for j in np.atleast_1d(self.n_classes_)
+            np.zeros((X.shape[0], j), dtype=np.float64) for j in np.atleast_1d(self.n_classes_)
         ]
         lock = threading.Lock()
         Parallel(n_jobs=n_jobs, verbose=self.verbose, require="sharedmem")(
@@ -1663,8 +1615,7 @@ class ForestRegressor(RegressorMixin, BaseForest, metaclass=ABCMeta):
         # Parallel loop
         lock = threading.Lock()
         Parallel(n_jobs=n_jobs, verbose=self.verbose, require="sharedmem")(
-            delayed(_accumulate_prediction)(e.predict, X, [y_hat], lock)
-            for e in self.estimators_
+            delayed(_accumulate_prediction)(e.predict, X, [y_hat], lock) for e in self.estimators_
         )
 
         y_hat /= len(self.estimators_)
@@ -1737,16 +1688,12 @@ class ForestRegressor(RegressorMixin, BaseForest, metaclass=ABCMeta):
         """
         grid = np.asarray(grid, dtype=DTYPE, order="C")
         target_features = np.asarray(target_features, dtype=np.intp, order="C")
-        averaged_predictions = np.zeros(
-            shape=grid.shape[0], dtype=np.float64, order="C"
-        )
+        averaged_predictions = np.zeros(shape=grid.shape[0], dtype=np.float64, order="C")
 
         for tree in self.estimators_:
             # Note: we don't sum in parallel because the GIL isn't released in
             # the fast method.
-            tree.tree_.compute_partial_dependence(
-                grid, target_features, averaged_predictions
-            )
+            tree.tree_.compute_partial_dependence(grid, target_features, averaged_predictions)
         # Average over the forest
         averaged_predictions /= len(self.estimators_)
 
@@ -3623,9 +3570,7 @@ class RandomTreesEmbedding(TransformerMixin, BaseForest):
             feature names.
         """
         check_is_fitted(self, "_n_features_out")
-        _check_feature_names_in(
-            self, input_features=input_features, generate_names=False
-        )
+        _check_feature_names_in(self, input_features=input_features, generate_names=False)
 
         feature_names = [
             f"randomtreesembedding_{tree}_{leaf}"

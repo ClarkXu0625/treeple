@@ -127,9 +127,7 @@ def test_load_files_w_categories_desc_and_encoding(
     test_category_dir_1, test_category_dir_2, load_files_root
 ):
     category = os.path.abspath(test_category_dir_1).split(os.sep).pop()
-    res = load_files(
-        load_files_root, description="test", categories=[category], encoding="utf-8"
-    )
+    res = load_files(load_files_root, description="test", categories=[category], encoding="utf-8")
 
     assert len(res.filenames) == 1
     assert len(res.target_names) == 1
@@ -137,9 +135,7 @@ def test_load_files_w_categories_desc_and_encoding(
     assert res.data == ["Hello World!\n"]
 
 
-def test_load_files_wo_load_content(
-    test_category_dir_1, test_category_dir_2, load_files_root
-):
+def test_load_files_wo_load_content(test_category_dir_1, test_category_dir_2, load_files_root):
     res = load_files(load_files_root, load_content=False)
     assert len(res.filenames) == 1
     assert len(res.target_names) == 2
@@ -157,9 +153,7 @@ def test_load_files_allowed_extensions(tmp_path, allowed_extensions):
     for p in paths:
         p.write_bytes(b"hello")
     res = load_files(tmp_path, allowed_extensions=allowed_extensions)
-    assert set([str(p) for p in paths if p.suffix in allowed_extensions]) == set(
-        res.filenames
-    )
+    assert set([str(p) for p in paths if p.suffix in allowed_extensions]) == set(res.filenames)
 
 
 @pytest.mark.parametrize(
@@ -170,9 +164,7 @@ def test_load_files_allowed_extensions(tmp_path, allowed_extensions):
         ("breast_cancer.csv", 569, 30, ["malignant", "benign"]),
     ],
 )
-def test_load_csv_data(
-    filename, expected_n_samples, expected_n_features, expected_target_names
-):
+def test_load_csv_data(filename, expected_n_samples, expected_n_features, expected_target_names):
     actual_data, actual_target, actual_target_names = load_csv_data(filename)
     assert actual_data.shape[0] == expected_n_samples
     assert actual_data.shape[1] == expected_n_features
@@ -185,9 +177,7 @@ def test_load_csv_data_with_descr():
     descr_file_name = "iris.rst"
 
     res_without_descr = load_csv_data(data_file_name=data_file_name)
-    res_with_descr = load_csv_data(
-        data_file_name=data_file_name, descr_file_name=descr_file_name
-    )
+    res_with_descr = load_csv_data(data_file_name=data_file_name, descr_file_name=descr_file_name)
     assert len(res_with_descr) == 4
     assert len(res_without_descr) == 3
 
@@ -301,8 +291,7 @@ def test_loader(loader_func, data_shape, target_shape, n_target, has_descr, file
         assert "data_module" in bunch
         assert all(
             [
-                f in bunch
-                and (resources.files(bunch["data_module"]) / bunch[f]).is_file()
+                f in bunch and (resources.files(bunch["data_module"]) / bunch[f]).is_file()
                 for f in filenames
             ]
         )
@@ -381,9 +370,7 @@ def test_fetch_remote_raise_warnings_with_invalid_url(monkeypatch):
     url = "https://scikit-learn.org/this_file_does_not_exist.tar.gz"
     invalid_remote_file = RemoteFileMetadata("invalid_file", url, None)
     urlretrieve_mock = Mock(
-        side_effect=HTTPError(
-            url=url, code=404, msg="Not Found", hdrs=None, fp=io.BytesIO()
-        )
+        side_effect=HTTPError(url=url, code=404, msg="Not Found", hdrs=None, fp=io.BytesIO())
     )
     monkeypatch.setattr("sklearn.datasets._base.urlretrieve", urlretrieve_mock)
 
@@ -399,9 +386,7 @@ def test_fetch_remote_raise_warnings_with_invalid_url(monkeypatch):
 
 
 def test_derive_folder_and_filename_from_url():
-    folder, filename = _derive_folder_and_filename_from_url(
-        "https://example.com/file.tar.gz"
-    )
+    folder, filename = _derive_folder_and_filename_from_url("https://example.com/file.tar.gz")
     assert folder == "example.com"
     assert filename == "file.tar.gz"
 
@@ -437,15 +422,11 @@ def test_derive_folder_and_filename_from_url():
     assert folder == "example.com/path_to"
     assert filename == "data.json"
 
-    folder, filename = _derive_folder_and_filename_from_url(
-        "https://example.com//some_file.txt"
-    )
+    folder, filename = _derive_folder_and_filename_from_url("https://example.com//some_file.txt")
     assert folder == "example.com"
     assert filename == "some_file.txt"
 
-    folder, filename = _derive_folder_and_filename_from_url(
-        "http://example/../some_file.txt"
-    )
+    folder, filename = _derive_folder_and_filename_from_url("http://example/../some_file.txt")
     assert folder == "example"
     assert filename == "some_file.txt"
 
@@ -499,9 +480,7 @@ def test_fetch_file_using_data_home(monkeypatch, tmpdir):
     urlretrieve_mock = _mock_urlretrieve(server_side)
     monkeypatch.setattr("sklearn.datasets._base.urlretrieve", urlretrieve_mock)
 
-    monkeypatch.setattr(
-        "sklearn.datasets._base.get_data_home", Mock(return_value=data_home)
-    )
+    monkeypatch.setattr("sklearn.datasets._base.get_data_home", Mock(return_value=data_home))
     fetched_file_path = fetch_file(
         "https://example.com/data.jsonl",
     )
@@ -511,12 +490,8 @@ def test_fetch_file_using_data_home(monkeypatch, tmpdir):
     fetched_file_path = fetch_file(
         "https://example.com/subfolder/other_file.txt",
     )
-    assert (
-        fetched_file_path == data_home / "example.com" / "subfolder" / "other_file.txt"
-    )
-    assert fetched_file_path.read_text(encoding="utf-8") == other_data_file.read_text(
-        "utf-8"
-    )
+    assert fetched_file_path == data_home / "example.com" / "subfolder" / "other_file.txt"
+    assert fetched_file_path.read_text(encoding="utf-8") == other_data_file.read_text("utf-8")
 
     expected_warning_msg = re.escape(
         "Retry downloading from url: https://example.com/subfolder/invalid.txt"

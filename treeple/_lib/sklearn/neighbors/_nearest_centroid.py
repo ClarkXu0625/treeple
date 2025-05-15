@@ -144,8 +144,7 @@ class NearestCentroid(ClassifierMixin, BaseEstimator):
         n_classes = classes.size
         if n_classes < 2:
             raise ValueError(
-                "The number of classes has to be greater than one; got %d class"
-                % (n_classes)
+                "The number of classes has to be greater than one; got %d class" % (n_classes)
             )
 
         # Mask mapping each class to its members.
@@ -212,6 +211,4 @@ class NearestCentroid(ClassifierMixin, BaseEstimator):
         check_is_fitted(self)
 
         X = validate_data(self, X, accept_sparse="csr", reset=False)
-        return self.classes_[
-            pairwise_distances_argmin(X, self.centroids_, metric=self.metric)
-        ]
+        return self.classes_[pairwise_distances_argmin(X, self.centroids_, metric=self.metric)]

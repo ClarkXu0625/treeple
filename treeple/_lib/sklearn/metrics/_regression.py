@@ -114,9 +114,7 @@ def _check_reg_targets(y_true, y_pred, multioutput, dtype="numeric", xp=None):
         if multioutput not in allowed_multioutput_str:
             raise ValueError(
                 "Allowed 'multioutput' string values are {}. "
-                "You provided multioutput={!r}".format(
-                    allowed_multioutput_str, multioutput
-                )
+                "You provided multioutput={!r}".format(allowed_multioutput_str, multioutput)
             )
     elif multioutput is not None:
         multioutput = check_array(multioutput, ensure_2d=False)
@@ -141,9 +139,7 @@ def _check_reg_targets(y_true, y_pred, multioutput, dtype="numeric", xp=None):
     },
     prefer_skip_nested_validation=True,
 )
-def mean_absolute_error(
-    y_true, y_pred, *, sample_weight=None, multioutput="uniform_average"
-):
+def mean_absolute_error(y_true, y_pred, *, sample_weight=None, multioutput="uniform_average"):
     """Mean absolute error regression loss.
 
     Read more in the :ref:`User Guide <mean_absolute_error>`.
@@ -206,9 +202,7 @@ def mean_absolute_error(
     )
     check_consistent_length(y_true, y_pred, sample_weight)
 
-    output_errors = _average(
-        xp.abs(y_pred - y_true), weights=sample_weight, axis=0, xp=xp
-    )
+    output_errors = _average(xp.abs(y_pred - y_true), weights=sample_weight, axis=0, xp=xp)
     if isinstance(multioutput, str):
         if multioutput == "raw_values":
             return output_errors
@@ -297,9 +291,7 @@ def mean_pinball_loss(
     >>> mean_pinball_loss(y_true, y_true, alpha=0.9)
     np.float64(0.0)
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
     diff = y_true - y_pred
     sign = (diff >= 0).astype(diff.dtype)
@@ -397,15 +389,11 @@ def mean_absolute_percentage_error(
     xp, _ = get_namespace(*input_arrays)
     dtype = _find_matching_floating_dtype(y_true, y_pred, sample_weight, xp=xp)
 
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
     epsilon = xp.asarray(xp.finfo(xp.float64).eps, dtype=dtype)
     y_true_abs = xp.asarray(xp.abs(y_true), dtype=dtype)
-    mape = xp.asarray(xp.abs(y_pred - y_true), dtype=dtype) / xp.maximum(
-        y_true_abs, epsilon
-    )
+    mape = xp.asarray(xp.abs(y_pred - y_true), dtype=dtype) / xp.maximum(y_true_abs, epsilon)
     output_errors = _average(mape, weights=sample_weight, axis=0)
     if isinstance(multioutput, str):
         if multioutput == "raw_values":
@@ -523,9 +511,7 @@ def mean_squared_error(
     },
     prefer_skip_nested_validation=True,
 )
-def root_mean_squared_error(
-    y_true, y_pred, *, sample_weight=None, multioutput="uniform_average"
-):
+def root_mean_squared_error(y_true, y_pred, *, sample_weight=None, multioutput="uniform_average"):
     """Root mean squared error regression loss.
 
     Read more in the :ref:`User Guide <mean_squared_error>`.
@@ -576,9 +562,7 @@ def root_mean_squared_error(
     xp, _ = get_namespace(y_true, y_pred, sample_weight, multioutput)
 
     output_errors = xp.sqrt(
-        mean_squared_error(
-            y_true, y_pred, sample_weight=sample_weight, multioutput="raw_values"
-        )
+        mean_squared_error(y_true, y_pred, sample_weight=sample_weight, multioutput="raw_values")
     )
 
     if isinstance(multioutput, str):
@@ -667,9 +651,7 @@ def mean_squared_log_error(
     xp, _ = get_namespace(y_true, y_pred)
     dtype = _find_matching_floating_dtype(y_true, y_pred, xp=xp)
 
-    _, y_true, y_pred, _ = _check_reg_targets(
-        y_true, y_pred, multioutput, dtype=dtype, xp=xp
-    )
+    _, y_true, y_pred, _ = _check_reg_targets(y_true, y_pred, multioutput, dtype=dtype, xp=xp)
 
     if xp.any(y_true <= -1) or xp.any(y_pred <= -1):
         raise ValueError(
@@ -771,9 +753,7 @@ def root_mean_squared_log_error(
     },
     prefer_skip_nested_validation=True,
 )
-def median_absolute_error(
-    y_true, y_pred, *, multioutput="uniform_average", sample_weight=None
-):
+def median_absolute_error(y_true, y_pred, *, multioutput="uniform_average", sample_weight=None):
     """Median absolute error regression loss.
 
     Median absolute error output is non-negative floating point. The best value
@@ -827,16 +807,12 @@ def median_absolute_error(
     >>> median_absolute_error(y_true, y_pred, multioutput=[0.3, 0.7])
     np.float64(0.85)
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     if sample_weight is None:
         output_errors = np.median(np.abs(y_pred - y_true), axis=0)
     else:
         sample_weight = _check_sample_weight(sample_weight, y_pred)
-        output_errors = _weighted_percentile(
-            np.abs(y_pred - y_true), sample_weight=sample_weight
-        )
+        output_errors = _weighted_percentile(np.abs(y_pred - y_true), sample_weight=sample_weight)
     if isinstance(multioutput, str):
         if multioutput == "raw_values":
             return output_errors
@@ -866,9 +842,7 @@ def _assemble_r2_explained_variance(
         # Non-zero Numerator and Non-zero Denominator: use the formula
         valid_score = nonzero_denominator & nonzero_numerator
 
-        output_scores[valid_score] = 1 - (
-            numerator[valid_score] / denominator[valid_score]
-        )
+        output_scores[valid_score] = 1 - (numerator[valid_score] / denominator[valid_score])
 
         # Non-zero Numerator and Zero Denominator:
         # arbitrary set to 0.0 to avoid -inf scores
@@ -1013,15 +987,11 @@ def explained_variance_score(
     >>> explained_variance_score(y_true, y_pred, force_finite=False)
     -inf
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
 
     y_diff_avg = np.average(y_true - y_pred, weights=sample_weight, axis=0)
-    numerator = np.average(
-        (y_true - y_pred - y_diff_avg) ** 2, weights=sample_weight, axis=0
-    )
+    numerator = np.average((y_true - y_pred - y_diff_avg) ** 2, weights=sample_weight, axis=0)
 
     y_true_avg = np.average(y_true, weights=sample_weight, axis=0)
     denominator = np.average((y_true - y_true_avg) ** 2, weights=sample_weight, axis=0)
@@ -1179,9 +1149,7 @@ def r2_score(
     >>> r2_score(y_true, y_pred, force_finite=False)
     -inf
     """
-    xp, _, device_ = get_namespace_and_device(
-        y_true, y_pred, sample_weight, multioutput
-    )
+    xp, _, device_ = get_namespace_and_device(y_true, y_pred, sample_weight, multioutput)
 
     dtype = _find_matching_floating_dtype(y_true, y_pred, sample_weight, xp=xp)
 
@@ -1267,8 +1235,7 @@ def _mean_tweedie_deviance(y_true, y_pred, sample_weight, power):
     if p < 0:
         # 'Extreme stable', y any real number, y_pred > 0
         dev = 2 * (
-            xp.pow(xp.where(y_true > 0, y_true, zero), xp.asarray(2 - p))
-            / ((1 - p) * (2 - p))
+            xp.pow(xp.where(y_true > 0, y_true, zero), xp.asarray(2 - p)) / ((1 - p) * (2 - p))
             - y_true * xp.pow(y_pred, xp.asarray(1 - p)) / (1 - p)
             + xp.pow(y_pred, xp.asarray(2 - p)) / (2 - p)
         )
@@ -1382,9 +1349,7 @@ def mean_tweedie_deviance(y_true, y_pred, *, sample_weight=None, power=0):
         # Unreachable statement
         raise ValueError
 
-    return _mean_tweedie_deviance(
-        y_true, y_pred, sample_weight=sample_weight, power=power
-    )
+    return _mean_tweedie_deviance(y_true, y_pred, sample_weight=sample_weight, power=power)
 
 
 @validate_params(
@@ -1577,14 +1542,10 @@ def d2_tweedie_score(y_true, y_pred, *, sample_weight=None, power=0):
         return float("nan")
 
     y_true, y_pred = xp.squeeze(y_true, axis=1), xp.squeeze(y_pred, axis=1)
-    numerator = mean_tweedie_deviance(
-        y_true, y_pred, sample_weight=sample_weight, power=power
-    )
+    numerator = mean_tweedie_deviance(y_true, y_pred, sample_weight=sample_weight, power=power)
 
     y_avg = _average(y_true, weights=sample_weight, xp=xp)
-    denominator = _mean_tweedie_deviance(
-        y_true, y_avg, sample_weight=sample_weight, power=power
-    )
+    denominator = _mean_tweedie_deviance(y_true, y_avg, sample_weight=sample_weight, power=power)
 
     return 1 - numerator / denominator
 
@@ -1681,9 +1642,7 @@ def d2_pinball_score(
     >>> d2_pinball_score(y_true, y_true, alpha=0.1)
     np.float64(1.0)
     """
-    y_type, y_true, y_pred, multioutput = _check_reg_targets(
-        y_true, y_pred, multioutput
-    )
+    y_type, y_true, y_pred, multioutput = _check_reg_targets(y_true, y_pred, multioutput)
     check_consistent_length(y_true, y_pred, sample_weight)
 
     if _num_samples(y_pred) < 2:
@@ -1700,15 +1659,11 @@ def d2_pinball_score(
     )
 
     if sample_weight is None:
-        y_quantile = np.tile(
-            np.percentile(y_true, q=alpha * 100, axis=0), (len(y_true), 1)
-        )
+        y_quantile = np.tile(np.percentile(y_true, q=alpha * 100, axis=0), (len(y_true), 1))
     else:
         sample_weight = _check_sample_weight(sample_weight, y_true)
         y_quantile = np.tile(
-            _weighted_percentile(
-                y_true, sample_weight=sample_weight, percentile=alpha * 100
-            ),
+            _weighted_percentile(y_true, sample_weight=sample_weight, percentile=alpha * 100),
             (len(y_true), 1),
         )
 
@@ -1753,9 +1708,7 @@ def d2_pinball_score(
     },
     prefer_skip_nested_validation=True,
 )
-def d2_absolute_error_score(
-    y_true, y_pred, *, sample_weight=None, multioutput="uniform_average"
-):
+def d2_absolute_error_score(y_true, y_pred, *, sample_weight=None, multioutput="uniform_average"):
     """
     :math:`D^2` regression score function, fraction of absolute error explained.
 

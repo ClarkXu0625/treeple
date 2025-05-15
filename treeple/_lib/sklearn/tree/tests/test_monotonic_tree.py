@@ -182,9 +182,7 @@ def test_multiple_output_raises(TreeClassifier):
     X = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
     y = [[1, 0, 1, 0, 1], [1, 0, 1, 0, 1]]
 
-    est = TreeClassifier(
-        max_depth=None, monotonic_cst=np.array([-1, 1]), random_state=0
-    )
+    est = TreeClassifier(max_depth=None, monotonic_cst=np.array([-1, 1]), random_state=0)
     msg = "Monotonicity constraints are not supported with multiple output"
     with pytest.raises(ValueError, match=msg):
         est.fit(X, y)
@@ -219,22 +217,16 @@ def test_bad_monotonic_cst_raises(TreeClassifier):
     y = [1, 0, 1, 0, 1]
 
     msg = "monotonic_cst has shape 3 but the input data X has 2 features."
-    est = TreeClassifier(
-        max_depth=None, monotonic_cst=np.array([-1, 1, 0]), random_state=0
-    )
+    est = TreeClassifier(max_depth=None, monotonic_cst=np.array([-1, 1, 0]), random_state=0)
     with pytest.raises(ValueError, match=msg):
         est.fit(X, y)
 
     msg = "monotonic_cst must be None or an array-like of -1, 0 or 1."
-    est = TreeClassifier(
-        max_depth=None, monotonic_cst=np.array([-2, 2]), random_state=0
-    )
+    est = TreeClassifier(max_depth=None, monotonic_cst=np.array([-2, 2]), random_state=0)
     with pytest.raises(ValueError, match=msg):
         est.fit(X, y)
 
-    est = TreeClassifier(
-        max_depth=None, monotonic_cst=np.array([-1, 0.8]), random_state=0
-    )
+    est = TreeClassifier(max_depth=None, monotonic_cst=np.array([-1, 0.8]), random_state=0)
     with pytest.raises(ValueError, match=msg + "(.*)0.8]"):
         est.fit(X, y)
 

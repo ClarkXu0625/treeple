@@ -53,10 +53,8 @@ from ._utils import _any_isnan_axis0
 
 ##############################
 # clark:
-import cProfile
-import pstats
-import io
 import line_profiler
+
 #################################
 
 __all__ = [
@@ -256,9 +254,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
 
             # _compute_missing_values_in_feature_mask will check for finite values and
             # compute the missing mask if the tree supports missing values
-            check_X_params = dict(
-                dtype=DTYPE, accept_sparse="csc", ensure_all_finite=False
-            )
+            check_X_params = dict(dtype=DTYPE, accept_sparse="csc", ensure_all_finite=False)
             check_y_params = dict(ensure_2d=False, dtype=None)
             if y is not None or self.__sklearn_tags__().target_tags.required:
                 X, y = validate_data(
@@ -267,16 +263,12 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
             else:
                 X = validate_data(self, X, **check_X_params)
 
-            missing_values_in_feature_mask = (
-                self._compute_missing_values_in_feature_mask(X)
-            )
+            missing_values_in_feature_mask = self._compute_missing_values_in_feature_mask(X)
             if issparse(X):
                 X.sort_indices()
 
                 if X.indices.dtype != np.intc or X.indptr.dtype != np.intc:
-                    raise ValueError(
-                        "No support for np.int64 index based sparse matrices"
-                    )
+                    raise ValueError("No support for np.int64 index based sparse matrices")
 
             if y is not None and self.criterion == "poisson":
                 if np.any(y < 0):
@@ -286,8 +278,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
                     )
                 if np.sum(y) <= 0:
                     raise ValueError(
-                        "Sum of y is not positive which is "
-                        "necessary for Poisson regression."
+                        "Sum of y is not positive which is " "necessary for Poisson regression."
                     )
 
         # Determine output settings
@@ -329,23 +320,17 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
 
                     for i in range(n_samples):
                         for j in range(self.n_outputs_):
-                            y_encoded[i, j] = np.where(self.classes_[j] == y[i, j])[0][
-                                0
-                            ]
+                            y_encoded[i, j] = np.where(self.classes_[j] == y[i, j])[0][0]
                 else:
                     for k in range(self.n_outputs_):
-                        classes_k, y_encoded[:, k] = np.unique(
-                            y[:, k], return_inverse=True
-                        )
+                        classes_k, y_encoded[:, k] = np.unique(y[:, k], return_inverse=True)
                         self.classes_.append(classes_k)
                         self.n_classes_.append(classes_k.shape[0])
 
                 y = y_encoded
 
                 if self.class_weight is not None:
-                    expanded_class_weight = compute_sample_weight(
-                        self.class_weight, y_original
-                    )
+                    expanded_class_weight = compute_sample_weight(self.class_weight, y_original)
 
                 self.n_classes_ = np.array(self.n_classes_, dtype=np.intp)
                 self._n_classes_ = self.n_classes_
@@ -354,8 +339,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
 
             if len(y) != n_samples:
                 raise ValueError(
-                    "Number of labels=%d does not match number of samples=%d"
-                    % (len(y), n_samples)
+                    "Number of labels=%d does not match number of samples=%d" % (len(y), n_samples)
                 )
 
         # set decision-tree model parameters
@@ -400,7 +384,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
         max_leaf_nodes = -1 if self.max_leaf_nodes is None else self.max_leaf_nodes
 
         if sample_weight is not None:
-            sample_weight = _check_sample_weight(sample_weight, X)#, DOUBLE)
+            sample_weight = _check_sample_weight(sample_weight, X)  # , DOUBLE)
 
         if y is not None and expanded_class_weight is not None:
             if sample_weight is not None:
@@ -494,9 +478,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
         criterion = self.criterion
         if not isinstance(criterion, BaseCriterion):
             if is_classifier(self):
-                criterion = CRITERIA_CLF[self.criterion](
-                    self.n_outputs_, self.n_classes_
-                )
+                criterion = CRITERIA_CLF[self.criterion](self.n_outputs_, self.n_classes_)
             else:
                 criterion = CRITERIA_REG[self.criterion](self.n_outputs_, n_samples)
         else:
@@ -616,9 +598,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
         criterion = self.criterion
         if not isinstance(criterion, BaseCriterion):
             if is_classifier(self):
-                criterion = CRITERIA_CLF[self.criterion](
-                    self.n_outputs_, self._n_classes_
-                )
+                criterion = CRITERIA_CLF[self.criterion](self.n_outputs_, self._n_classes_)
             else:
                 criterion = CRITERIA_REG[self.criterion](self.n_outputs_, n_samples)
         else:
@@ -681,9 +661,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
                 reset=False,
                 ensure_all_finite=ensure_all_finite,
             )
-            if issparse(X) and (
-                X.indices.dtype != np.intc or X.indptr.dtype != np.intc
-            ):
+            if issparse(X) and (X.indices.dtype != np.intc or X.indptr.dtype != np.intc):
                 raise ValueError("No support for np.int64 index based sparse matrices")
         else:
             # The number of features is checked regardless of `check_input`
@@ -763,9 +741,7 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
             variable. Each array has shape (n_leaf_node_samples, n_outputs).
         """
         if not self.store_leaf_values:
-            raise RuntimeError(
-                "leaf node samples are not stored when store_leaf_values=False"
-            )
+            raise RuntimeError("leaf node samples are not stored when store_leaf_values=False")
 
         # get indices of leaves per sample (n_samples,)
         X_leaves = self.apply(X, check_input=check_input)
@@ -840,28 +816,18 @@ class BaseDecisionTree(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
             if self.n_outputs_ == 1:
                 # return the class with the highest probability for each quantile
                 # (n_samples, n_quantiles)
-                class_preds = np.zeros(
-                    (n_samples, n_quantiles), dtype=self.classes_.dtype
-                )
+                class_preds = np.zeros((n_samples, n_quantiles), dtype=self.classes_.dtype)
                 for i in range(n_quantiles):
-                    class_pred_per_sample = (
-                        proba[:, i, :].squeeze().astype(self.classes_.dtype)
-                    )
-                    class_preds[:, i] = self.classes_.take(
-                        class_pred_per_sample, axis=0
-                    )
+                    class_pred_per_sample = proba[:, i, :].squeeze().astype(self.classes_.dtype)
+                    class_preds[:, i] = self.classes_.take(class_pred_per_sample, axis=0)
                 return class_preds
             else:
                 class_type = self.classes_[0].dtype
-                predictions = np.zeros(
-                    (n_samples, n_quantiles, self.n_outputs_), dtype=class_type
-                )
+                predictions = np.zeros((n_samples, n_quantiles, self.n_outputs_), dtype=class_type)
                 for k in range(self.n_outputs_):
                     for i in range(n_quantiles):
                         class_pred_per_sample = proba[:, i, k].squeeze().astype(int)
-                        predictions[:, i, k] = self.classes_[k].take(
-                            class_pred_per_sample, axis=0
-                        )
+                        predictions[:, i, k] = self.classes_[k].take(class_pred_per_sample, axis=0)
 
                 return predictions
         # Regression
@@ -1441,9 +1407,7 @@ class DecisionTreeClassifier(ClassifierMixin, BaseDecisionTree):
                 X.sort_indices()
 
                 if X.indices.dtype != np.intc or X.indptr.dtype != np.intc:
-                    raise ValueError(
-                        "No support for np.int64 index based sparse matrices"
-                    )
+                    raise ValueError("No support for np.int64 index based sparse matrices")
 
         if X.shape[1] != self.n_features_in_:
             raise ValueError(
@@ -1904,14 +1868,10 @@ class DecisionTreeRegressor(RegressorMixin, BaseDecisionTree):
             The value of the partial dependence function on each grid point.
         """
         grid = np.asarray(grid, dtype=DTYPE, order="C")
-        averaged_predictions = np.zeros(
-            shape=grid.shape[0], dtype=np.float64, order="C"
-        )
+        averaged_predictions = np.zeros(shape=grid.shape[0], dtype=np.float64, order="C")
         target_features = np.asarray(target_features, dtype=np.intp, order="C")
 
-        self.tree_.compute_partial_dependence(
-            grid, target_features, averaged_predictions
-        )
+        self.tree_.compute_partial_dependence(grid, target_features, averaged_predictions)
         return averaged_predictions
 
     def __sklearn_tags__(self):

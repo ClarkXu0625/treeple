@@ -427,7 +427,7 @@ def _incr_mean_variance_axis0(
     last_over_new_n = np.zeros_like(updated_n, dtype=dtype)
 
     # X can be a CSR or CSC matrix
-    if X_format == 'csr':
+    if X_format == "csr":
         new_mean, new_var, new_n = _csr_mean_variance_axis0(
             X_data, n_samples, n_features, X_indices, X_indptr, weights)
     else:  # X_format == 'csc'

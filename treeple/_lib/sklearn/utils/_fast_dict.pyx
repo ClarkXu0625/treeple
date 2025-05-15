@@ -44,7 +44,7 @@ cdef class IntFloatDict:
         cdef cpp_map[intp_t, float64_t].iterator it = self.my_map.find(key)
         if it == self.my_map.end():
             # The key is not in the dict
-            raise KeyError('%i' % key)
+            raise KeyError("%i" % key)
         return deref(it).second
 
     def __setitem__(self, int key, float value):

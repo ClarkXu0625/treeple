@@ -35,7 +35,7 @@ def expected_mutual_information(contingency, int64_t n_samples):
     # There are three major terms to the EMI equation, which are multiplied to
     # and then summed over varying nij values.
     # While nijs[0] will never be used, having it simplifies the indexing.
-    nijs = np.arange(0, max(np.max(a), np.max(b)) + 1, dtype='float')
+    nijs = np.arange(0, max(np.max(a), np.max(b)) + 1, dtype="float")
     nijs[0] = 1  # Stops divide by zero warnings. As its not used, no issue.
     # term1 is nij / N
     term1 = nijs / n_samples

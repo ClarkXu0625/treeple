@@ -44,7 +44,7 @@ from numpy import float32 as DTYPE
 from numpy import float64 as DOUBLE
 
 cdef float64_t INFINITY = np.inf
-cdef float64_t EPSILON = np.finfo('double').eps
+cdef float64_t EPSILON = np.finfo("double").eps
 
 # Some handy constants (BestFirstTreeBuilder)
 cdef bint IS_FIRST = 1
@@ -1306,7 +1306,7 @@ cdef class BaseTree:
         """Finds the terminal region (=leaf node) for each sample in sparse X.
         """
         # Check input
-        if not (issparse(X) and X.format == 'csr'):
+        if not (issparse(X) and X.format == "csr"):
             raise ValueError("X should be in csr_matrix format, got %s"
                              % type(X))
 
@@ -1775,11 +1775,11 @@ cdef class Tree(BaseTree):
 
     @property
     def children_left(self):
-        return self._get_node_ndarray()['left_child'][:self.node_count]
+        return self._get_node_ndarray()["left_child"][:self.node_count]
 
     @property
     def children_right(self):
-        return self._get_node_ndarray()['right_child'][:self.node_count]
+        return self._get_node_ndarray()["right_child"][:self.node_count]
 
     @property
     def n_leaves(self):
@@ -1789,27 +1789,27 @@ cdef class Tree(BaseTree):
 
     @property
     def feature(self):
-        return self._get_node_ndarray()['feature'][:self.node_count]
+        return self._get_node_ndarray()["feature"][:self.node_count]
 
     @property
     def threshold(self):
-        return self._get_node_ndarray()['threshold'][:self.node_count]
+        return self._get_node_ndarray()["threshold"][:self.node_count]
 
     @property
     def impurity(self):
-        return self._get_node_ndarray()['impurity'][:self.node_count]
+        return self._get_node_ndarray()["impurity"][:self.node_count]
 
     @property
     def n_node_samples(self):
-        return self._get_node_ndarray()['n_node_samples'][:self.node_count]
+        return self._get_node_ndarray()["n_node_samples"][:self.node_count]
 
     @property
     def weighted_n_node_samples(self):
-        return self._get_node_ndarray()['weighted_n_node_samples'][:self.node_count]
+        return self._get_node_ndarray()["weighted_n_node_samples"][:self.node_count]
 
     @property
     def missing_go_to_left(self):
-        return self._get_node_ndarray()['missing_go_to_left'][:self.node_count]
+        return self._get_node_ndarray()["missing_go_to_left"][:self.node_count]
 
     @property
     def value(self):
@@ -1876,7 +1876,7 @@ cdef class Tree(BaseTree):
         d["node_count"] = self.node_count
         d["nodes"] = self._get_node_ndarray()
         d["values"] = self._get_value_ndarray()
-        d['value_samples'] = self.leaf_nodes_samples
+        d["value_samples"] = self.leaf_nodes_samples
         return d
 
     def __setstate__(self, d):
@@ -1884,12 +1884,12 @@ cdef class Tree(BaseTree):
         self.max_depth = d["max_depth"]
         self.node_count = d["node_count"]
 
-        if 'nodes' not in d:
-            raise ValueError('You have loaded Tree version which '
-                             'cannot be imported')
+        if "nodes" not in d:
+            raise ValueError("You have loaded Tree version which "
+                             "cannot be imported")
 
-        node_ndarray = d['nodes']
-        value_ndarray = d['values']
+        node_ndarray = d["nodes"]
+        value_ndarray = d["values"]
 
         value_shape = (node_ndarray.shape[0], self.n_outputs,
                        self.max_n_classes)
@@ -1911,7 +1911,7 @@ cdef class Tree(BaseTree):
                self.capacity * self.value_stride * sizeof(float64_t))
 
         # store the leaf node samples if they exist
-        value_samples_dict = d['value_samples']
+        value_samples_dict = d["value_samples"]
         for node_id, leaf_samples in value_samples_dict.items():
             self.value_samples[node_id].resize(leaf_samples.shape[0])
             for idx in range(leaf_samples.shape[0]):
@@ -1922,7 +1922,7 @@ cdef class Tree(BaseTree):
         """Wraps value_samples as a 2-d NumPy array per node_id."""
         cdef intp_t i, j
         cdef intp_t n_samples = self.value_samples[node_id].size()
-        cdef cnp.ndarray[float64_t, ndim=2, mode='c'] leaf_node_samples = np.empty(shape=(n_samples, self.n_outputs), dtype=np.float64)
+        cdef cnp.ndarray[float64_t, ndim=2, mode="c"] leaf_node_samples = np.empty(shape=(n_samples, self.n_outputs), dtype=np.float64)
 
         for i in range(n_samples):
             for j in range(self.n_outputs):
@@ -1931,7 +1931,7 @@ cdef class Tree(BaseTree):
 
     cdef cnp.ndarray _get_value_samples_keys(self):
         """Wraps value_samples keys as a 1-d NumPy array of keys."""
-        cdef cnp.ndarray[intp_t, ndim=1, mode='c'] keys = np.empty(len(self.value_samples), dtype=np.intp)
+        cdef cnp.ndarray[intp_t, ndim=1, mode="c"] keys = np.empty(len(self.value_samples), dtype=np.intp)
         cdef intp_t i = 0
 
         for key in self.value_samples:
@@ -1981,7 +1981,7 @@ cdef class Tree(BaseTree):
     cpdef cnp.ndarray predict(self, object X):
         """Predict target for X."""
         out = self._get_value_ndarray().take(self.apply(X), axis=0,
-                                             mode='clip')
+                                             mode="clip")
         if self.n_outputs == 1:
             out = out.reshape(X.shape[0], self.max_n_classes)
         return out
@@ -2024,8 +2024,8 @@ def _check_value_ndarray(value_ndarray, expected_dtype, expected_shape):
         return value_ndarray
 
     # Handles different endianness
-    if value_ndarray.dtype.str.endswith('f8'):
-        return value_ndarray.astype(expected_dtype, casting='equiv')
+    if value_ndarray.dtype.str.endswith("f8"):
+        return value_ndarray.astype(expected_dtype, casting="equiv")
 
     raise ValueError(
         "value array from the pickle has an incompatible dtype:\n"
@@ -2416,8 +2416,8 @@ def ccp_pruning_path(Tree orig_tree):
         count += 1
 
     return {
-        'ccp_alphas': np.asarray(ccp_alphas),
-        'impurities': np.asarray(impurities),
+        "ccp_alphas": np.asarray(ccp_alphas),
+        "impurities": np.asarray(impurities),
     }
 
 

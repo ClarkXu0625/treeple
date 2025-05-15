@@ -16,7 +16,7 @@ from ._utils cimport WeightedMedianCalculator, log
 
 
 # EPSILON is used in the Poisson criterion
-cdef float64_t EPSILON = 10 * np.finfo('double').eps
+cdef float64_t EPSILON = 10 * np.finfo("double").eps
 
 cdef class BaseCriterion:
     """This is an abstract interface for criterion.
@@ -1290,8 +1290,8 @@ cdef class MAE(RegressionCriterion):
 
         self.node_medians = np.zeros(n_outputs, dtype=np.float64)
 
-        self.left_child = np.empty(n_outputs, dtype='object')
-        self.right_child = np.empty(n_outputs, dtype='object')
+        self.left_child = np.empty(n_outputs, dtype="object")
+        self.right_child = np.empty(n_outputs, dtype="object")
         # initialize WeightedMedianCalculators
         for k in range(n_outputs):
             self.left_child[k] = WeightedMedianCalculator(n_samples)

@@ -60,7 +60,7 @@ ctypedef packed struct MST_edge_t:
     int64_t next_node
     float64_t distance
 
-cpdef cnp.ndarray[MST_edge_t, ndim=1, mode='c'] mst_from_mutual_reachability(
+cpdef cnp.ndarray[MST_edge_t, ndim=1, mode="c"] mst_from_mutual_reachability(
     cnp.ndarray[float64_t, ndim=2] mutual_reachability
 ):
     """Compute the Minimum Spanning Tree (MST) representation of the mutual-
@@ -80,11 +80,11 @@ cpdef cnp.ndarray[MST_edge_t, ndim=1, mode='c'] mst_from_mutual_reachability(
     cdef:
         # Note: we utilize ndarray's over memory-views to make use of numpy
         # binary indexing and sub-selection below.
-        cnp.ndarray[int64_t, ndim=1, mode='c'] current_labels
-        cnp.ndarray[float64_t, ndim=1, mode='c'] min_reachability, left, right
-        cnp.ndarray[MST_edge_t, ndim=1, mode='c'] mst
+        cnp.ndarray[int64_t, ndim=1, mode="c"] current_labels
+        cnp.ndarray[float64_t, ndim=1, mode="c"] min_reachability, left, right
+        cnp.ndarray[MST_edge_t, ndim=1, mode="c"] mst
 
-        cnp.ndarray[uint8_t, mode='c'] label_filter
+        cnp.ndarray[uint8_t, mode="c"] label_filter
 
         int64_t n_samples = PyArray_SHAPE(<cnp.PyArrayObject*> mutual_reachability)[0]
         int64_t current_node, new_node_index, new_node, i
@@ -110,7 +110,7 @@ cpdef cnp.ndarray[MST_edge_t, ndim=1, mode='c'] mst_from_mutual_reachability(
     return mst
 
 
-cpdef cnp.ndarray[MST_edge_t, ndim=1, mode='c'] mst_from_data_matrix(
+cpdef cnp.ndarray[MST_edge_t, ndim=1, mode="c"] mst_from_data_matrix(
     const float64_t[:, ::1] raw_data,
     const float64_t[::1] core_distances,
     DistanceMetric64 dist_metric,
@@ -144,7 +144,7 @@ cpdef cnp.ndarray[MST_edge_t, ndim=1, mode='c'] mst_from_data_matrix(
         uint8_t[::1] in_tree
         float64_t[::1] min_reachability
         int64_t[::1] current_sources
-        cnp.ndarray[MST_edge_t, ndim=1, mode='c'] mst
+        cnp.ndarray[MST_edge_t, ndim=1, mode="c"] mst
 
         int64_t current_node, source_node, new_node, next_node_source
         int64_t i, j, n_samples, num_features

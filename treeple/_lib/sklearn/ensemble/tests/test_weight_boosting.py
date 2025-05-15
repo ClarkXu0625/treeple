@@ -47,18 +47,14 @@ iris.data, iris.target = shuffle(iris.data, iris.target, random_state=rng)
 
 # Load the diabetes dataset and randomly permute it
 diabetes = datasets.load_diabetes()
-diabetes.data, diabetes.target = shuffle(
-    diabetes.data, diabetes.target, random_state=rng
-)
+diabetes.data, diabetes.target = shuffle(diabetes.data, diabetes.target, random_state=rng)
 
 
 def test_samme_proba():
     # Test the `_samme_proba` helper function.
 
     # Define some example (bad) `predict_proba` output.
-    probs = np.array(
-        [[1, 1e-6, 0], [0.19, 0.6, 0.2], [-999, 0.51, 0.5], [1e-6, 1, 1e-9]]
-    )
+    probs = np.array([[1, 1e-6, 0], [0.19, 0.6, 0.2], [-999, 0.51, 0.5], [1e-6, 1, 1e-9]])
     probs /= np.abs(probs.sum(axis=1))[:, np.newaxis]
 
     # _samme_proba calls estimator.predict_proba.
@@ -176,10 +172,7 @@ def test_staged_predict():
     staged_predictions = [p for p in clf.staged_predict(diabetes.data)]
     score = clf.score(diabetes.data, diabetes.target, sample_weight=diabetes_weights)
     staged_scores = [
-        s
-        for s in clf.staged_score(
-            diabetes.data, diabetes.target, sample_weight=diabetes_weights
-        )
+        s for s in clf.staged_score(diabetes.data, diabetes.target, sample_weight=diabetes_weights)
     ]
 
     assert len(staged_predictions) == 10
@@ -425,9 +418,7 @@ def test_sparse_regression(sparse_container, expected_internal_type):
             self.data_type_ = type(X)
             return self
 
-    X, y = datasets.make_regression(
-        n_samples=15, n_features=50, n_targets=1, random_state=42
-    )
+    X, y = datasets.make_regression(n_samples=15, n_features=50, n_targets=1, random_state=42)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
 
@@ -440,9 +431,7 @@ def test_sparse_regression(sparse_container, expected_internal_type):
     )
 
     # Trained on dense format
-    dense_regressor = AdaBoostRegressor(estimator=CustomSVR(), random_state=1).fit(
-        X_train, y_train
-    )
+    dense_regressor = AdaBoostRegressor(estimator=CustomSVR(), random_state=1).fit(X_train, y_train)
 
     # predict
     sparse_regr_results = sparse_regressor.predict(X_test_sparse)
@@ -557,9 +546,7 @@ def test_adaboost_consistent_predict():
     model = AdaBoostClassifier(random_state=42)
     model.fit(X_train, y_train)
 
-    assert_array_equal(
-        np.argmax(model.predict_proba(X_test), axis=1), model.predict(X_test)
-    )
+    assert_array_equal(np.argmax(model.predict_proba(X_test), axis=1), model.predict(X_test))
 
 
 @pytest.mark.parametrize(

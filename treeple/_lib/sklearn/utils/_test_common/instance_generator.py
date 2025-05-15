@@ -491,9 +491,7 @@ PER_ESTIMATOR_CHECK_PARAMS: dict = {
     BisectingKMeans: {"check_dict_unchanged": dict(max_iter=5, n_clusters=1, n_init=2)},
     CCA: {"check_dict_unchanged": dict(max_iter=5, n_components=1)},
     DictionaryLearning: {
-        "check_dict_unchanged": dict(
-            max_iter=20, n_components=1, transform_algorithm="lasso_lars"
-        )
+        "check_dict_unchanged": dict(max_iter=20, n_components=1, transform_algorithm="lasso_lars")
     },
     FactorAnalysis: {"check_dict_unchanged": dict(max_iter=5, n_components=1)},
     FastICA: {"check_dict_unchanged": dict(max_iter=5, n_components=1)},
@@ -522,13 +520,9 @@ PER_ESTIMATOR_CHECK_PARAMS: dict = {
             batch_size=10, fresh_restarts=True, max_iter=20, n_components=1
         )
     },
-    MiniBatchSparsePCA: {
-        "check_dict_unchanged": dict(batch_size=10, max_iter=5, n_components=1)
-    },
+    MiniBatchSparsePCA: {"check_dict_unchanged": dict(batch_size=10, max_iter=5, n_components=1)},
     NMF: {"check_dict_unchanged": dict(max_iter=500, n_components=1)},
-    NeighborhoodComponentsAnalysis: {
-        "check_dict_unchanged": dict(max_iter=5, n_components=1)
-    },
+    NeighborhoodComponentsAnalysis: {"check_dict_unchanged": dict(max_iter=5, n_components=1)},
     Nystroem: {"check_dict_unchanged": dict(n_components=1)},
     PCA: {"check_dict_unchanged": dict(n_components=1)},
     PLSCanonical: {"check_dict_unchanged": dict(max_iter=5, n_components=1)},
@@ -542,9 +536,7 @@ PER_ESTIMATOR_CHECK_PARAMS: dict = {
     SpectralBiclustering: {
         "check_dict_unchanged": dict(n_best=1, n_clusters=1, n_components=1, n_init=2)
     },
-    SpectralClustering: {
-        "check_dict_unchanged": dict(n_clusters=1, n_components=1, n_init=2)
-    },
+    SpectralClustering: {"check_dict_unchanged": dict(n_clusters=1, n_components=1, n_init=2)},
     SpectralCoclustering: {"check_dict_unchanged": dict(n_clusters=1, n_init=2)},
     SpectralEmbedding: {"check_dict_unchanged": dict(eigen_tol=1e-05, n_components=1)},
     TSNE: {"check_dict_unchanged": dict(n_components=1, perplexity=2)},

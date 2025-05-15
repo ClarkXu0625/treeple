@@ -323,7 +323,7 @@ cdef class WeightedEdge:
 cdef class UnionFind(object):
 
     def __init__(self, N):
-        self.parent = np.full(2 * N - 1, -1., dtype=np.intp, order='C')
+        self.parent = np.full(2 * N - 1, -1., dtype=np.intp, order="C")
         self.next_label = N
         self.size = np.hstack((np.ones(N, dtype=np.intp),
                                np.zeros(N - 1, dtype=np.intp)))

@@ -79,17 +79,13 @@ class SimplePipeline(BaseEstimator):
         params = process_routing(self, "fit", **fit_params)
         X_transformed = X
         for i, step in enumerate(self.steps[:-1]):
-            transformer = clone(step).fit(
-                X_transformed, y, **params.get(f"step_{i}").fit
-            )
+            transformer = clone(step).fit(X_transformed, y, **params.get(f"step_{i}").fit)
             self.steps_.append(transformer)
             X_transformed = transformer.transform(
                 X_transformed, **params.get(f"step_{i}").transform
             )
 
-        self.steps_.append(
-            clone(self.steps[-1]).fit(X_transformed, y, **params.predictor.fit)
-        )
+        self.steps_.append(clone(self.steps[-1]).fit(X_transformed, y, **params.predictor.fit))
         return self
 
     def predict(self, X, **predict_params):
@@ -256,12 +252,8 @@ def test_default_request_override():
     class Class_1(Base):
         __metadata_request__split = {"groups": "sample_domain"}
 
-    assert_request_equal(
-        class_1()._get_metadata_request(), {"split": {"groups": "sample_domain"}}
-    )
-    assert_request_equal(
-        Class_1()._get_metadata_request(), {"split": {"groups": "sample_domain"}}
-    )
+    assert_request_equal(class_1()._get_metadata_request(), {"split": {"groups": "sample_domain"}})
+    assert_request_equal(Class_1()._get_metadata_request(), {"split": {"groups": "sample_domain"}})
 
 
 @config_context(enable_metadata_routing=True)
@@ -337,20 +329,14 @@ def test_simple_metadata_routing():
         estimator=ConsumingClassifier().set_fit_request(sample_weight=True)
     )
     clf.fit(X, y, sample_weight=my_weights)
-    check_recorded_metadata(
-        clf.estimator_, method="fit", parent="fit", sample_weight=my_weights
-    )
+    check_recorded_metadata(clf.estimator_, method="fit", parent="fit", sample_weight=my_weights)
 
     # And requesting it with an alias
     clf = WeightedMetaClassifier(
-        estimator=ConsumingClassifier().set_fit_request(
-            sample_weight="alternative_weight"
-        )
+        estimator=ConsumingClassifier().set_fit_request(sample_weight="alternative_weight")
     )
     clf.fit(X, y, alternative_weight=my_weights)
-    check_recorded_metadata(
-        clf.estimator_, method="fit", parent="fit", sample_weight=my_weights
-    )
+    check_recorded_metadata(clf.estimator_, method="fit", parent="fit", sample_weight=my_weights)
 
 
 @config_context(enable_metadata_routing=True)
@@ -371,9 +357,7 @@ def test_nested_routing():
         ]
     )
     w1, w2, w3 = [1], [2], [3]
-    pipeline.fit(
-        X, y, metadata=my_groups, sample_weight=w1, outer_weights=w2, inner_weights=w3
-    )
+    pipeline.fit(X, y, metadata=my_groups, sample_weight=w1, outer_weights=w2, inner_weights=w3)
     check_recorded_metadata(
         pipeline.steps_[0].transformer_,
         method="fit",
@@ -386,9 +370,7 @@ def test_nested_routing():
         parent="fit",
         sample_weight=w1,
     )
-    check_recorded_metadata(
-        pipeline.steps_[1], method="fit", parent="fit", sample_weight=w2
-    )
+    check_recorded_metadata(pipeline.steps_[1], method="fit", parent="fit", sample_weight=w2)
     check_recorded_metadata(
         pipeline.steps_[1].estimator_, method="fit", parent="fit", sample_weight=w3
     )
@@ -665,9 +647,7 @@ def test_metadata_router_consumes_method():
         ),
         (
             WeightedMetaRegressor(
-                estimator=ConsumingRegressor().set_fit_request(
-                    sample_weight="my_weights"
-                )
+                estimator=ConsumingRegressor().set_fit_request(sample_weight="my_weights")
             ),
             {"my_weights", "sample_weight"},
             {"my_weights"},
@@ -683,9 +663,7 @@ def test_metaestimator_warnings():
     class WeightedMetaRegressorWarn(WeightedMetaRegressor):
         __metadata_request__fit = {"sample_weight": metadata_routing.WARN}
 
-    with pytest.warns(
-        UserWarning, match="Support for .* has recently been added to this class"
-    ):
+    with pytest.warns(UserWarning, match="Support for .* has recently been added to this class"):
         WeightedMetaRegressorWarn(
             estimator=LinearRegression().set_fit_request(sample_weight=False)
         ).fit(X, y, sample_weight=my_weights)
@@ -696,12 +674,8 @@ def test_estimator_warnings():
     class ConsumingRegressorWarn(ConsumingRegressor):
         __metadata_request__fit = {"sample_weight": metadata_routing.WARN}
 
-    with pytest.warns(
-        UserWarning, match="Support for .* has recently been added to this class"
-    ):
-        MetaRegressor(estimator=ConsumingRegressorWarn()).fit(
-            X, y, sample_weight=my_weights
-        )
+    with pytest.warns(UserWarning, match="Support for .* has recently been added to this class"):
+        MetaRegressor(estimator=ConsumingRegressorWarn()).fit(X, y, sample_weight=my_weights)
 
 
 @config_context(enable_metadata_routing=True)
@@ -709,9 +683,7 @@ def test_estimator_warnings():
     "obj, string",
     [
         (
-            MethodMetadataRequest(owner="test", method="fit").add_request(
-                param="foo", alias="bar"
-            ),
+            MethodMetadataRequest(owner="test", method="fit").add_request(param="foo", alias="bar"),
             "{'foo': 'bar'}",
         ),
         (
@@ -779,11 +751,7 @@ def test_validations(obj, method, inputs, err_cls, err_msg):
 
 @config_context(enable_metadata_routing=True)
 def test_methodmapping():
-    mm = (
-        MethodMapping()
-        .add(caller="fit", callee="transform")
-        .add(caller="fit", callee="fit")
-    )
+    mm = MethodMapping().add(caller="fit", callee="transform").add(caller="fit", callee="fit")
 
     mm_list = list(mm)
     assert mm_list[0] == ("fit", "transform")
@@ -837,8 +805,7 @@ def test_metadata_routing_add():
         method_mapping=MethodMapping().add(caller="fit", callee="fit"),
     )
     assert (
-        str(router)
-        == "{'est': {'mapping': [{'caller': 'fit', 'callee': 'fit'}], 'router': {'fit':"
+        str(router) == "{'est': {'mapping': [{'caller': 'fit', 'callee': 'fit'}], 'router': {'fit':"
         " {'sample_weight': 'weights', 'metadata': None}, 'partial_fit':"
         " {'sample_weight': None, 'metadata': None}, 'predict': {'sample_weight':"
         " None, 'metadata': None}, 'score': {'sample_weight': None, 'metadata':"
@@ -851,8 +818,7 @@ def test_metadata_routing_add():
         est=ConsumingRegressor().set_score_request(sample_weight=True),
     )
     assert (
-        str(router)
-        == "{'est': {'mapping': [{'caller': 'fit', 'callee': 'score'}], 'router':"
+        str(router) == "{'est': {'mapping': [{'caller': 'fit', 'callee': 'score'}], 'router':"
         " {'fit': {'sample_weight': None, 'metadata': None}, 'partial_fit':"
         " {'sample_weight': None, 'metadata': None}, 'predict': {'sample_weight':"
         " None, 'metadata': None}, 'score': {'sample_weight': True, 'metadata':"
@@ -870,39 +836,39 @@ def test_metadata_routing_get_param_names():
             )
         )
         .add(
-            trs=ConsumingTransformer().set_fit_request(
-                sample_weight="transform_weights"
-            ),
+            trs=ConsumingTransformer().set_fit_request(sample_weight="transform_weights"),
             method_mapping=MethodMapping().add(caller="fit", callee="fit"),
         )
     )
 
     assert (
-        str(router)
-        == "{'$self_request': {'fit': {'sample_weight': 'self_weights'}, 'score':"
+        str(router) == "{'$self_request': {'fit': {'sample_weight': 'self_weights'}, 'score':"
         " {'sample_weight': None}}, 'trs': {'mapping': [{'caller': 'fit', 'callee':"
         " 'fit'}], 'router': {'fit': {'sample_weight': 'transform_weights',"
         " 'metadata': None}, 'transform': {'sample_weight': None, 'metadata': None},"
         " 'inverse_transform': {'sample_weight': None, 'metadata': None}}}}"
     )
 
-    assert router._get_param_names(
-        method="fit", return_alias=True, ignore_self_request=False
-    ) == {"transform_weights", "metadata", "self_weights"}
+    assert router._get_param_names(method="fit", return_alias=True, ignore_self_request=False) == {
+        "transform_weights",
+        "metadata",
+        "self_weights",
+    }
     # return_alias=False will return original names for "self"
-    assert router._get_param_names(
-        method="fit", return_alias=False, ignore_self_request=False
-    ) == {"sample_weight", "metadata", "transform_weights"}
+    assert router._get_param_names(method="fit", return_alias=False, ignore_self_request=False) == {
+        "sample_weight",
+        "metadata",
+        "transform_weights",
+    }
     # ignoring self would remove "sample_weight"
-    assert router._get_param_names(
-        method="fit", return_alias=False, ignore_self_request=True
-    ) == {"metadata", "transform_weights"}
+    assert router._get_param_names(method="fit", return_alias=False, ignore_self_request=True) == {
+        "metadata",
+        "transform_weights",
+    }
     # return_alias is ignored when ignore_self_request=True
     assert router._get_param_names(
         method="fit", return_alias=True, ignore_self_request=True
-    ) == router._get_param_names(
-        method="fit", return_alias=False, ignore_self_request=True
-    )
+    ) == router._get_param_names(method="fit", return_alias=False, ignore_self_request=True)
 
 
 @config_context(enable_metadata_routing=True)
@@ -1137,9 +1103,7 @@ def test_unbound_set_methods_work():
         def fit(self, X, y, sample_weight=None):
             return self
 
-    error_message = re.escape(
-        "set_fit_request() takes 0 positional argument but 1 were given"
-    )
+    error_message = re.escape("set_fit_request() takes 0 positional argument but 1 were given")
 
     # Test positional arguments error before making the descriptor method unbound.
     with pytest.raises(TypeError, match=error_message):

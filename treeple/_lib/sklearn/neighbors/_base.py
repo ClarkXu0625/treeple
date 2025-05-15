@@ -473,9 +473,7 @@ class NeighborsBase(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
     def _fit(self, X, y=None):
         if self.__sklearn_tags__().target_tags.required:
             if not isinstance(X, (KDTree, BallTree, NeighborsBase)):
-                X, y = validate_data(
-                    self, X, y, accept_sparse="csr", multi_output=True, order="C"
-                )
+                X, y = validate_data(self, X, y, accept_sparse="csr", multi_output=True, order="C")
 
             if is_classifier(self):
                 # Classification targets require a specific format
@@ -611,17 +609,11 @@ class NeighborsBase(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
             if (
                 self.metric == "precomputed"
                 or self._fit_X.shape[1] > 15
-                or (
-                    self.n_neighbors is not None
-                    and self.n_neighbors >= self._fit_X.shape[0] // 2
-                )
+                or (self.n_neighbors is not None and self.n_neighbors >= self._fit_X.shape[0] // 2)
             ):
                 self._fit_method = "brute"
             else:
-                if (
-                    self.effective_metric_ == "minkowski"
-                    and self.effective_metric_params_["p"] < 1
-                ):
+                if self.effective_metric_ == "minkowski" and self.effective_metric_params_["p"] < 1:
                     self._fit_method = "brute"
                 elif (
                     self.effective_metric_ == "minkowski"
@@ -640,10 +632,7 @@ class NeighborsBase(MultiOutputMixin, BaseEstimator, metaclass=ABCMeta):
                 else:
                     self._fit_method = "brute"
 
-        if (
-            self.effective_metric_ == "minkowski"
-            and self.effective_metric_params_["p"] < 1
-        ):
+        if self.effective_metric_ == "minkowski" and self.effective_metric_params_["p"] < 1:
             # For 0 < p < 1 Minkowski distances aren't valid distance
             # metric as they do not satisfy triangular inequality:
             # they are semi-metrics.
@@ -802,8 +791,7 @@ class KNeighborsMixin:
             raise ValueError("Expected n_neighbors > 0. Got %d" % n_neighbors)
         elif not isinstance(n_neighbors, numbers.Integral):
             raise TypeError(
-                "n_neighbors does not take %s value, enter integer value"
-                % type(n_neighbors)
+                "n_neighbors does not take %s value, enter integer value" % type(n_neighbors)
             )
 
         query_is_train = X is None
@@ -833,11 +821,8 @@ class KNeighborsMixin:
 
         n_jobs = effective_n_jobs(self.n_jobs)
         chunked_results = None
-        use_pairwise_distances_reductions = (
-            self._fit_method == "brute"
-            and ArgKmin.is_usable_for(
-                X if X is not None else self._fit_X, self._fit_X, self.effective_metric_
-            )
+        use_pairwise_distances_reductions = self._fit_method == "brute" and ArgKmin.is_usable_for(
+            X if X is not None else self._fit_X, self._fit_X, self.effective_metric_
         )
         if use_pairwise_distances_reductions:
             results = ArgKmin.compute(
@@ -850,9 +835,7 @@ class KNeighborsMixin:
                 return_distance=return_distance,
             )
 
-        elif (
-            self._fit_method == "brute" and self.metric == "precomputed" and issparse(X)
-        ):
+        elif self._fit_method == "brute" and self.metric == "precomputed" and issparse(X):
             results = _kneighbors_from_graph(
                 X, n_neighbors=n_neighbors, return_distance=return_distance
             )
@@ -932,9 +915,7 @@ class KNeighborsMixin:
             neigh_ind = np.reshape(neigh_ind[sample_mask], (n_queries, n_neighbors - 1))
 
             if return_distance:
-                neigh_dist = np.reshape(
-                    neigh_dist[sample_mask], (n_queries, n_neighbors - 1)
-                )
+                neigh_dist = np.reshape(neigh_dist[sample_mask], (n_queries, n_neighbors - 1))
                 return neigh_dist, neigh_ind
             return neigh_ind
 
@@ -1064,9 +1045,7 @@ class RadiusNeighborsMixin:
             results = neigh_ind
         return results
 
-    def radius_neighbors(
-        self, X=None, radius=None, return_distance=True, sort_results=False
-    ):
+    def radius_neighbors(self, X=None, radius=None, return_distance=True, sort_results=False):
         """Find the neighbors within a given radius of a point or points.
 
         Return the indices and distances of each point from the dataset
@@ -1176,9 +1155,7 @@ class RadiusNeighborsMixin:
                 sort_results=sort_results,
             )
 
-        elif (
-            self._fit_method == "brute" and self.metric == "precomputed" and issparse(X)
-        ):
+        elif self._fit_method == "brute" and self.metric == "precomputed" and issparse(X):
             results = _radius_neighbors_from_graph(
                 X, radius=radius, return_distance=return_distance
             )
@@ -1274,9 +1251,7 @@ class RadiusNeighborsMixin:
                 return neigh_dist, neigh_ind
             return neigh_ind
 
-    def radius_neighbors_graph(
-        self, X=None, radius=None, mode="connectivity", sort_results=False
-    ):
+    def radius_neighbors_graph(self, X=None, radius=None, mode="connectivity", sort_results=False):
         """Compute the (weighted) graph of Neighbors for points in X.
 
         Neighborhoods are restricted the points at a distance lower than

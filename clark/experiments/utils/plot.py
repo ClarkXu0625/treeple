@@ -1,30 +1,32 @@
-import numpy as np
-import time
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from treeple.datasets import make_trunk_classification
-import ydf
-import matplotlib.pyplot as plt
-from treeple import ObliqueRandomForestClassifier
-from sklearn.metrics import confusion_matrix, f1_score
-from sklearn.metrics import ConfusionMatrixDisplay
-from matplotlib.cm import ScalarMappable
-from matplotlib.colors import ListedColormap
-from treeple._lib.sklearn.tree._criterion import Gini
-from treeple.tree._oblique_splitter import BestObliqueSplitterTester
-from treeple.datasets import make_trunk_classification
-import pandas as pd
 import math
-from matplotlib.colors import LogNorm    
+import time
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import ydf
+from matplotlib.cm import ScalarMappable
+from matplotlib.colors import ListedColormap, LogNorm
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, confusion_matrix, f1_score
+from sklearn.model_selection import train_test_split
+
+from treeple import ObliqueRandomForestClassifier
+from treeple._lib.sklearn.tree._criterion import Gini
+from treeple.datasets import make_trunk_classification
+from treeple.tree._oblique_splitter import BestObliqueSplitterTester
 
 
-def plot_traintime_heatmap(times1, times2, n_columns, n_rows,
-                            title1="YDF Training Time", 
-                            title2="Treeple Training Time", 
-                            xlabel="Features", 
-                            ylabel="Projections", 
-                            scale="log"):
+def plot_traintime_heatmap(
+    times1,
+    times2,
+    n_columns,
+    n_rows,
+    title1="YDF Training Time",
+    title2="Treeple Training Time",
+    xlabel="Features",
+    ylabel="Projections",
+    scale="log",
+):
     """
     Plot the training time heatmap for YDF and Treeple.
     """
@@ -38,14 +40,16 @@ def plot_traintime_heatmap(times1, times2, n_columns, n_rows,
     times_treeple = np.maximum(times_treeple, 1e-3)
 
     # Define shared color normalization
-    log_norm = LogNorm(vmin=min(times_ydf.min(), times_treeple.min()),
-                       vmax=max(times_ydf.max(), times_treeple.max()))
+    log_norm = LogNorm(
+        vmin=min(times_ydf.min(), times_treeple.min()),
+        vmax=max(times_ydf.max(), times_treeple.max()),
+    )
 
     # Create subplots
     fig, axes = plt.subplots(1, 2, figsize=(16, 6), constrained_layout=True)
 
     # Plot YDF heatmap
-    cax1 = axes[0].imshow(times_ydf, cmap='RdYlGn_r', aspect='equal', norm=log_norm)
+    cax1 = axes[0].imshow(times_ydf, cmap="RdYlGn_r", aspect="equal", norm=log_norm)
     axes[0].set_title(title1)
     axes[0].set_xlabel(xlabel)
     axes[0].set_ylabel(ylabel)
@@ -55,7 +59,7 @@ def plot_traintime_heatmap(times1, times2, n_columns, n_rows,
     axes[0].set_yticklabels(n_rows)
 
     # Plot Treeple heatmap
-    cax2 = axes[1].imshow(times_treeple, cmap='RdYlGn_r', aspect='equal', norm=log_norm)
+    cax2 = axes[1].imshow(times_treeple, cmap="RdYlGn_r", aspect="equal", norm=log_norm)
     axes[1].set_title(title2)
     axes[1].set_xlabel(xlabel)
     axes[1].set_ylabel(ylabel)
@@ -65,34 +69,34 @@ def plot_traintime_heatmap(times1, times2, n_columns, n_rows,
     axes[1].set_yticklabels(n_rows)
 
     # Create one shared colorbar
-    cbar = fig.colorbar(cax2, ax=axes, orientation='vertical', fraction=0.02, pad=0.04)
-    cbar.set_label('Training Time (seconds)')
+    cbar = fig.colorbar(cax2, ax=axes, orientation="vertical", fraction=0.02, pad=0.04)
+    cbar.set_label("Training Time (seconds)")
 
     # Annotate YDF heatmap
     for i in range(len(n_rows)):
         for j in range(len(n_columns)):
-            text_color = 'black' if log_norm(times_ydf[i, j]) > 0.3 else 'white'
-            axes[0].text(j, i, f"{times_ydf[i, j]:.2f}", ha='center', va='center', color=text_color)
+            text_color = "black" if log_norm(times_ydf[i, j]) > 0.3 else "white"
+            axes[0].text(j, i, f"{times_ydf[i, j]:.2f}", ha="center", va="center", color=text_color)
 
     # Annotate Treeple heatmap
     for i in range(len(n_rows)):
         for j in range(len(n_columns)):
-            text_color = 'black' if log_norm(times_treeple[i, j]) > 0.3 else 'white'
-            axes[1].text(j, i, f"{times_treeple[i, j]:.2f}", ha='center', va='center', color=text_color)
+            text_color = "black" if log_norm(times_treeple[i, j]) > 0.3 else "white"
+            axes[1].text(
+                j, i, f"{times_treeple[i, j]:.2f}", ha="center", va="center", color=text_color
+            )
 
     plt.show()
 
 
-
-
 def plot_single_heatmap(
-    time_data, 
-    n_columns, 
-    n_rows, 
-    title="Training Time Heatmap", 
-    xlabel="Number of Features", 
-    ylabel="Number of Projections", 
-    scale="log"
+    time_data,
+    n_columns,
+    n_rows,
+    title="Training Time Heatmap",
+    xlabel="Number of Features",
+    ylabel="Number of Projections",
+    scale="log",
 ):
     """
     Plot a single heatmap for training time.
@@ -114,7 +118,7 @@ def plot_single_heatmap(
         norm = None
 
     fig, ax = plt.subplots(figsize=(8, 6), constrained_layout=True)
-    cax = ax.imshow(time_data, cmap='RdYlGn_r', aspect='equal', norm=norm)
+    cax = ax.imshow(time_data, cmap="RdYlGn_r", aspect="equal", norm=norm)
 
     ax.set_title(title)
     ax.set_xlabel(xlabel)
@@ -129,11 +133,11 @@ def plot_single_heatmap(
         for j in range(len(n_columns)):
             val = time_data[i, j]
             color_val = norm(val) if norm else val / np.max(time_data)
-            text_color = 'black' if color_val > 0.3 else 'white'
-            ax.text(j, i, f"{val:.2f}", ha='center', va='center', color=text_color)
+            text_color = "black" if color_val > 0.3 else "white"
+            ax.text(j, i, f"{val:.2f}", ha="center", va="center", color=text_color)
 
     # Add colorbar
-    cbar = fig.colorbar(cax, ax=ax, orientation='vertical', fraction=0.045, pad=0.04)
-    cbar.set_label('Training Time (seconds)')
+    cbar = fig.colorbar(cax, ax=ax, orientation="vertical", fraction=0.045, pad=0.04)
+    cbar.set_label("Training Time (seconds)")
 
     plt.show()

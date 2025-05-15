@@ -1,5 +1,9 @@
 import copy
 import numbers
+
+########################################
+# Clark:
+import time
 from numbers import Real
 
 import numpy as np
@@ -35,9 +39,7 @@ from .unsupervised._unsup_tree import (
     UnsupervisedDepthFirstTreeBuilder,
     UnsupervisedTree,
 )
-########################################
-# Clark:
-import time
+
 ########################################
 
 DTYPE = _sklearn_tree.DTYPE
@@ -938,7 +940,7 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
         """
         ########################################
         # Clark:
-        start=time.perf_counter()
+        start = time.perf_counter()
         ########################################
         monotonic_cst = None
         self.monotonic_cst_ = monotonic_cst
@@ -985,7 +987,6 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
 
         self.tree_ = ObliqueTree(self.n_features_in_, self.n_classes_, self.n_outputs_)
 
-
         # Use BestFirst if max_leaf_nodes given; use DepthFirst otherwise
         if max_leaf_nodes < 0:
             builder = DepthFirstTreeBuilder(
@@ -1007,7 +1008,7 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
                 self.min_impurity_decrease,
             )
 
-        builder.build(self.tree_, X, y, sample_weight, None)    # Clark: main loop
+        builder.build(self.tree_, X, y, sample_weight, None)  # Clark: main loop
 
         if self.n_outputs_ == 1:
             self.n_classes_ = self.n_classes_[0]

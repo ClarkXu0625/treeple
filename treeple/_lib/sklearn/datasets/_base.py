@@ -267,9 +267,7 @@ def load_files(
     target_names = []
     filenames = []
 
-    folders = [
-        f for f in sorted(listdir(container_path)) if isdir(join(container_path, f))
-    ]
+    folders = [f for f in sorted(listdir(container_path)) if isdir(join(container_path, f))]
 
     if categories is not None:
         folders = [f for f in folders if f in categories]
@@ -317,9 +315,7 @@ def load_files(
             DESCR=description,
         )
 
-    return Bunch(
-        filenames=filenames, target_names=target_names, target=target, DESCR=description
-    )
+    return Bunch(filenames=filenames, target_names=target_names, target=target, DESCR=description)
 
 
 def load_csv_data(
@@ -1012,9 +1008,7 @@ def load_digits(*, n_class=10, return_X_y=False, as_frame=False):
         images = images[idx]
 
     feature_names = [
-        "pixel_{}_{}".format(row_idx, col_idx)
-        for row_idx in range(8)
-        for col_idx in range(8)
+        "pixel_{}_{}".format(row_idx, col_idx) for row_idx in range(8) for col_idx in range(8)
     ]
 
     frame = None
@@ -1497,9 +1491,7 @@ def _fetch_remote(remote, dirname=None, n_retries=3, delay=1):
     # attempting to delete a file that was already renamed. If the download
     # fails or the result does not match the expected SHA256 digest, the
     # temporary file is removed manually in the except block.
-    temp_file = NamedTemporaryFile(
-        prefix=remote.filename + ".part_", dir=folder_path, delete=False
-    )
+    temp_file = NamedTemporaryFile(prefix=remote.filename + ".part_", dir=folder_path, delete=False)
     # Note that Python 3.12's `delete_on_close=True` is ignored as we set
     # `delete=False` explicitly. So after this line the empty temporary file still
     # exists on disk to make sure that it's uniquely reserved for this specific call of
@@ -1582,9 +1574,7 @@ def _derive_folder_and_filename_from_url(url):
     return "/".join(folder_components), filename
 
 
-def fetch_file(
-    url, folder=None, local_filename=None, sha256=None, n_retries=3, delay=1
-):
+def fetch_file(url, folder=None, local_filename=None, sha256=None, n_retries=3, delay=1):
     """Fetch a file from the web if not already present in the local folder.
 
     If the file already exists locally (and the SHA256 checksums match when
@@ -1629,9 +1619,5 @@ def fetch_file(
         folder = Path(get_data_home()) / folder_from_url
         makedirs(folder, exist_ok=True)
 
-    remote_metadata = RemoteFileMetadata(
-        filename=local_filename, url=url, checksum=sha256
-    )
-    return _fetch_remote(
-        remote_metadata, dirname=folder, n_retries=n_retries, delay=delay
-    )
+    remote_metadata = RemoteFileMetadata(filename=local_filename, url=url, checksum=sha256)
+    return _fetch_remote(remote_metadata, dirname=folder, n_retries=n_retries, delay=delay)

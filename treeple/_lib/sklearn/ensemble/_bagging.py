@@ -58,9 +58,7 @@ def _generate_indices(random_state, bootstrap, n_population, n_samples):
     if bootstrap:
         indices = random_state.randint(0, n_population, n_samples)
     else:
-        indices = sample_without_replacement(
-            n_population, n_samples, random_state=random_state
-        )
+        indices = sample_without_replacement(n_population, n_samples, random_state=random_state)
 
     return indices
 
@@ -79,12 +77,8 @@ def _generate_bagging_indices(
     random_state = check_random_state(random_state)
 
     # Draw indices
-    feature_indices = _generate_indices(
-        random_state, bootstrap_features, n_features, max_features
-    )
-    sample_indices = _generate_indices(
-        random_state, bootstrap_samples, n_samples, max_samples
-    )
+    feature_indices = _generate_indices(random_state, bootstrap_features, n_features, max_features)
+    sample_indices = _generate_indices(random_state, bootstrap_samples, n_samples, max_samples)
 
     return feature_indices, sample_indices
 
@@ -165,9 +159,7 @@ def _parallel_build_estimators(
         # if possible, otherwise use indexing.
         if _routing_enabled():
             request_or_router = get_routing_for_object(ensemble.estimator_)
-            consumes_sample_weight = request_or_router.consumes(
-                "fit", ("sample_weight",)
-            )
+            consumes_sample_weight = request_or_router.consumes("fit", ("sample_weight",))
         else:
             consumes_sample_weight = support_sample_weight
         if consumes_sample_weight:
@@ -214,9 +206,7 @@ def _parallel_predict_proba(estimators, estimators_features, X, n_classes):
                 proba += proba_estimator
 
             else:
-                proba[:, estimator.classes_] += proba_estimator[
-                    :, range(len(estimator.classes_))
-                ]
+                proba[:, estimator.classes_] += proba_estimator[:, range(len(estimator.classes_))]
 
         else:
             # Resort to voting
@@ -466,9 +456,7 @@ class BaseBagging(BaseEnsemble, metaclass=ABCMeta):
             routed_params = Bunch()
             routed_params.estimator = Bunch(fit=fit_params)
             if "sample_weight" in fit_params:
-                routed_params.estimator.fit["sample_weight"] = fit_params[
-                    "sample_weight"
-                ]
+                routed_params.estimator.fit["sample_weight"] = fit_params["sample_weight"]
 
         if max_depth is not None:
             self.estimator_.max_depth = max_depth
@@ -524,16 +512,11 @@ class BaseBagging(BaseEnsemble, metaclass=ABCMeta):
             )
 
         elif n_more_estimators == 0:
-            warn(
-                "Warm-start fitting without increasing n_estimators does not "
-                "fit new trees."
-            )
+            warn("Warm-start fitting without increasing n_estimators does not " "fit new trees.")
             return self
 
         # Parallel loop
-        n_jobs, n_estimators, starts = _partition_estimators(
-            n_more_estimators, self.n_jobs
-        )
+        n_jobs, n_estimators, starts = _partition_estimators(n_more_estimators, self.n_jobs)
         total_n_estimators = sum(n_estimators)
 
         # Advance random state to state after training
@@ -544,9 +527,7 @@ class BaseBagging(BaseEnsemble, metaclass=ABCMeta):
         seeds = random_state.randint(MAX_INT, size=n_more_estimators)
         self._seeds = seeds
 
-        all_results = Parallel(
-            n_jobs=n_jobs, verbose=self.verbose, **self._parallel_args()
-        )(
+        all_results = Parallel(n_jobs=n_jobs, verbose=self.verbose, **self._parallel_args())(
             delayed(_parallel_build_estimators)(
                 n_estimators[i],
                 self,
@@ -562,12 +543,8 @@ class BaseBagging(BaseEnsemble, metaclass=ABCMeta):
         )
 
         # Reduce
-        self.estimators_ += list(
-            itertools.chain.from_iterable(t[0] for t in all_results)
-        )
-        self.estimators_features_ += list(
-            itertools.chain.from_iterable(t[1] for t in all_results)
-        )
+        self.estimators_ += list(itertools.chain.from_iterable(t[0] for t in all_results))
+        self.estimators_features_ += list(itertools.chain.from_iterable(t[1] for t in all_results))
 
         if self.oob_score:
             self._set_oob_score(X, y)
@@ -862,9 +839,7 @@ class BaggingClassifier(ClassifierMixin, BaseBagging):
             mask = ~indices_to_mask(samples, n_samples)
 
             if hasattr(estimator, "predict_proba"):
-                predictions[mask, :] += estimator.predict_proba(
-                    (X[mask, :])[:, features]
-                )
+                predictions[mask, :] += estimator.predict_proba((X[mask, :])[:, features])
 
             else:
                 p = estimator.predict((X[mask, :])[:, features])
@@ -953,9 +928,7 @@ class BaggingClassifier(ClassifierMixin, BaseBagging):
         # Parallel loop
         n_jobs, _, starts = _partition_estimators(self.n_estimators, self.n_jobs)
 
-        all_proba = Parallel(
-            n_jobs=n_jobs, verbose=self.verbose, **self._parallel_args()
-        )(
+        all_proba = Parallel(n_jobs=n_jobs, verbose=self.verbose, **self._parallel_args())(
             delayed(_parallel_predict_proba)(
                 self.estimators_[starts[i] : starts[i + 1]],
                 self.estimators_features_[starts[i] : starts[i + 1]],

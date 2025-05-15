@@ -73,13 +73,9 @@ def yield_namespace_device_dtype_combinations(include_numpy_namespaces=True):
         The name of the data type to use for arrays. Can be None to indicate
         that the default value should be used.
     """
-    for array_namespace in yield_namespaces(
-        include_numpy_namespaces=include_numpy_namespaces
-    ):
+    for array_namespace in yield_namespaces(include_numpy_namespaces=include_numpy_namespaces):
         if array_namespace == "torch":
-            for device, dtype in itertools.product(
-                ("cpu", "cuda"), ("float64", "float32")
-            ):
+            for device, dtype in itertools.product(("cpu", "cuda"), ("float64", "float32")):
                 yield array_namespace, device, dtype
             yield array_namespace, "mps", "float32"
         else:
@@ -97,8 +93,7 @@ def _check_array_api_dispatch(array_api_dispatch):
             import array_api_compat  # noqa
         except ImportError:
             raise ImportError(
-                "array_api_compat is required to dispatch arrays using the API"
-                " specification"
+                "array_api_compat is required to dispatch arrays using the API" " specification"
             )
 
         numpy_version = parse_version(numpy.__version__)
@@ -130,9 +125,7 @@ def _check_array_api_dispatch(array_api_dispatch):
 
 def _single_array_device(array):
     """Hardware device where the array data resides on."""
-    if isinstance(array, (numpy.ndarray, numpy.generic)) or not hasattr(
-        array, "device"
-    ):
+    if isinstance(array, (numpy.ndarray, numpy.generic)) or not hasattr(array, "device"):
         return "cpu"
     else:
         return array.device
@@ -159,9 +152,7 @@ def device(*array_list, remove_none=True, remove_types=(str,)):
     out : device
         `device` object (see the "Device Support" section of the array API spec).
     """
-    array_list = _remove_non_arrays(
-        *array_list, remove_none=remove_none, remove_types=remove_types
-    )
+    array_list = _remove_non_arrays(*array_list, remove_none=remove_none, remove_types=remove_types)
 
     if not array_list:
         return None
@@ -176,8 +167,7 @@ def device(*array_list, remove_none=True, remove_types=(str,)):
         device_other = _single_array_device(array)
         if device_ != device_other:
             raise ValueError(
-                f"Input arrays use different devices: {str(device_)}, "
-                f"{str(device_other)}"
+                f"Input arrays use different devices: {str(device_)}, " f"{str(device_other)}"
             )
 
     return device_
@@ -237,8 +227,7 @@ def _isdtype_single(dtype, kind, *, xp):
             return dtype in {xp.uint8, xp.uint16, xp.uint32, xp.uint64}
         elif kind == "integral":
             return any(
-                _isdtype_single(dtype, k, xp=xp)
-                for k in ("signed integer", "unsigned integer")
+                _isdtype_single(dtype, k, xp=xp) for k in ("signed integer", "unsigned integer")
             )
         elif kind == "real floating":
             return dtype in supported_float_dtypes(xp)
@@ -409,9 +398,7 @@ class _NumPyAPIWrapper:
         return numpy.unique(x)
 
     def unique_all(self, x):
-        return numpy.unique(
-            x, return_index=True, return_inverse=True, return_counts=True
-        )
+        return numpy.unique(x, return_index=True, return_inverse=True, return_counts=True)
 
     def concat(self, arrays, *, axis=None):
         return numpy.concatenate(arrays, axis=axis)
@@ -423,9 +410,7 @@ class _NumPyAPIWrapper:
         https://data-apis.org/array-api/latest/API_specification/generated/array_api.reshape.html
         """
         if not isinstance(shape, tuple):
-            raise TypeError(
-                f"shape must be a tuple, got {shape!r} of type {type(shape)}"
-            )
+            raise TypeError(f"shape must be a tuple, got {shape!r} of type {type(shape)}")
 
         if copy is True:
             x = x.copy()
@@ -639,9 +624,7 @@ def _fill_or_add_to_diagonal(array, value, xp, add_value=True, wrap=False):
     https://github.com/numpy/numpy/blob/v2.0.0/numpy/lib/_index_tricks_impl.py#L799-L929
     """
     if array.ndim != 2:
-        raise ValueError(
-            f"array should be 2-d. Got array with shape {tuple(array.shape)}"
-        )
+        raise ValueError(f"array should be 2-d. Got array with shape {tuple(array.shape)}")
 
     value = xp.asarray(value, dtype=array.dtype, device=device(array))
     end = None
@@ -682,9 +665,7 @@ def _find_matching_floating_dtype(*arrays, xp):
     instance), return the default floating point dtype for the namespace.
     """
     dtyped_arrays = [a for a in arrays if hasattr(a, "dtype")]
-    floating_dtypes = [
-        a.dtype for a in dtyped_arrays if xp.isdtype(a.dtype, "real floating")
-    ]
+    floating_dtypes = [a.dtype for a in dtyped_arrays if xp.isdtype(a.dtype, "real floating")]
     if floating_dtypes:
         # Return the floating dtype with the highest precision:
         return xp.result_type(*floating_dtypes)
@@ -733,13 +714,9 @@ def _average(a, axis=None, weights=None, normalize=True, xp=None):
         weights = xp.reshape(weights, shape)
 
     if xp.isdtype(a.dtype, "complex floating"):
-        raise NotImplementedError(
-            "Complex floating point values are not supported by average."
-        )
+        raise NotImplementedError("Complex floating point values are not supported by average.")
     if weights is not None and xp.isdtype(weights.dtype, "complex floating"):
-        raise NotImplementedError(
-            "Complex floating point values are not supported by average."
-        )
+        raise NotImplementedError("Complex floating point values are not supported by average.")
 
     output_dtype = _find_matching_floating_dtype(a, weights, xp=xp)
     a = xp.astype(a, output_dtype)
@@ -795,9 +772,7 @@ def _nanmax(X, axis=None, xp=None):
         return X
 
 
-def _asarray_with_order(
-    array, dtype=None, order=None, copy=None, *, xp=None, device=None
-):
+def _asarray_with_order(array, dtype=None, order=None, copy=None, *, xp=None, device=None):
     """Helper to support the order kwarg only for NumPy-backed arrays
 
     Memory layout parameter `order` is not exposed in the Array API standard,

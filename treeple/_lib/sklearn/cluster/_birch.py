@@ -82,9 +82,7 @@ def _split_node(node, threshold, branching_factor):
         if node.next_leaf_ is not None:
             node.next_leaf_.prev_leaf_ = new_node2
 
-    dist = euclidean_distances(
-        node.centroids_, Y_norm_squared=node.squared_norm_, squared=True
-    )
+    dist = euclidean_distances(node.centroids_, Y_norm_squared=node.squared_norm_, squared=True)
     n_clusters = dist.shape[0]
 
     farthest_idx = np.unravel_index(dist.argmax(), (n_clusters, n_clusters))
@@ -215,12 +213,8 @@ class _CFNode:
                 # If it is determined that the child need not be split, we
                 # can just update the closest_subcluster
                 closest_subcluster.update(subcluster)
-                self.init_centroids_[closest_index] = self.subclusters_[
-                    closest_index
-                ].centroid_
-                self.init_sq_norm_[closest_index] = self.subclusters_[
-                    closest_index
-                ].sq_norm_
+                self.init_centroids_[closest_index] = self.subclusters_[closest_index].centroid_
+                self.init_sq_norm_[closest_index] = self.subclusters_[closest_index].sq_norm_
                 return False
 
             # things not too good. we need to redistribute the subclusters in
@@ -232,9 +226,7 @@ class _CFNode:
                     threshold,
                     branching_factor,
                 )
-                self.update_split_subclusters(
-                    closest_subcluster, new_subcluster1, new_subcluster2
-                )
+                self.update_split_subclusters(closest_subcluster, new_subcluster1, new_subcluster2)
 
                 if len(self.subclusters_) > self.branching_factor:
                     return True
@@ -305,9 +297,7 @@ class _CFSubcluster:
         else:
             self.n_samples_ = 1
             self.centroid_ = self.linear_sum_ = linear_sum
-            self.squared_sum_ = self.sq_norm_ = np.dot(
-                self.linear_sum_, self.linear_sum_
-            )
+            self.squared_sum_ = self.sq_norm_ = np.dot(self.linear_sum_, self.linear_sum_)
         self.child_ = None
 
     def update(self, subcluster):
@@ -356,9 +346,7 @@ class _CFSubcluster:
         return sqrt(max(0, sq_radius))
 
 
-class Birch(
-    ClassNamePrefixFeaturesOutMixin, ClusterMixin, TransformerMixin, BaseEstimator
-):
+class Birch(ClassNamePrefixFeaturesOutMixin, ClusterMixin, TransformerMixin, BaseEstimator):
     """Implements the BIRCH clustering algorithm.
 
     It is a memory-efficient, online-learning algorithm provided as an
@@ -672,9 +660,7 @@ class Birch(
         kwargs = {"Y_norm_squared": self._subcluster_norms}
 
         with config_context(assume_finite=True):
-            argmin = pairwise_distances_argmin(
-                X, self.subcluster_centers_, metric_kwargs=kwargs
-            )
+            argmin = pairwise_distances_argmin(X, self.subcluster_centers_, metric_kwargs=kwargs)
         return self.subcluster_labels_[argmin]
 
     def transform(self, X):
@@ -723,8 +709,7 @@ class Birch(
             if not_enough_centroids:
                 warnings.warn(
                     "Number of subclusters found (%d) by BIRCH is less "
-                    "than (%d). Decrease the threshold."
-                    % (len(centroids), self.n_clusters),
+                    "than (%d). Decrease the threshold." % (len(centroids), self.n_clusters),
                     ConvergenceWarning,
                 )
         else:

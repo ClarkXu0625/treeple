@@ -719,9 +719,7 @@ def test_setting_request_on_sub_estimator_removes_error(metaestimator):
                 metaestimator, sub_estimator_consumes=True
             )
             if scorer:
-                set_requests(
-                    scorer, method_mapping={}, methods=["score"], metadata_name=key
-                )
+                set_requests(scorer, method_mapping={}, methods=["score"], metadata_name=key)
             if cv:
                 cv.set_split_request(groups=True, metadata=True)
 
@@ -735,9 +733,7 @@ def test_setting_request_on_sub_estimator_removes_error(metaestimator):
 
             instance = metaestimator_class(**kwargs)
             method = getattr(instance, method_name)
-            extra_method_args = metaestimator.get("method_args", {}).get(
-                method_name, {}
-            )
+            extra_method_args = metaestimator.get("method_args", {}).get(method_name, {})
             if "fit" not in method_name:
                 # fit before calling method
                 instance.fit(X, y)
@@ -750,9 +746,7 @@ def test_setting_request_on_sub_estimator_removes_error(metaestimator):
             # sanity check that registry is not empty, or else the test passes
             # trivially
             assert registry
-            split_params = (
-                method_kwargs.keys() if preserves_metadata == "subset" else ()
-            )
+            split_params = method_kwargs.keys() if preserves_metadata == "subset" else ()
             for estimator in registry:
                 check_recorded_metadata(
                     estimator,

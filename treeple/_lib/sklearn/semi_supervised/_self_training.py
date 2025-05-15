@@ -232,13 +232,11 @@ class SelfTrainingClassifier(MetaEstimatorMixin, BaseEstimator):
         # TODO(1.8) remove
         elif self.estimator is None and self.base_estimator == "deprecated":
             raise ValueError(
-                "You must pass an estimator to SelfTrainingClassifier."
-                " Use `estimator`."
+                "You must pass an estimator to SelfTrainingClassifier." " Use `estimator`."
             )
         elif self.estimator is not None and self.base_estimator != "deprecated":
             raise ValueError(
-                "You must pass only one estimator to SelfTrainingClassifier."
-                " Use `estimator`."
+                "You must pass only one estimator to SelfTrainingClassifier." " Use `estimator`."
             )
         else:
             estimator_ = clone(self.estimator)
@@ -302,9 +300,7 @@ class SelfTrainingClassifier(MetaEstimatorMixin, BaseEstimator):
         if np.all(has_label):
             warnings.warn("y contains no unlabeled samples", UserWarning)
 
-        if self.criterion == "k_best" and (
-            self.k_best > X.shape[0] - np.sum(has_label)
-        ):
+        if self.criterion == "k_best" and (self.k_best > X.shape[0] - np.sum(has_label)):
             warnings.warn(
                 (
                     "k_best is larger than the amount of unlabeled "
@@ -325,9 +321,7 @@ class SelfTrainingClassifier(MetaEstimatorMixin, BaseEstimator):
 
         self.n_iter_ = 0
 
-        while not np.all(has_label) and (
-            self.max_iter is None or self.n_iter_ < self.max_iter
-        ):
+        while not np.all(has_label) and (self.max_iter is None or self.n_iter_ < self.max_iter):
             self.n_iter_ += 1
             self.estimator_.fit(
                 X[safe_mask(X, has_label)],
@@ -509,9 +503,7 @@ class SelfTrainingClassifier(MetaEstimatorMixin, BaseEstimator):
             ensure_all_finite=False,
             reset=False,
         )
-        return self.estimator_.decision_function(
-            X, **routed_params.estimator.decision_function
-        )
+        return self.estimator_.decision_function(X, **routed_params.estimator.decision_function)
 
     @available_if(_estimator_has("predict_log_proba"))
     def predict_log_proba(self, X, **params):
@@ -554,9 +546,7 @@ class SelfTrainingClassifier(MetaEstimatorMixin, BaseEstimator):
             ensure_all_finite=False,
             reset=False,
         )
-        return self.estimator_.predict_log_proba(
-            X, **routed_params.estimator.predict_log_proba
-        )
+        return self.estimator_.predict_log_proba(X, **routed_params.estimator.predict_log_proba)
 
     @available_if(_estimator_has("score"))
     def score(self, X, y, **params):
@@ -635,7 +625,5 @@ class SelfTrainingClassifier(MetaEstimatorMixin, BaseEstimator):
 
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
-        tags._xfail_checks.update(
-            {"check_non_transformer_estimators_n_iter": "n_iter_ can be 0."}
-        )
+        tags._xfail_checks.update({"check_non_transformer_estimators_n_iter": "n_iter_ can be 0."})
         return tags

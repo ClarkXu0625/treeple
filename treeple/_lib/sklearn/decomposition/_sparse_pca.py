@@ -116,9 +116,7 @@ class _BaseSparsePCA(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEsti
         X = validate_data(self, X, reset=False)
         X = X - self.mean_
 
-        U = ridge_regression(
-            self.components_.T, X.T, self.ridge_alpha, solver="cholesky"
-        )
+        U = ridge_regression(self.components_.T, X.T, self.ridge_alpha, solver="cholesky")
 
         return U
 

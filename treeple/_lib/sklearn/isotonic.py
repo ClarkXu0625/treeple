@@ -107,9 +107,7 @@ def check_increasing(x, y):
     },
     prefer_skip_nested_validation=True,
 )
-def isotonic_regression(
-    y, *, sample_weight=None, y_min=None, y_max=None, increasing=True
-):
+def isotonic_regression(y, *, sample_weight=None, y_min=None, y_max=None, increasing=True):
     """Solve the isotonic regression model.
 
     Read more in the :ref:`User Guide <isotonic>`.
@@ -154,9 +152,7 @@ def isotonic_regression(
     """
     y = check_array(y, ensure_2d=False, input_name="y", dtype=[np.float64, np.float32])
     if sp_base_version >= parse_version("1.12.0"):
-        res = optimize.isotonic_regression(
-            y=y, weights=sample_weight, increasing=increasing
-        )
+        res = optimize.isotonic_regression(y=y, weights=sample_weight, increasing=increasing)
         y = np.asarray(res.x, dtype=y.dtype)
     else:
         # TODO: remove this branch when Scipy 1.12 is the minimum supported version
@@ -287,10 +283,7 @@ class IsotonicRegression(RegressorMixin, TransformerMixin, BaseEstimator):
 
     def _check_input_data_shape(self, X):
         if not (X.ndim == 1 or (X.ndim == 2 and X.shape[1] == 1)):
-            msg = (
-                "Isotonic regression input X should be a 1d array or "
-                "2d array with 1 feature"
-            )
+            msg = "Isotonic regression input X should be a 1d array or " "2d array with 1 feature"
             raise ValueError(msg)
 
     def _build_f(self, X, y):
@@ -301,9 +294,7 @@ class IsotonicRegression(RegressorMixin, TransformerMixin, BaseEstimator):
             # single y, constant prediction
             self.f_ = lambda x: y.repeat(x.shape)
         else:
-            self.f_ = interpolate.interp1d(
-                X, y, kind="linear", bounds_error=bounds_error
-            )
+            self.f_ = interpolate.interp1d(X, y, kind="linear", bounds_error=bounds_error)
 
     def _build_y(self, X, y, sample_weight, trim_duplicates=True):
         """Build the y_ IsotonicRegression."""
@@ -384,9 +375,7 @@ class IsotonicRegression(RegressorMixin, TransformerMixin, BaseEstimator):
         new input data.
         """
         check_params = dict(accept_sparse=False, ensure_2d=False)
-        X = check_array(
-            X, input_name="X", dtype=[np.float64, np.float32], **check_params
-        )
+        X = check_array(X, input_name="X", dtype=[np.float64, np.float32], **check_params)
         y = check_array(y, input_name="y", dtype=X.dtype, **check_params)
         check_consistent_length(X, y, sample_weight)
 

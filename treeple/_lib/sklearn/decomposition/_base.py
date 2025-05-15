@@ -13,9 +13,7 @@ from ..utils._array_api import _fill_or_add_to_diagonal, device, get_namespace
 from ..utils.validation import check_is_fitted, validate_data
 
 
-class _BasePCA(
-    ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator, metaclass=ABCMeta
-):
+class _BasePCA(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEstimator, metaclass=ABCMeta):
     """Base class for PCA methods.
 
     Warning: This class should not be used directly.
@@ -189,9 +187,7 @@ class _BasePCA(
         xp, _ = get_namespace(X)
 
         if self.whiten:
-            scaled_components = (
-                xp.sqrt(self.explained_variance_[:, np.newaxis]) * self.components_
-            )
+            scaled_components = xp.sqrt(self.explained_variance_[:, np.newaxis]) * self.components_
             return X @ scaled_components + self.mean_
         else:
             return X @ self.components_ + self.mean_

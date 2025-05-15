@@ -266,9 +266,7 @@ class NoSampleWeightPandasSeriesType(BaseEstimator):
         from pandas import Series
 
         if isinstance(sample_weight, Series):
-            raise ValueError(
-                "Estimator does not accept 'sample_weight'of type pandas.Series"
-            )
+            raise ValueError("Estimator does not accept 'sample_weight'of type pandas.Series")
         return self
 
     def predict(self, X):
@@ -338,10 +336,7 @@ class NotInvariantSampleOrder(BaseEstimator):
         X = check_array(X)
         # if the input contains the same elements but different sample order,
         # then just return zeros.
-        if (
-            np.array_equiv(np.sort(X, axis=0), np.sort(self._X, axis=0))
-            and (X != self._X).any()
-        ):
+        if np.array_equiv(np.sort(X, axis=0), np.sort(self._X, axis=0)) and (X != self._X).any():
             return np.zeros(X.shape[0])
         return X[:, 0]
 
@@ -354,9 +349,7 @@ class OneClassSampleErrorClassifier(BaseBadClassifier):
         self.raise_when_single_class = raise_when_single_class
 
     def fit(self, X, y, sample_weight=None):
-        X, y = check_X_y(
-            X, y, accept_sparse=("csr", "csc"), multi_output=True, y_numeric=True
-        )
+        X, y = check_X_y(X, y, accept_sparse=("csr", "csc"), multi_output=True, y_numeric=True)
 
         self.has_single_class_ = False
         self.classes_, y = np.unique(y, return_inverse=True)
@@ -597,9 +590,7 @@ def test_mutable_default_params():
         "object which is not allowed"
     )
     # check that the "default_constructible" test checks for mutable parameters
-    check_parameters_default_constructible(
-        "Immutable", HasImmutableParameters()
-    )  # should pass
+    check_parameters_default_constructible("Immutable", HasImmutableParameters())  # should pass
     with raises(AssertionError, match=msg):
         check_parameters_default_constructible("Mutable", HasMutableParameters())
 
@@ -659,9 +650,7 @@ def test_check_estimators_overwrite_params():
         "the parameter wrong_attribute from 0 to 1 during fit."
     )
     with raises(AssertionError, match=msg):
-        check_estimators_overwrite_params(
-            "ChangesWrongAttribute", ChangesWrongAttribute()
-        )
+        check_estimators_overwrite_params("ChangesWrongAttribute", ChangesWrongAttribute())
     check_estimators_overwrite_params("test", ChangesUnderscoreAttribute())
 
 
@@ -686,9 +675,7 @@ def test_check_methods_sample_order_invariance():
         "with different sample order."
     ).format(method=method, name=name)
     with raises(AssertionError, match=msg):
-        check_methods_sample_order_invariance(
-            "NotInvariantSampleOrder", NotInvariantSampleOrder()
-        )
+        check_methods_sample_order_invariance("NotInvariantSampleOrder", NotInvariantSampleOrder())
 
 
 def test_check_methods_subset_invariance():
@@ -861,23 +848,14 @@ def test_check_no_attributes_set_in_init():
         r" Found attributes \['you_should_not_set_this_'\]."
     )
     with raises(AssertionError, match=msg):
-        check_no_attributes_set_in_init(
-            "estimator_name", NonConformantEstimatorPrivateSet()
-        )
+        check_no_attributes_set_in_init("estimator_name", NonConformantEstimatorPrivateSet())
 
-    msg = (
-        "Estimator estimator_name should store all parameters as an attribute"
-        " during init"
-    )
+    msg = "Estimator estimator_name should store all parameters as an attribute" " during init"
     with raises(AttributeError, match=msg):
-        check_no_attributes_set_in_init(
-            "estimator_name", NonConformantEstimatorNoParamSet()
-        )
+        check_no_attributes_set_in_init("estimator_name", NonConformantEstimatorNoParamSet())
 
     # a private class attribute is okay!
-    check_no_attributes_set_in_init(
-        "estimator_name", ConformantEstimatorClassAttribute()
-    )
+    check_no_attributes_set_in_init("estimator_name", ConformantEstimatorClassAttribute())
     # also check if cloning an estimator which has non-default set requests is
     # fine. Setting a non-default value via `set_{method}_request` sets the
     # private _metadata_request instance attribute which is copied in `clone`.
@@ -903,16 +881,12 @@ def test_check_estimator_pairwise():
 
 def test_check_classifier_data_not_an_array():
     with raises(AssertionError, match="Not equal to tolerance"):
-        check_classifier_data_not_an_array(
-            "estimator_name", EstimatorInconsistentForPandas()
-        )
+        check_classifier_data_not_an_array("estimator_name", EstimatorInconsistentForPandas())
 
 
 def test_check_regressor_data_not_an_array():
     with raises(AssertionError, match="Not equal to tolerance"):
-        check_regressor_data_not_an_array(
-            "estimator_name", EstimatorInconsistentForPandas()
-        )
+        check_regressor_data_not_an_array("estimator_name", EstimatorInconsistentForPandas())
 
 
 def test_check_dataframe_column_names_consistency():
@@ -924,9 +898,7 @@ def test_check_dataframe_column_names_consistency():
     lr = LogisticRegression()
     check_dataframe_column_names_consistency(lr.__class__.__name__, lr)
     lr.__doc__ = "Docstring that does not document the estimator's attributes"
-    err_msg = (
-        "Estimator LogisticRegression does not document its feature_names_in_ attribute"
-    )
+    err_msg = "Estimator LogisticRegression does not document its feature_names_in_ attribute"
     with raises(ValueError, match=err_msg):
         check_dataframe_column_names_consistency(lr.__class__.__name__, lr)
 
@@ -980,8 +952,7 @@ def test_check_classifiers_multilabel_output_format_predict():
     # 3. inconsistent dtype
     clf = MultiLabelClassifierPredict(response_output=y_test.astype(np.float64))
     err_msg = (
-        r"MultiLabelClassifierPredict.predict does not output the same "
-        r"dtype than the targets."
+        r"MultiLabelClassifierPredict.predict does not output the same " r"dtype than the targets."
     )
     with raises(AssertionError, match=err_msg):
         check_classifiers_multilabel_output_format_predict(clf.__class__.__name__, clf)
@@ -1168,9 +1139,7 @@ def run_tests_without_pytest():
     """Runs the tests in this file without using pytest."""
     main_module = sys.modules["__main__"]
     test_functions = [
-        getattr(main_module, name)
-        for name in dir(main_module)
-        if name.startswith("test_")
+        getattr(main_module, name) for name in dir(main_module) if name.startswith("test_")
     ]
     test_cases = [unittest.FunctionTestCase(fn) for fn in test_functions]
     suite = unittest.TestSuite()
@@ -1327,9 +1296,7 @@ def test_check_outlier_contamination():
 
     err_msg = r"contamination constraint should be an interval in \(0, 0.5\]"
     for interval in incorrect_intervals:
-        OutlierDetectorWithConstraint._parameter_constraints["contamination"] = [
-            interval
-        ]
+        OutlierDetectorWithConstraint._parameter_constraints["contamination"] = [interval]
         detector = OutlierDetectorWithConstraint()
         with raises(AssertionError, match=err_msg):
             check_outlier_contamination(detector.__class__.__name__, detector)

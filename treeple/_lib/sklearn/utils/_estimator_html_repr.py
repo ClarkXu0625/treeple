@@ -180,11 +180,7 @@ def _write_label_html(
             else f'<div class="caption">{html.escape(name_caption)}</div>'
         )
         name_caption_div = f"<div><div>{name}</div>{name_caption_div}</div>"
-        links_div = (
-            f"<div>{doc_link}{is_fitted_icon}</div>"
-            if doc_link or is_fitted_icon
-            else ""
-        )
+        links_div = f"<div>{doc_link}{is_fitted_icon}</div>" if doc_link or is_fitted_icon else ""
 
         label_html = (
             f'<label for="{est_id}" class="sk-toggleable__label {is_fitted_css_class} '
@@ -217,9 +213,7 @@ def _get_visual_block(estimator):
             )
 
     if isinstance(estimator, str):
-        return _VisualBlock(
-            "single", estimator, names=estimator, name_details=estimator
-        )
+        return _VisualBlock("single", estimator, names=estimator, name_details=estimator)
     elif estimator is None:
         return _VisualBlock("single", estimator, names="None", name_details="None")
 
@@ -392,8 +386,7 @@ def estimator_html_repr(estimator):
             is_fitted_css_class = ""
 
     is_fitted_icon = (
-        f'<span class="sk-estimator-doc-link {is_fitted_css_class}">'
-        f"i{status_label}</span>"
+        f'<span class="sk-estimator-doc-link {is_fitted_css_class}">' f"i{status_label}</span>"
     )
     with closing(StringIO()) as out:
         container_id = _CONTAINER_ID_COUNTER.get_id()

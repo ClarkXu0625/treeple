@@ -51,9 +51,7 @@ def test_factor_analysis(global_random_seed):
         mcov = fa.get_covariance()
         diff = np.sum(np.abs(scov - mcov)) / W.size
         assert diff < 0.2, "Mean absolute difference is %f" % diff
-        fa = FactorAnalysis(
-            n_components=n_components, noise_variance_init=np.ones(n_features)
-        )
+        fa = FactorAnalysis(n_components=n_components, noise_variance_init=np.ones(n_features))
         with pytest.raises(ValueError):
             fa.fit(X[:, :2])
 
@@ -102,8 +100,6 @@ def test_factor_analysis(global_random_seed):
             [0.96822861, -0.06299656, 0.24411001, 0.07540887],
         ]
     )
-    r_solution = np.array(
-        [[0.962, 0.052], [-0.141, 0.989], [0.949, -0.300], [0.937, -0.251]]
-    )
+    r_solution = np.array([[0.962, 0.052], [-0.141, 0.989], [0.949, -0.300], [0.937, -0.251]])
     rotated = _ortho_rotation(factors[:, :n_components], method="varimax").T
     assert_array_almost_equal(np.abs(rotated), np.abs(r_solution), decimal=3)

@@ -49,13 +49,9 @@ def _unique(values, *, return_inverse=False, return_counts=False):
         array. Only provided if `return_counts` is True.
     """
     if values.dtype == object:
-        return _unique_python(
-            values, return_inverse=return_inverse, return_counts=return_counts
-        )
+        return _unique_python(values, return_inverse=return_inverse, return_counts=return_counts)
     # numerical
-    return _unique_np(
-        values, return_inverse=return_inverse, return_counts=return_counts
-    )
+    return _unique_np(values, return_inverse=return_inverse, return_counts=return_counts)
 
 
 def _unique_np(values, return_inverse=False, return_counts=False):
@@ -129,9 +125,7 @@ def _extract_missing(values):
     missing_values: MissingValues
         Object with missing value information.
     """
-    missing_values_set = {
-        value for value in values if value is None or is_scalar_nan(value)
-    }
+    missing_values_set = {value for value in values if value is None or is_scalar_nan(value)}
 
     if not missing_values_set:
         return values, MissingValues(nan=False, none=False)

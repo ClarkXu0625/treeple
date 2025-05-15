@@ -202,12 +202,7 @@ def safe_sparse_dot(a, b, *, dense_output=False):
     else:
         ret = a @ b
 
-    if (
-        sparse.issparse(a)
-        and sparse.issparse(b)
-        and dense_output
-        and hasattr(ret, "toarray")
-    ):
+    if sparse.issparse(a) and sparse.issparse(b) and dense_output and hasattr(ret, "toarray"):
         return ret.toarray()
     return ret
 
@@ -540,9 +535,7 @@ def randomized_svd(
         # When when array_api_dispatch is disabled, rely on scipy.linalg
         # instead of numpy.linalg to avoid introducing a behavior change w.r.t.
         # previous versions of scikit-learn.
-        Uhat, s, Vt = linalg.svd(
-            B, full_matrices=False, lapack_driver=svd_lapack_driver
-        )
+        Uhat, s, Vt = linalg.svd(B, full_matrices=False, lapack_driver=svd_lapack_driver)
     del B
     U = Q @ Uhat
 
@@ -1018,9 +1011,7 @@ def _safe_accumulator_op(op, x, *args, **kwargs):
     return result
 
 
-def _incremental_mean_and_var(
-    X, last_mean, last_variance, last_sample_count, sample_weight=None
-):
+def _incremental_mean_and_var(X, last_mean, last_variance, last_sample_count, sample_weight=None):
     """Calculate mean update and a Youngs and Cramer variance update.
 
     If sample_weight is given, the weighted mean and variance is computed.
@@ -1085,9 +1076,7 @@ def _incremental_mean_and_var(
     if sample_weight is not None:
         # equivalent to np.nansum(X * sample_weight, axis=0)
         # safer because np.float64(X*W) != np.float64(X)*np.float64(W)
-        new_sum = _safe_accumulator_op(
-            np.matmul, sample_weight, np.where(X_nan_mask, 0, X)
-        )
+        new_sum = _safe_accumulator_op(np.matmul, sample_weight, np.where(X_nan_mask, 0, X))
         new_sample_count = _safe_accumulator_op(
             np.sum, sample_weight[:, None] * (~X_nan_mask), axis=0
         )
@@ -1191,14 +1180,9 @@ def stable_cumsum(arr, axis=None, rtol=1e-05, atol=1e-08):
     """
     out = np.cumsum(arr, axis=axis, dtype=np.float64)
     expected = np.sum(arr, axis=axis, dtype=np.float64)
-    if not np.allclose(
-        out.take(-1, axis=axis), expected, rtol=rtol, atol=atol, equal_nan=True
-    ):
+    if not np.allclose(out.take(-1, axis=axis), expected, rtol=rtol, atol=atol, equal_nan=True):
         warnings.warn(
-            (
-                "cumsum was found to be unstable: "
-                "its last element does not correspond to sum"
-            ),
+            ("cumsum was found to be unstable: " "its last element does not correspond to sum"),
             RuntimeWarning,
         )
     return out

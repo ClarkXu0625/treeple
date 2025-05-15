@@ -216,9 +216,7 @@ class FactorAnalysis(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEsti
         self : object
             FactorAnalysis class instance.
         """
-        X = validate_data(
-            self, X, copy=self.copy, dtype=np.float64, force_writeable=True
-        )
+        X = validate_data(self, X, copy=self.copy, dtype=np.float64, force_writeable=True)
 
         n_samples, n_features = X.shape
         n_components = self.n_components
@@ -425,9 +423,7 @@ class FactorAnalysis(ClassNamePrefixFeaturesOutMixin, TransformerMixin, BaseEsti
     def _rotate(self, components, n_components=None, tol=1e-6):
         "Rotate the factor analysis solution."
         # note that tol is not exposed
-        return _ortho_rotation(components.T, method=self.rotation, tol=tol)[
-            : self.n_components
-        ]
+        return _ortho_rotation(components.T, method=self.rotation, tol=tol)[: self.n_components]
 
     @property
     def _n_features_out(self):

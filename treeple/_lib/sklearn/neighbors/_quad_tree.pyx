@@ -67,12 +67,12 @@ cdef class _QuadTree:
     @property
     def cumulative_size(self):
         cdef Cell[:] cell_mem_view = self._get_cell_ndarray()
-        return cell_mem_view.base['cumulative_size'][:self.cell_count]
+        return cell_mem_view.base["cumulative_size"][:self.cell_count]
 
     @property
     def leafs(self):
         cdef Cell[:] cell_mem_view = self._get_cell_ndarray()
-        return cell_mem_view.base['is_leaf'][:self.cell_count]
+        return cell_mem_view.base["is_leaf"][:self.cell_count]
 
     def build_tree(self, X):
         """Build a tree from an array of points X."""
@@ -507,16 +507,16 @@ cdef class _QuadTree:
         self.capacity = d["capacity"]
         self.n_points = d["n_points"]
 
-        if 'cells' not in d:
-            raise ValueError('You have loaded Tree version which '
-                             'cannot be imported')
+        if "cells" not in d:
+            raise ValueError("You have loaded Tree version which "
+                             "cannot be imported")
 
-        cell_ndarray = d['cells']
+        cell_ndarray = d["cells"]
 
         if (cell_ndarray.ndim != 1 or
                 cell_ndarray.dtype != CELL_DTYPE or
                 not cell_ndarray.flags.c_contiguous):
-            raise ValueError('Did not recognise loaded array layout')
+            raise ValueError("Did not recognise loaded array layout")
 
         self.capacity = cell_ndarray.shape[0]
         if self._resize_c(self.capacity) != 0:

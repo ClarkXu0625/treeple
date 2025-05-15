@@ -112,16 +112,12 @@ def test_get_visual_block_feature_union():
     est_html_info = _get_visual_block(f_union)
     assert est_html_info.kind == "parallel"
     assert est_html_info.names == ("pca", "svd")
-    assert est_html_info.estimators == tuple(
-        trans[1] for trans in f_union.transformer_list
-    )
+    assert est_html_info.estimators == tuple(trans[1] for trans in f_union.transformer_list)
     assert est_html_info.name_details == (None, None)
 
 
 def test_get_visual_block_voting():
-    clf = VotingClassifier(
-        [("log_reg", LogisticRegression()), ("mlp", MLPClassifier())]
-    )
+    clf = VotingClassifier([("log_reg", LogisticRegression()), ("mlp", MLPClassifier())])
     est_html_info = _get_visual_block(clf)
     assert est_html_info.kind == "parallel"
     assert est_html_info.estimators == tuple(trans[1] for trans in clf.estimators)
@@ -130,9 +126,7 @@ def test_get_visual_block_voting():
 
 
 def test_get_visual_block_column_transformer():
-    ct = ColumnTransformer(
-        [("pca", PCA(), ["num1", "num2"]), ("svd", TruncatedSVD, [0, 3])]
-    )
+    ct = ColumnTransformer([("pca", PCA(), ["num1", "num2"]), ("svd", TruncatedSVD, [0, 3])])
     est_html_info = _get_visual_block(ct)
     assert est_html_info.kind == "parallel"
     assert est_html_info.estimators == tuple(trans[1] for trans in ct.transformers)
@@ -181,17 +175,13 @@ def test_estimator_html_repr_pipeline():
         ]
     )
 
-    pipe = Pipeline(
-        [("preprocessor", preprocess), ("feat_u", feat_u), ("classifier", clf)]
-    )
+    pipe = Pipeline([("preprocessor", preprocess), ("feat_u", feat_u), ("classifier", clf)])
     html_output = estimator_html_repr(pipe)
 
     # top level estimators show estimator with changes
     assert html.escape(str(pipe)) in html_output
     for _, est in pipe.steps:
-        assert (
-            '<div class="sk-toggleable__content "><pre>' + html.escape(str(est))
-        ) in html_output
+        assert ('<div class="sk-toggleable__content "><pre>' + html.escape(str(est))) in html_output
 
     # low level estimators do not show changes
     with config_context(print_changed_only=True):
@@ -245,9 +235,7 @@ def test_stacking_classifier(final_estimator):
 
 @pytest.mark.parametrize("final_estimator", [None, LinearSVR()])
 def test_stacking_regressor(final_estimator):
-    reg = StackingRegressor(
-        estimators=[("svr", LinearSVR())], final_estimator=final_estimator
-    )
+    reg = StackingRegressor(estimators=[("svr", LinearSVR())], final_estimator=final_estimator)
     html_output = estimator_html_repr(reg)
 
     assert html.escape(str(reg.estimators[0][0])) in html_output
@@ -337,10 +325,7 @@ def test_fallback_exists():
     pca = PCA(n_components=10)
     html_output = estimator_html_repr(pca)
 
-    assert (
-        f'<div class="sk-text-repr-fallback"><pre>{html.escape(str(pca))}'
-        in html_output
-    )
+    assert f'<div class="sk-text-repr-fallback"><pre>{html.escape(str(pca))}' in html_output
 
 
 def test_show_arrow_pipeline():
@@ -433,13 +418,11 @@ def test_html_documentation_link_mixin_sklearn(mock_version):
         else:
             version = "dev"
         assert (
-            mixin._doc_link_template
-            == f"https://scikit-learn.org/{version}/modules/generated/"
+            mixin._doc_link_template == f"https://scikit-learn.org/{version}/modules/generated/"
             "{estimator_module}.{estimator_name}.html"
         )
         assert (
-            mixin._get_doc_link()
-            == f"https://scikit-learn.org/{version}/modules/generated/"
+            mixin._get_doc_link() == f"https://scikit-learn.org/{version}/modules/generated/"
             "sklearn.utils._HTMLDocumentationLinkMixin.html"
         )
 
@@ -454,9 +437,7 @@ def test_html_documentation_link_mixin_sklearn(mock_version):
         ("prefix.mypackage.mymodule.submodule", "prefix.mypackage.mymodule.submodule"),
     ],
 )
-def test_html_documentation_link_mixin_get_doc_link_instance(
-    module_path, expected_module
-):
+def test_html_documentation_link_mixin_get_doc_link_instance(module_path, expected_module):
     """Check the behaviour of the `_get_doc_link` with various parameter."""
 
     class FooBar(_HTMLDocumentationLinkMixin):
@@ -466,9 +447,7 @@ def test_html_documentation_link_mixin_get_doc_link_instance(
     est = FooBar()
     # if we set `_doc_link`, then we expect to infer a module and name for the estimator
     est._doc_link_module = "prefix"
-    est._doc_link_template = (
-        "https://website.com/{estimator_module}.{estimator_name}.html"
-    )
+    est._doc_link_template = "https://website.com/{estimator_module}.{estimator_name}.html"
     assert est._get_doc_link() == f"https://website.com/{expected_module}.FooBar.html"
 
 
@@ -489,9 +468,7 @@ def test_html_documentation_link_mixin_get_doc_link_class(module_path, expected_
 
     class FooBar(_HTMLDocumentationLinkMixin):
         _doc_link_module = "prefix"
-        _doc_link_template = (
-            "https://website.com/{estimator_module}.{estimator_name}.html"
-        )
+        _doc_link_template = "https://website.com/{estimator_module}.{estimator_name}.html"
 
     FooBar.__module__ = module_path
     est = FooBar()
@@ -511,9 +488,7 @@ def test_html_documentation_link_mixin_get_doc_link_out_of_library():
 def test_html_documentation_link_mixin_doc_link_url_param_generator_instance():
     mixin = _HTMLDocumentationLinkMixin()
     # we can bypass the generation by providing our own callable
-    mixin._doc_link_template = (
-        "https://website.com/{my_own_variable}.{another_variable}.html"
-    )
+    mixin._doc_link_template = "https://website.com/{my_own_variable}.{another_variable}.html"
 
     def url_param_generator(estimator):
         return {
@@ -536,9 +511,7 @@ def test_html_documentation_link_mixin_doc_link_url_param_generator_class():
         }
 
     class FooBar(_HTMLDocumentationLinkMixin):
-        _doc_link_template = (
-            "https://website.com/{my_own_variable}.{another_variable}.html"
-        )
+        _doc_link_template = "https://website.com/{my_own_variable}.{another_variable}.html"
         _doc_link_url_param_generator = url_param_generator
 
     estimator = FooBar()

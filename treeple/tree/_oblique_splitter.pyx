@@ -15,7 +15,6 @@ from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 from ._utils cimport fisher_yates_shuffle, floyd_sample_indices
 
 
-
 cdef float64_t INFINITY = np.inf
 
 # Mitigate precision differences between 32 bit and 64 bit

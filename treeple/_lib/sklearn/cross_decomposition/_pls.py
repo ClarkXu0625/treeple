@@ -169,9 +169,7 @@ def _deprecate_Y_when_optional(y, Y):
             FutureWarning,
         )
         if y is not None:
-            raise ValueError(
-                "Cannot use both `y` and `Y`. Use only `y` as `Y` is deprecated."
-            )
+            raise ValueError("Cannot use both `y` and `Y`. Use only `y` as `Y` is deprecated.")
         return Y
     return y
 
@@ -292,9 +290,7 @@ class _PLS(
         # With PLSRegression n_components is bounded by the rank of (X.T X) see
         # Wegelin page 25. With CCA and PLSCanonical, n_components is bounded
         # by the rank of X and the rank of Y: see Wegelin page 12
-        rank_upper_bound = (
-            min(n, p) if self.deflation_mode == "regression" else min(n, p, q)
-        )
+        rank_upper_bound = min(n, p) if self.deflation_mode == "regression" else min(n, p, q)
         if n_components > rank_upper_bound:
             raise ValueError(
                 f"`n_components` upper bound is {rank_upper_bound}. "
@@ -440,9 +436,7 @@ class _PLS(
         # Apply rotation
         x_scores = np.dot(X, self.x_rotations_)
         if y is not None:
-            y = check_array(
-                y, input_name="y", ensure_2d=False, copy=copy, dtype=FLOAT_DTYPES
-            )
+            y = check_array(y, input_name="y", ensure_2d=False, copy=copy, dtype=FLOAT_DTYPES)
             if y.ndim == 1:
                 y = y.reshape(-1, 1)
             y -= self._y_mean
@@ -675,9 +669,7 @@ class PLSRegression(_PLS):
     #     - "plspm " with function plsreg2(X, Y)
     #     - "pls" with function oscorespls.fit(X, Y)
 
-    def __init__(
-        self, n_components=2, *, scale=True, max_iter=500, tol=1e-06, copy=True
-    ):
+    def __init__(self, n_components=2, *, scale=True, max_iter=500, tol=1e-06, copy=True):
         super().__init__(
             n_components=n_components,
             scale=scale,
@@ -951,9 +943,7 @@ class CCA(_PLS):
     for param in ("deflation_mode", "mode", "algorithm"):
         _parameter_constraints.pop(param)
 
-    def __init__(
-        self, n_components=2, *, scale=True, max_iter=500, tol=1e-06, copy=True
-    ):
+    def __init__(self, n_components=2, *, scale=True, max_iter=500, tol=1e-06, copy=True):
         super().__init__(
             n_components=n_components,
             scale=scale,

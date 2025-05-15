@@ -314,9 +314,7 @@ class LinearSVC(LinearClassifierMixin, SparseCoefMixin, BaseEstimator):
         check_classification_targets(y)
         self.classes_ = np.unique(y)
 
-        _dual = _validate_dual_parameter(
-            self.dual, self.loss, self.penalty, self.multi_class, X
-        )
+        _dual = _validate_dual_parameter(self.dual, self.loss, self.penalty, self.multi_class, X)
 
         self.coef_, self.intercept_, n_iter_ = _fit_liblinear(
             X,
@@ -355,9 +353,7 @@ class LinearSVC(LinearClassifierMixin, SparseCoefMixin, BaseEstimator):
             "check_sample_weights_invariance": (
                 "zero sample_weight is not equivalent to removing samples"
             ),
-            "check_non_transformer_estimators_n_iter": (
-                "n_iter_ cannot be easily accessed."
-            ),
+            "check_non_transformer_estimators_n_iter": ("n_iter_ cannot be easily accessed."),
         }
         return tags
 
@@ -1166,9 +1162,7 @@ class NuSVC(BaseSVC):
     def __sklearn_tags__(self):
         tags = super().__sklearn_tags__()
         tags._xfail_checks = {
-            "check_methods_subset_invariance": (
-                "fails for the decision_function method"
-            ),
+            "check_methods_subset_invariance": ("fails for the decision_function method"),
             "check_class_weight_classifiers": "class_weight is ignored.",
             "check_sample_weights_invariance": (
                 "zero sample_weight is not equivalent to removing samples"

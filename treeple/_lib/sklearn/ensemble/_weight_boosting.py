@@ -291,9 +291,7 @@ class BaseWeightBoosting(BaseEnsemble, metaclass=ABCMeta):
             The feature importances.
         """
         if self.estimators_ is None or len(self.estimators_) == 0:
-            raise ValueError(
-                "Estimator not fitted, call `fit` before `feature_importances_`."
-            )
+            raise ValueError("Estimator not fitted, call `fit` before `feature_importances_`.")
 
         try:
             norm = self.estimator_weights_.sum()
@@ -329,14 +327,10 @@ def _samme_proba(estimator, n_classes, X):
     np.clip(proba, np.finfo(proba.dtype).eps, None, out=proba)
     log_proba = np.log(proba)
 
-    return (n_classes - 1) * (
-        log_proba - (1.0 / n_classes) * log_proba.sum(axis=1)[:, np.newaxis]
-    )
+    return (n_classes - 1) * (log_proba - (1.0 / n_classes) * log_proba.sum(axis=1)[:, np.newaxis])
 
 
-class AdaBoostClassifier(
-    _RoutingNotSupportedMixin, ClassifierMixin, BaseWeightBoosting
-):
+class AdaBoostClassifier(_RoutingNotSupportedMixin, ClassifierMixin, BaseWeightBoosting):
     """An AdaBoost classifier.
 
     An AdaBoost [1]_ classifier is a meta-estimator that begins by fitting a
@@ -518,9 +512,7 @@ class AdaBoostClassifier(
             )
 
         if not has_fit_parameter(self.estimator_, "sample_weight"):
-            raise ValueError(
-                f"{self.estimator.__class__.__name__} doesn't support sample_weight."
-            )
+            raise ValueError(f"{self.estimator.__class__.__name__} doesn't support sample_weight.")
 
     def _boost(self, iboost, X, y, sample_weight, random_state):
         """Implement a single boost.
@@ -602,8 +594,7 @@ class AdaBoostClassifier(
         if not iboost == self.n_estimators - 1:
             # Only boost positive weights
             sample_weight = np.exp(
-                np.log(sample_weight)
-                + estimator_weight * incorrect * (sample_weight > 0)
+                np.log(sample_weight) + estimator_weight * incorrect * (sample_weight > 0)
             )
 
         return sample_weight, estimator_weight, estimator_error

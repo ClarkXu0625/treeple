@@ -46,9 +46,7 @@ def _parallel_compute_tree_depths(
 
     with lock:
         depths += (
-            tree_decision_path_lengths[leaves_index]
-            + tree_avg_path_lengths[leaves_index]
-            - 1.0
+            tree_decision_path_lengths[leaves_index] + tree_avg_path_lengths[leaves_index] - 1.0
         )
 
 
@@ -316,9 +314,7 @@ class IsolationForest(OutlierMixin, BaseBagging):
         self : object
             Fitted estimator.
         """
-        X = validate_data(
-            self, X, accept_sparse=["csc"], dtype=tree_dtype, ensure_all_finite=False
-        )
+        X = validate_data(self, X, accept_sparse=["csc"], dtype=tree_dtype, ensure_all_finite=False)
         if issparse(X):
             # Pre-sort indices to avoid that each individual tree of the
             # ensemble sorts the indices.
@@ -338,8 +334,7 @@ class IsolationForest(OutlierMixin, BaseBagging):
                 warn(
                     "max_samples (%s) is greater than the "
                     "total number of samples (%s). max_samples "
-                    "will be set to n_samples for estimation."
-                    % (self.max_samples, n_samples)
+                    "will be set to n_samples for estimation." % (self.max_samples, n_samples)
                 )
                 max_samples = n_samples
             else:
@@ -560,9 +555,7 @@ class IsolationForest(OutlierMixin, BaseBagging):
         #    the data needed to compute the scores -- the returned scores
         #    themselves are 1D.
 
-        chunk_n_rows = get_chunk_n_rows(
-            row_bytes=16 * self._max_features, max_n_rows=n_samples
-        )
+        chunk_n_rows = get_chunk_n_rows(row_bytes=16 * self._max_features, max_n_rows=n_samples)
         slices = gen_batches(n_samples, chunk_n_rows)
 
         scores = np.zeros(n_samples, order="f")
@@ -625,9 +618,7 @@ class IsolationForest(OutlierMixin, BaseBagging):
         scores = 2 ** (
             # For a single training sample, denominator and depth are 0.
             # Therefore, we set the score manually to 1.
-            -np.divide(
-                depths, denominator, out=np.ones_like(depths), where=denominator != 0
-            )
+            -np.divide(depths, denominator, out=np.ones_like(depths), where=denominator != 0)
         )
         return scores
 

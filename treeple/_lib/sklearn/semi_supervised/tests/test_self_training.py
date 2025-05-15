@@ -20,18 +20,14 @@ from sklearn.tree import DecisionTreeClassifier
 
 # load the iris dataset and randomly permute it
 iris = load_iris()
-X_train, X_test, y_train, y_test = train_test_split(
-    iris.data, iris.target, random_state=0
-)
+X_train, X_test, y_train, y_test = train_test_split(iris.data, iris.target, random_state=0)
 
 n_labeled_samples = 50
 
 y_train_missing_labels = y_train.copy()
 y_train_missing_labels[n_labeled_samples:] = -1
 mapping = {0: "A", 1: "B", 2: "C", -1: "-1"}
-y_train_missing_strings = np.vectorize(mapping.get)(y_train_missing_labels).astype(
-    object
-)
+y_train_missing_strings = np.vectorize(mapping.get)(y_train_missing_labels).astype(object)
 y_train_missing_strings[y_train_missing_labels == -1] = -1
 
 
@@ -377,15 +373,11 @@ def test_routing_passed_metadata_not_supported(method):
     """Test that the right error message is raised when metadata is passed while
     not supported when `enable_metadata_routing=False`."""
     est = SelfTrainingClassifier(estimator=SimpleEstimator())
-    with pytest.raises(
-        ValueError, match="is only supported if enable_metadata_routing=True"
-    ):
+    with pytest.raises(ValueError, match="is only supported if enable_metadata_routing=True"):
         est.fit([[1], [1]], [1, 1], sample_weight=[1], prop="a")
 
     est = SelfTrainingClassifier(estimator=SimpleEstimator())
-    with pytest.raises(
-        ValueError, match="is only supported if enable_metadata_routing=True"
-    ):
+    with pytest.raises(ValueError, match="is only supported if enable_metadata_routing=True"):
         # make sure that the estimator thinks it is already fitted
         est.fitted_params_ = True
         getattr(est, method)([[1]], sample_weight=[1], prop="a")

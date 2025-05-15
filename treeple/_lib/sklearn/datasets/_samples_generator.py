@@ -222,9 +222,7 @@ def make_classification(
 
     if weights is not None:
         if len(weights) not in [n_classes, n_classes - 1]:
-            raise ValueError(
-                "Weights specified but incompatible with number of classes."
-            )
+            raise ValueError("Weights specified but incompatible with number of classes.")
         if len(weights) == n_classes - 1:
             if isinstance(weights, list):
                 weights = weights + [1.0 - sum(weights)]
@@ -239,8 +237,7 @@ def make_classification(
 
     # Distribute samples among clusters by weight
     n_samples_per_cluster = [
-        int(n_samples * weights[k % n_classes] / n_clusters_per_class)
-        for k in range(n_clusters)
+        int(n_samples * weights[k % n_classes] / n_clusters_per_class) for k in range(n_clusters)
     ]
 
     for i in range(n_samples - sum(n_samples_per_cluster)):
@@ -251,9 +248,7 @@ def make_classification(
     y = np.zeros(n_samples, dtype=int)
 
     # Build the polytope whose vertices become cluster centroids
-    centroids = _generate_hypercube(n_clusters, n_informative, generator).astype(
-        float, copy=False
-    )
+    centroids = _generate_hypercube(n_clusters, n_informative, generator).astype(float, copy=False)
     centroids *= 2 * class_sep
     centroids -= class_sep
     if not hypercube:
@@ -278,9 +273,7 @@ def make_classification(
     # Create redundant features
     if n_redundant > 0:
         B = 2 * generator.uniform(size=(n_informative, n_redundant)) - 1
-        X[:, n_informative : n_informative + n_redundant] = np.dot(
-            X[:, :n_informative], B
-        )
+        X[:, n_informative : n_informative + n_redundant] = np.dot(X[:, :n_informative], B)
 
     # Repeat some features
     if n_repeated > 0:
@@ -703,9 +696,7 @@ def make_regression(
     # zeros (the other features are not correlated to y and should be ignored
     # by a sparsifying regularizers such as L1 or elastic net)
     ground_truth = np.zeros((n_features, n_targets))
-    ground_truth[:n_informative, :] = 100 * generator.uniform(
-        size=(n_informative, n_targets)
-    )
+    ground_truth[:n_informative, :] = 100 * generator.uniform(size=(n_informative, n_targets))
 
     y = np.dot(X, ground_truth) + bias
 
@@ -741,9 +732,7 @@ def make_regression(
     },
     prefer_skip_nested_validation=True,
 )
-def make_circles(
-    n_samples=100, *, shuffle=True, noise=None, random_state=None, factor=0.8
-):
+def make_circles(n_samples=100, *, shuffle=True, noise=None, random_state=None, factor=0.8):
     """Make a large circle containing a smaller circle in 2d.
 
     A simple toy dataset to visualize clustering and classification
@@ -813,12 +802,8 @@ def make_circles(
     inner_circ_x = np.cos(linspace_in) * factor
     inner_circ_y = np.sin(linspace_in) * factor
 
-    X = np.vstack(
-        [np.append(outer_circ_x, inner_circ_x), np.append(outer_circ_y, inner_circ_y)]
-    ).T
-    y = np.hstack(
-        [np.zeros(n_samples_out, dtype=np.intp), np.ones(n_samples_in, dtype=np.intp)]
-    )
+    X = np.vstack([np.append(outer_circ_x, inner_circ_x), np.append(outer_circ_y, inner_circ_y)]).T
+    y = np.hstack([np.zeros(n_samples_out, dtype=np.intp), np.ones(n_samples_in, dtype=np.intp)])
     if shuffle:
         X, y = util_shuffle(X, y, random_state=generator)
 
@@ -888,9 +873,7 @@ def make_moons(n_samples=100, *, shuffle=True, noise=None, random_state=None):
         try:
             n_samples_out, n_samples_in = n_samples
         except ValueError as e:
-            raise ValueError(
-                "`n_samples` can be either an int or a two-element tuple."
-            ) from e
+            raise ValueError("`n_samples` can be either an int or a two-element tuple.") from e
 
     generator = check_random_state(random_state)
 
@@ -899,12 +882,8 @@ def make_moons(n_samples=100, *, shuffle=True, noise=None, random_state=None):
     inner_circ_x = 1 - np.cos(np.linspace(0, np.pi, n_samples_in))
     inner_circ_y = 1 - np.sin(np.linspace(0, np.pi, n_samples_in)) - 0.5
 
-    X = np.vstack(
-        [np.append(outer_circ_x, inner_circ_x), np.append(outer_circ_y, inner_circ_y)]
-    ).T
-    y = np.hstack(
-        [np.zeros(n_samples_out, dtype=np.intp), np.ones(n_samples_in, dtype=np.intp)]
-    )
+    X = np.vstack([np.append(outer_circ_x, inner_circ_x), np.append(outer_circ_y, inner_circ_y)]).T
+    y = np.hstack([np.zeros(n_samples_out, dtype=np.intp), np.ones(n_samples_in, dtype=np.intp)])
 
     if shuffle:
         X, y = util_shuffle(X, y, random_state=generator)
@@ -1024,9 +1003,7 @@ def make_blobs(
 
         if isinstance(centers, numbers.Integral):
             n_centers = centers
-            centers = generator.uniform(
-                center_box[0], center_box[1], size=(n_centers, n_features)
-            )
+            centers = generator.uniform(center_box[0], center_box[1], size=(n_centers, n_features))
 
         else:
             centers = check_array(centers)
@@ -1037,14 +1014,10 @@ def make_blobs(
         # Set n_centers by looking at [n_samples] arg
         n_centers = len(n_samples)
         if centers is None:
-            centers = generator.uniform(
-                center_box[0], center_box[1], size=(n_centers, n_features)
-            )
+            centers = generator.uniform(center_box[0], center_box[1], size=(n_centers, n_features))
         if not isinstance(centers, Iterable):
             raise ValueError(
-                "Parameter `centers` must be array-like. Got {!r} instead".format(
-                    centers
-                )
+                "Parameter `centers` must be array-like. Got {!r} instead".format(centers)
             )
         if len(centers) != n_centers:
             raise ValueError(
@@ -1081,9 +1054,7 @@ def make_blobs(
     for i, (n, std) in enumerate(zip(n_samples_per_center, cluster_std)):
         start_idx = cum_sum_n_samples[i - 1] if i > 0 else 0
         end_idx = cum_sum_n_samples[i]
-        X[start_idx:end_idx] = generator.normal(
-            loc=centers[i], scale=std, size=(n, n_features)
-        )
+        X[start_idx:end_idx] = generator.normal(loc=centers[i], scale=std, size=(n, n_features))
         y[start_idx:end_idx] = i
 
     if shuffle:
@@ -1792,9 +1763,7 @@ def make_sparse_spd_matrix(
         m=_n_dim,
         n=_n_dim,
         density=1 - alpha,
-        data_rvs=lambda x: random_state.uniform(
-            low=smallest_coef, high=largest_coef, size=x
-        ),
+        data_rvs=lambda x: random_state.uniform(low=smallest_coef, high=largest_coef, size=x),
         random_state=random_state,
     )
     # We need to avoid "coo" format because it does not support slicing
@@ -1882,9 +1851,7 @@ def make_swiss_roll(n_samples=100, *, noise=0.0, random_state=None, hole=False):
         t = 1.5 * np.pi * (1 + 2 * generator.uniform(size=n_samples))
         y = 21 * generator.uniform(size=n_samples)
     else:
-        corners = np.array(
-            [[np.pi * (1.5 + i), j * 7] for i in range(3) for j in range(3)]
-        )
+        corners = np.array([[np.pi * (1.5 + i), j * 7] for i in range(3) for j in range(3)])
         corners = np.delete(corners, 4, axis=0)
         corner_index = generator.choice(8, n_samples)
         parameters = generator.uniform(size=(2, n_samples)) * np.array([[np.pi], [7]])
@@ -2181,12 +2148,8 @@ def make_biclusters(
     row_sizes = generator.multinomial(n_rows, np.repeat(1.0 / n_clusters, n_clusters))
     col_sizes = generator.multinomial(n_cols, np.repeat(1.0 / n_clusters, n_clusters))
 
-    row_labels = np.hstack(
-        [np.repeat(val, rep) for val, rep in zip(range(n_clusters), row_sizes)]
-    )
-    col_labels = np.hstack(
-        [np.repeat(val, rep) for val, rep in zip(range(n_clusters), col_sizes)]
-    )
+    row_labels = np.hstack([np.repeat(val, rep) for val, rep in zip(range(n_clusters), row_sizes)])
+    col_labels = np.hstack([np.repeat(val, rep) for val, rep in zip(range(n_clusters), col_sizes)])
 
     result = np.zeros(shape, dtype=np.float64)
     for i in range(n_clusters):
@@ -2303,12 +2266,8 @@ def make_checkerboard(
 
     # row and column clusters of approximately equal sizes
     n_rows, n_cols = shape
-    row_sizes = generator.multinomial(
-        n_rows, np.repeat(1.0 / n_row_clusters, n_row_clusters)
-    )
-    col_sizes = generator.multinomial(
-        n_cols, np.repeat(1.0 / n_col_clusters, n_col_clusters)
-    )
+    row_sizes = generator.multinomial(n_rows, np.repeat(1.0 / n_row_clusters, n_row_clusters))
+    col_sizes = generator.multinomial(n_cols, np.repeat(1.0 / n_col_clusters, n_col_clusters))
 
     row_labels = np.hstack(
         [np.repeat(val, rep) for val, rep in zip(range(n_row_clusters), row_sizes)]
@@ -2332,18 +2291,10 @@ def make_checkerboard(
         col_labels = col_labels[col_idx]
 
     rows = np.vstack(
-        [
-            row_labels == label
-            for label in range(n_row_clusters)
-            for _ in range(n_col_clusters)
-        ]
+        [row_labels == label for label in range(n_row_clusters) for _ in range(n_col_clusters)]
     )
     cols = np.vstack(
-        [
-            col_labels == label
-            for _ in range(n_row_clusters)
-            for label in range(n_col_clusters)
-        ]
+        [col_labels == label for _ in range(n_row_clusters) for label in range(n_col_clusters)]
     )
 
     return result, rows, cols

@@ -35,12 +35,12 @@ cpdef _sample_without_replacement_check_input(default_int n_population,
                                               default_int n_samples):
     """ Check that input are consistent for sample_without_replacement"""
     if n_population < 0:
-        raise ValueError('n_population should be greater than 0, got %s.'
+        raise ValueError("n_population should be greater than 0, got %s."
                          % n_population)
 
     if n_samples > n_population:
-        raise ValueError('n_population should be greater or equal than '
-                         'n_samples, got n_samples > n_population (%s > %s)'
+        raise ValueError("n_population should be greater or equal than "
+                         "n_samples, got n_samples > n_population (%s > %s)"
                          % (n_samples, n_population))
 
 
@@ -266,7 +266,7 @@ cdef _sample_without_replacement(default_int n_population,
         return _sample_without_replacement_with_pool(n_population, n_samples,
                                                      random_state)
     else:
-        raise ValueError('Expected a method name in %s, got %s. '
+        raise ValueError("Expected a method name in %s, got %s. "
                          % (all_methods, method))
 
 

@@ -61,7 +61,7 @@ cdef void _map_col_to_bins(
         int right
         int middle
 
-    for i in prange(data.shape[0], schedule='static', nogil=True,
+    for i in prange(data.shape[0], schedule="static", nogil=True,
                     num_threads=n_threads):
         if (
             isnan(data[i]) or

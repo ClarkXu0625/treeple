@@ -41,7 +41,7 @@ cdef extern from *:
 
 ################################################################################
 # Internal variables
-LIBSVM_KERNEL_TYPES = ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed']
+LIBSVM_KERNEL_TYPES = ["linear", "poly", "rbf", "sigmoid", "precomputed"]
 
 
 ################################################################################
@@ -51,7 +51,7 @@ def fit(
     const float64_t[:, ::1] X,
     const float64_t[::1] Y,
     int svm_type=0,
-    kernel='rbf',
+    kernel="rbf",
     int degree=3,
     double gamma=0.1,
     double coef0=0.0,
@@ -212,7 +212,7 @@ def fit(
     error_msg = svm_check_parameter(&problem, &param)
     if error_msg:
         # for SVR: epsilon is called p in libsvm
-        error_repl = error_msg.decode('utf-8').replace("p < 0", "epsilon < 0")
+        error_repl = error_msg.decode("utf-8").replace("p < 0", "epsilon < 0")
         raise ValueError(error_repl)
     cdef BlasFunctions blas_functions
     blas_functions.dot = _dot[double]
@@ -351,7 +351,7 @@ def predict(
     const float64_t[::1] probA=np.empty(0),
     const float64_t[::1] probB=np.empty(0),
     int svm_type=0,
-    kernel='rbf',
+    kernel="rbf",
     int degree=3,
     double gamma=0.1,
     double coef0=0.0,
@@ -475,7 +475,7 @@ def predict_proba(
     float64_t[::1] probA=np.empty(0),
     float64_t[::1] probB=np.empty(0),
     int svm_type=0,
-    kernel='rbf',
+    kernel="rbf",
     int degree=3,
     double gamma=0.1,
     double coef0=0.0,
@@ -609,7 +609,7 @@ def decision_function(
     const float64_t[::1] probA=np.empty(0),
     const float64_t[::1] probB=np.empty(0),
     int svm_type=0,
-    kernel='rbf',
+    kernel="rbf",
     int degree=3,
     double gamma=0.1,
     double coef0=0.0,
@@ -740,7 +740,7 @@ def cross_validation(
     const float64_t[::1] Y,
     int n_fold,
     int svm_type=0,
-    kernel='rbf',
+    kernel="rbf",
     int degree=3,
     double gamma=0.1,
     double coef0=0.0,

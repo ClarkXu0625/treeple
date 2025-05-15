@@ -65,9 +65,7 @@ from sklearn.utils.fixes import _IS_WASM
 def test_all_estimator_no_base_class():
     # test that all_estimators doesn't find abstract classes.
     for name, Estimator in all_estimators():
-        msg = (
-            "Base estimators such as {0} should not be included in all_estimators"
-        ).format(name)
+        msg = ("Base estimators such as {0} should not be included in all_estimators").format(name)
         assert not name.lower().startswith("base"), msg
 
 
@@ -114,9 +112,7 @@ def test_get_check_estimator_ids(val, expected):
 @parametrize_with_checks(list(_tested_estimators()))
 def test_estimators(estimator, check, request):
     # Common tests for estimator instances
-    with ignore_warnings(
-        category=(FutureWarning, ConvergenceWarning, UserWarning, LinAlgWarning)
-    ):
+    with ignore_warnings(category=(FutureWarning, ConvergenceWarning, UserWarning, LinAlgWarning)):
         check(estimator)
 
 
@@ -127,16 +123,13 @@ def test_check_estimator_generate_only():
 
 @pytest.mark.xfail(_IS_WASM, reason="importlib not supported for Pyodide packages")
 @pytest.mark.filterwarnings(
-    "ignore:Since version 1.0, it is not needed to import "
-    "enable_hist_gradient_boosting anymore"
+    "ignore:Since version 1.0, it is not needed to import " "enable_hist_gradient_boosting anymore"
 )
 def test_import_all_consistency():
     sklearn_path = [os.path.dirname(sklearn.__file__)]
     # Smoke test to check that any name in a __all__ list is actually defined
     # in the namespace of the module or package.
-    pkgs = pkgutil.walk_packages(
-        path=sklearn_path, prefix="sklearn.", onerror=lambda _: None
-    )
+    pkgs = pkgutil.walk_packages(path=sklearn_path, prefix="sklearn.", onerror=lambda _: None)
     submods = [modname for _, modname, _ in pkgs]
     for modname in submods + ["sklearn"]:
         if ".tests." in modname:
@@ -154,9 +147,7 @@ def test_import_all_consistency():
 def test_root_import_all_completeness():
     sklearn_path = [os.path.dirname(sklearn.__file__)]
     EXCEPTIONS = ("utils", "tests", "base", "conftest")
-    for _, modname, _ in pkgutil.walk_packages(
-        path=sklearn_path, onerror=lambda _: None
-    ):
+    for _, modname, _ in pkgutil.walk_packages(path=sklearn_path, onerror=lambda _: None):
         if "." in modname or modname.startswith("_") or modname in EXCEPTIONS:
             continue
         assert modname in sklearn.__all__
@@ -180,8 +171,7 @@ def test_all_tests_are_importable():
     }
     sklearn_path = [os.path.dirname(sklearn.__file__)]
     lookup = {
-        name: ispkg
-        for _, name, ispkg in pkgutil.walk_packages(sklearn_path, prefix="sklearn.")
+        name: ispkg for _, name, ispkg in pkgutil.walk_packages(sklearn_path, prefix="sklearn.")
     }
     missing_tests = [
         name
@@ -212,9 +202,7 @@ def test_class_support_removed():
         parametrize_with_checks([LogisticRegression])
 
 
-@pytest.mark.parametrize(
-    "estimator", _tested_estimators(), ids=_get_check_estimator_ids
-)
+@pytest.mark.parametrize("estimator", _tested_estimators(), ids=_get_check_estimator_ids)
 def test_valid_tag_types(estimator):
     """Check that estimator tags are valid."""
     from dataclasses import fields
@@ -251,9 +239,7 @@ def _estimators_that_predict_in_fit():
             est = estimator.set_params(early_stopping=True, n_iter_no_change=1)
             if est.__class__.__name__ in {"MLPClassifier", "MLPRegressor"}:
                 # TODO: FIX MLP to not check validation set during MLP
-                yield pytest.param(
-                    est, marks=pytest.mark.xfail(msg="MLP still validates in fit")
-                )
+                yield pytest.param(est, marks=pytest.mark.xfail(msg="MLP still validates in fit"))
             else:
                 yield est
         elif "n_iter_no_change" in est_params:
@@ -272,22 +258,16 @@ column_name_estimators = list(
 )
 
 
-@pytest.mark.parametrize(
-    "estimator", column_name_estimators, ids=_get_check_estimator_ids
-)
+@pytest.mark.parametrize("estimator", column_name_estimators, ids=_get_check_estimator_ids)
 def test_pandas_column_name_consistency(estimator):
     if isinstance(estimator, ColumnTransformer):
         pytest.skip("ColumnTransformer is not tested here")
     tags = get_tags(estimator)
     if "check_dataframe_column_names_consistency" in tags._xfail_checks:
-        pytest.skip(
-            "Estimator does not support check_dataframe_column_names_consistency"
-        )
+        pytest.skip("Estimator does not support check_dataframe_column_names_consistency")
     with ignore_warnings(category=(FutureWarning)):
         with warnings.catch_warnings(record=True) as record:
-            check_dataframe_column_names_consistency(
-                estimator.__class__.__name__, estimator
-            )
+            check_dataframe_column_names_consistency(estimator.__class__.__name__, estimator)
         for warning in record:
             assert "was fitted without feature names" not in str(warning.message)
 
@@ -308,24 +288,16 @@ def _include_in_get_feature_names_out_check(transformer):
 
 
 GET_FEATURES_OUT_ESTIMATORS = [
-    est
-    for est in _tested_estimators("transformer")
-    if _include_in_get_feature_names_out_check(est)
+    est for est in _tested_estimators("transformer") if _include_in_get_feature_names_out_check(est)
 ]
 
 
-@pytest.mark.parametrize(
-    "transformer", GET_FEATURES_OUT_ESTIMATORS, ids=_get_check_estimator_ids
-)
+@pytest.mark.parametrize("transformer", GET_FEATURES_OUT_ESTIMATORS, ids=_get_check_estimator_ids)
 def test_transformers_get_feature_names_out(transformer):
 
     with ignore_warnings(category=(FutureWarning)):
-        check_transformer_get_feature_names_out(
-            transformer.__class__.__name__, transformer
-        )
-        check_transformer_get_feature_names_out_pandas(
-            transformer.__class__.__name__, transformer
-        )
+        check_transformer_get_feature_names_out(transformer.__class__.__name__, transformer)
+        check_transformer_get_feature_names_out_pandas(transformer.__class__.__name__, transformer)
 
 
 ESTIMATORS_WITH_GET_FEATURE_NAMES_OUT = [
@@ -341,9 +313,7 @@ def test_estimators_get_feature_names_out_error(estimator):
     check_get_feature_names_out_error(estimator_name, estimator)
 
 
-@pytest.mark.parametrize(
-    "estimator", list(_tested_estimators()), ids=_get_check_estimator_ids
-)
+@pytest.mark.parametrize("estimator", list(_tested_estimators()), ids=_get_check_estimator_ids)
 def test_check_param_validation(estimator):
     if isinstance(estimator, FeatureUnion):
         pytest.skip("FeatureUnion is not tested here")
@@ -363,23 +333,18 @@ SET_OUTPUT_ESTIMATORS = list(
 )
 
 
-@pytest.mark.parametrize(
-    "estimator", SET_OUTPUT_ESTIMATORS, ids=_get_check_estimator_ids
-)
+@pytest.mark.parametrize("estimator", SET_OUTPUT_ESTIMATORS, ids=_get_check_estimator_ids)
 def test_set_output_transform(estimator):
     name = estimator.__class__.__name__
     if not hasattr(estimator, "set_output"):
         pytest.skip(
-            f"Skipping check_set_output_transform for {name}: Does not support"
-            " set_output API"
+            f"Skipping check_set_output_transform for {name}: Does not support" " set_output API"
         )
     with ignore_warnings(category=(FutureWarning)):
         check_set_output_transform(estimator.__class__.__name__, estimator)
 
 
-@pytest.mark.parametrize(
-    "estimator", SET_OUTPUT_ESTIMATORS, ids=_get_check_estimator_ids
-)
+@pytest.mark.parametrize("estimator", SET_OUTPUT_ESTIMATORS, ids=_get_check_estimator_ids)
 @pytest.mark.parametrize(
     "check_func",
     [
@@ -393,16 +358,13 @@ def test_set_output_transform_configured(estimator, check_func):
     name = estimator.__class__.__name__
     if not hasattr(estimator, "set_output"):
         pytest.skip(
-            f"Skipping {check_func.__name__} for {name}: Does not support"
-            " set_output API yet"
+            f"Skipping {check_func.__name__} for {name}: Does not support" " set_output API yet"
         )
     with ignore_warnings(category=(FutureWarning)):
         check_func(estimator.__class__.__name__, estimator)
 
 
-@pytest.mark.parametrize(
-    "estimator", _tested_estimators(), ids=_get_check_estimator_ids
-)
+@pytest.mark.parametrize("estimator", _tested_estimators(), ids=_get_check_estimator_ids)
 def test_check_inplace_ensure_writeable(estimator):
     name = estimator.__class__.__name__
 

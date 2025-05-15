@@ -351,7 +351,7 @@ cdef class Splitter:
                     offset_in_buffers[thread_idx - 1] + sizes[thread_idx - 1]
 
             # map indices from sample_indices to left/right_indices_buffer
-            for thread_idx in prange(n_threads, schedule='static',
+            for thread_idx in prange(n_threads, schedule="static",
                                      chunksize=1, num_threads=n_threads):
                 left_count = 0
                 right_count = 0
@@ -393,7 +393,7 @@ cdef class Splitter:
             # map indices in left/right_indices_buffer back into
             # sample_indices. This also updates self.partition since
             # sample_indices is a view.
-            for thread_idx in prange(n_threads, schedule='static',
+            for thread_idx in prange(n_threads, schedule="static",
                                      chunksize=1, num_threads=n_threads):
                 memcpy(
                     &sample_indices[left_offset[thread_idx]],
@@ -517,7 +517,7 @@ cdef class Splitter:
 
             # split_info_idx is index of split_infos of size n_allowed_features.
             # features_idx is the index of the feature column in X.
-            for split_info_idx in prange(n_allowed_features, schedule='static',
+            for split_info_idx in prange(n_allowed_features, schedule="static",
                                          num_threads=n_threads):
                 if has_interaction_cst:
                     feature_idx = allowed_features[split_info_idx]

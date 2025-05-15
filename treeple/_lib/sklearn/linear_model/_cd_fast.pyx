@@ -778,7 +778,7 @@ def enet_coordinate_descent_multi_task(
     cdef floating dual_norm_XtA
 
     # initial value of the residuals
-    cdef floating[::1, :] R = np.zeros((n_samples, n_tasks), dtype=dtype, order='F')
+    cdef floating[::1, :] R = np.zeros((n_samples, n_tasks), dtype=dtype, order="F")
 
     cdef floating[::1] norm_cols_X = np.zeros(n_features, dtype=dtype)
     cdef floating[::1] tmp = np.zeros(n_tasks, dtype=dtype)

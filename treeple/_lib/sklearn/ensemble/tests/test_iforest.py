@@ -42,9 +42,7 @@ def test_iforest(global_random_seed):
 
     with ignore_warnings():
         for params in grid:
-            IsolationForest(random_state=global_random_seed, **params).fit(
-                X_train
-            ).predict(X_test)
+            IsolationForest(random_state=global_random_seed, **params).fit(X_train).predict(X_test)
 
 
 @pytest.mark.parametrize("sparse_container", CSC_CONTAINERS + CSR_CONTAINERS)
@@ -227,9 +225,7 @@ def test_score_samples():
         clf2.score_samples([[2.0, 2.0]]),
         clf2.decision_function([[2.0, 2.0]]) + clf2.offset_,
     )
-    assert_array_equal(
-        clf1.score_samples([[2.0, 2.0]]), clf2.score_samples([[2.0, 2.0]])
-    )
+    assert_array_equal(clf1.score_samples([[2.0, 2.0]]), clf2.score_samples([[2.0, 2.0]]))
 
 
 def test_iforest_warm_start():
@@ -239,9 +235,7 @@ def test_iforest_warm_start():
     X = rng.randn(20, 2)
 
     # fit first 10 trees
-    clf = IsolationForest(
-        n_estimators=10, max_samples=20, random_state=rng, warm_start=True
-    )
+    clf = IsolationForest(n_estimators=10, max_samples=20, random_state=rng, warm_start=True)
     clf.fit(X)
     # remember the 1st tree
     tree_1 = clf.estimators_[0]
@@ -355,9 +349,7 @@ def test_iforest_sparse_input_float_contamination(sparse_container):
     X = sparse_container(X)
     X.sort_indices()
     contamination = 0.1
-    iforest = IsolationForest(
-        n_estimators=5, contamination=contamination, random_state=0
-    ).fit(X)
+    iforest = IsolationForest(n_estimators=5, contamination=contamination, random_state=0).fit(X)
 
     X_decision = iforest.decision_function(X)
     assert (X_decision < 0).sum() / X.shape[0] == pytest.approx(contamination)
@@ -371,9 +363,7 @@ def test_iforest_predict_parallel(global_random_seed, contamination, n_jobs):
     X = [[-2, -1], [-1, -1], [-1, -2], [1, 1], [1, 2], [2, 1], [7, 4], [-5, 9]]
 
     # Test IsolationForest
-    clf = IsolationForest(
-        random_state=global_random_seed, contamination=contamination, n_jobs=None
-    )
+    clf = IsolationForest(random_state=global_random_seed, contamination=contamination, n_jobs=None)
     clf.fit(X)
     decision_func = -clf.decision_function(X)
     pred = clf.predict(X)

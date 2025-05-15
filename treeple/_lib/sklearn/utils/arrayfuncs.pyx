@@ -127,7 +127,7 @@ def sum_parallel(const floating [:] array, int n_threads):
         int i = 0
 
     for i in prange(
-        array.shape[0], schedule='static', nogil=True, num_threads=n_threads
+        array.shape[0], schedule="static", nogil=True, num_threads=n_threads
     ):
         out += array[i]
 

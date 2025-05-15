@@ -150,9 +150,7 @@ def test_asarray_with_order(array_api):
         ([[1, 2, 1], [2, 2, 2]], 1, False, [8, 30]),
     ],
 )
-def test_average(
-    array_namespace, device_, dtype_name, weights, axis, normalize, expected
-):
+def test_average(array_namespace, device_, dtype_name, weights, axis, normalize, expected):
     xp = _array_api_for_tests(array_namespace, device_)
     array_in = numpy.asarray([[1, 2, 3], [4, 5, 6]], dtype=dtype_name)
     array_in = xp.asarray(array_in, device=device_)
@@ -333,9 +331,7 @@ def test_nan_reductions(library, X, reduction, expected):
     assert_allclose(result, expected)
 
 
-@pytest.mark.parametrize(
-    "namespace, _device, _dtype", yield_namespace_device_dtype_combinations()
-)
+@pytest.mark.parametrize("namespace, _device, _dtype", yield_namespace_device_dtype_combinations())
 def test_ravel(namespace, _device, _dtype):
     xp = _array_api_for_tests(namespace, _device)
 
@@ -470,9 +466,7 @@ def test_get_namespace_array_api_isdtype():
         assert xp.isdtype(xp.int16, "unknown")
 
 
-@pytest.mark.parametrize(
-    "namespace, _device, _dtype", yield_namespace_device_dtype_combinations()
-)
+@pytest.mark.parametrize("namespace, _device, _dtype", yield_namespace_device_dtype_combinations())
 def test_indexing_dtype(namespace, _device, _dtype):
     xp = _array_api_for_tests(namespace, _device)
 
@@ -482,25 +476,19 @@ def test_indexing_dtype(namespace, _device, _dtype):
         assert indexing_dtype(xp) == xp.int64
 
 
-@pytest.mark.parametrize(
-    "namespace, _device, _dtype", yield_namespace_device_dtype_combinations()
-)
+@pytest.mark.parametrize("namespace, _device, _dtype", yield_namespace_device_dtype_combinations())
 def test_max_precision_float_dtype(namespace, _device, _dtype):
     xp = _array_api_for_tests(namespace, _device)
     expected_dtype = xp.float32 if _device == "mps" else xp.float64
     assert _max_precision_float_dtype(xp, _device) == expected_dtype
 
 
-@pytest.mark.parametrize(
-    "array_namespace, device, _", yield_namespace_device_dtype_combinations()
-)
+@pytest.mark.parametrize("array_namespace, device, _", yield_namespace_device_dtype_combinations())
 @pytest.mark.parametrize("invert", [True, False])
 @pytest.mark.parametrize("assume_unique", [True, False])
 @pytest.mark.parametrize("element_size", [6, 10, 14])
 @pytest.mark.parametrize("int_dtype", ["int16", "int32", "int64", "uint8"])
-def test_isin(
-    array_namespace, device, _, invert, assume_unique, element_size, int_dtype
-):
+def test_isin(array_namespace, device, _, invert, assume_unique, element_size, int_dtype):
     xp = _array_api_for_tests(array_namespace, device)
     r = element_size // 2
     element = 2 * numpy.arange(element_size).reshape((r, 2)).astype(int_dtype)
@@ -569,9 +557,7 @@ def test_count_nonzero(
         sample_weight = numpy.asarray([0.5, 1.5, 0.8, 3.2, 2.4], dtype=dtype_name)
     else:
         sample_weight = None
-    expected = sparse_count_nonzero(
-        csr_container(array), axis=axis, sample_weight=sample_weight
-    )
+    expected = sparse_count_nonzero(csr_container(array), axis=axis, sample_weight=sample_weight)
     array_xp = xp.asarray(array, device=device_)
 
     with config_context(array_api_dispatch=True):

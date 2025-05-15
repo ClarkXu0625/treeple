@@ -179,7 +179,7 @@ def predict_stages(
     cdef Tree tree
 
     if issparse(X):
-        if X.format != 'csr':
+        if X.format != "csr":
             raise ValueError("When X is a sparse matrix, a CSR format is"
                              " expected, got {!r}".format(type(X)))
         _predict_regression_tree_stages_sparse(

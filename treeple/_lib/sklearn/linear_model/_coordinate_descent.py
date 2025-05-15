@@ -575,9 +575,7 @@ def enet_path(
         )
         if Xy is not None:
             # Xy should be a 1d contiguous array or a 2D C ordered array
-            Xy = check_array(
-                Xy, dtype=X.dtype.type, order="C", copy=False, ensure_2d=False
-            )
+            Xy = check_array(Xy, dtype=X.dtype.type, order="C", copy=False, ensure_2d=False)
 
     n_samples, n_features = X.shape
 
@@ -695,8 +693,7 @@ def enet_path(
             )
         else:
             raise ValueError(
-                "Precompute should be one of True, False, 'auto' or array-like. Got %r"
-                % precompute
+                "Precompute should be one of True, False, 'auto' or array-like. Got %r" % precompute
             )
         coef_, dual_gap_, eps_, n_iter_ = model
         coefs[..., i] = coef_
@@ -986,9 +983,7 @@ class ElasticNet(MultiOutputMixin, RegressorMixin, LinearModel):
                 multi_output=True,
                 y_numeric=True,
             )
-            y = check_array(
-                y, order="F", copy=False, dtype=X.dtype.type, ensure_2d=False
-            )
+            y = check_array(y, order="F", copy=False, dtype=X.dtype.type, ensure_2d=False)
 
         n_samples, n_features = X.shape
         alpha = self.alpha
@@ -1592,9 +1587,7 @@ class LinearModelCV(MultiOutputMixin, LinearModel, ABC):
         # lot of duplication of memory
         copy_X = self.copy_X and self.fit_intercept
 
-        check_y_params = dict(
-            copy=False, dtype=[np.float64, np.float32], ensure_2d=False
-        )
+        check_y_params = dict(copy=False, dtype=[np.float64, np.float32], ensure_2d=False)
         if isinstance(X, np.ndarray) or sparse.issparse(X):
             # Keep a reference to X
             reference_to_old_X = X
@@ -1613,9 +1606,7 @@ class LinearModelCV(MultiOutputMixin, LinearModel, ABC):
                 copy=False,
                 accept_large_sparse=False,
             )
-            X, y = validate_data(
-                self, X, y, validate_separately=(check_X_params, check_y_params)
-            )
+            X, y = validate_data(self, X, y, validate_separately=(check_X_params, check_y_params))
             if sparse.issparse(X):
                 if hasattr(reference_to_old_X, "data") and not np.may_share_memory(
                     reference_to_old_X.data, X.data
@@ -1638,9 +1629,7 @@ class LinearModelCV(MultiOutputMixin, LinearModel, ABC):
                 force_writeable=True,
                 copy=copy_X,
             )
-            X, y = validate_data(
-                self, X, y, validate_separately=(check_X_params, check_y_params)
-            )
+            X, y = validate_data(self, X, y, validate_separately=(check_X_params, check_y_params))
             copy_X = False
 
         check_consistent_length(X, y)
@@ -1655,9 +1644,7 @@ class LinearModelCV(MultiOutputMixin, LinearModel, ABC):
             if sparse.issparse(X):
                 raise TypeError("X should be dense but a sparse matrix waspassed")
             elif y.ndim == 1:
-                raise ValueError(
-                    "For mono-task outputs, use %sCV" % self.__class__.__name__[9:]
-                )
+                raise ValueError("For mono-task outputs, use %sCV" % self.__class__.__name__[9:])
 
         if isinstance(sample_weight, numbers.Number):
             sample_weight = None
@@ -1737,8 +1724,7 @@ class LinearModelCV(MultiOutputMixin, LinearModel, ABC):
                 and not has_fit_parameter(self, "sample_weight")
             ):
                 raise ValueError(
-                    "The CV splitter and underlying estimator do not support"
-                    " sample weights."
+                    "The CV splitter and underlying estimator do not support" " sample weights."
                 )
 
             if splitter_supports_sample_weight:
@@ -1746,9 +1732,7 @@ class LinearModelCV(MultiOutputMixin, LinearModel, ABC):
 
             routed_params = process_routing(self, "fit", **params)
 
-            if sample_weight is not None and not has_fit_parameter(
-                self, "sample_weight"
-            ):
+            if sample_weight is not None and not has_fit_parameter(self, "sample_weight"):
                 # MultiTaskElasticNetCV does not (yet) support sample_weight
                 sample_weight = None
         else:
@@ -1808,9 +1792,7 @@ class LinearModelCV(MultiOutputMixin, LinearModel, ABC):
 
         # Refit the model with the parameters selected
         common_params = {
-            name: value
-            for name, value in self.get_params().items()
-            if name in model.get_params()
+            name: value for name, value in self.get_params().items() if name in model.get_params()
         }
         model.set_params(**common_params)
         model.alpha = best_alpha
@@ -2600,9 +2582,7 @@ class MultiTaskElasticNet(Lasso):
             copy=self.copy_X and self.fit_intercept,
         )
         check_y_params = dict(ensure_2d=False, order="F")
-        X, y = validate_data(
-            self, X, y, validate_separately=(check_X_params, check_y_params)
-        )
+        X, y = validate_data(self, X, y, validate_separately=(check_X_params, check_y_params))
         check_consistent_length(X, y)
         y = y.astype(X.dtype)
 
@@ -2621,9 +2601,7 @@ class MultiTaskElasticNet(Lasso):
         )
 
         if not self.warm_start or not hasattr(self, "coef_"):
-            self.coef_ = np.zeros(
-                (n_targets, n_features), dtype=X.dtype.type, order="F"
-            )
+            self.coef_ = np.zeros((n_targets, n_features), dtype=X.dtype.type, order="F")
 
         l1_reg = self.alpha * self.l1_ratio * n_samples
         l2_reg = self.alpha * (1.0 - self.l1_ratio) * n_samples

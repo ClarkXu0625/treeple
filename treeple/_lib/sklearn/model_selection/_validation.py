@@ -344,9 +344,7 @@ def cross_validate(
 
     cv = check_cv(cv, y, classifier=is_classifier(estimator))
 
-    scorers = check_scoring(
-        estimator, scoring=scoring, raise_exc=(error_score == "raise")
-    )
+    scorers = check_scoring(estimator, scoring=scoring, raise_exc=(error_score == "raise"))
 
     if _routing_enabled():
         # For estimators, a MetadataRouter is created in get_metadata_routing
@@ -492,9 +490,7 @@ def _normalize_score_results(scores, scaler_score_key="score"):
 
 
 def _warn_or_raise_about_fit_failures(results, error_score):
-    fit_errors = [
-        result["fit_error"] for result in results if result["fit_error"] is not None
-    ]
+    fit_errors = [result["fit_error"] for result in results if result["fit_error"] is not None]
     if fit_errors:
         num_failed_fits = len(fit_errors)
         num_fits = len(results)
@@ -883,9 +879,7 @@ def _fit_and_score(
         result["fit_error"] = None
 
         fit_time = time.time() - start_time
-        test_scores = _score(
-            estimator, X_test, y_test, scorer, score_params_test, error_score
-        )
+        test_scores = _score(estimator, X_test, y_test, scorer, score_params_test, error_score)
         score_time = time.time() - start_time - fit_time
         if return_train_score:
             train_scores = _score(
@@ -1223,10 +1217,7 @@ def cross_val_predict(
 
     # If classification methods produce multiple columns of output,
     # we need to manually encode classes to ensure consistent column ordering.
-    encode = (
-        method in ["decision_function", "predict_proba", "predict_log_proba"]
-        and y is not None
-    )
+    encode = method in ["decision_function", "predict_proba", "predict_log_proba"] and y is not None
     if encode:
         y = np.asarray(y)
         if y.ndim == 1:
@@ -1330,10 +1321,7 @@ def _fit_and_predict(estimator, X, y, train, test, fit_params, method):
     func = getattr(estimator, method)
     predictions = func(X_test)
 
-    encode = (
-        method in ["decision_function", "predict_proba", "predict_log_proba"]
-        and y is not None
-    )
+    encode = method in ["decision_function", "predict_proba", "predict_log_proba"] and y is not None
 
     if encode:
         if isinstance(predictions, list):
@@ -1400,9 +1388,7 @@ def _enforce_prediction_order(classes, predictions, n_classes, method):
                     "Only {} class/es in training fold, but {} "
                     "in overall dataset. This "
                     "is not supported for decision_function "
-                    "with imbalanced folds. {}".format(
-                        len(classes), n_classes, recommendation
-                    )
+                    "with imbalanced folds. {}".format(len(classes), n_classes, recommendation)
                 )
 
         float_min = np.finfo(predictions.dtype).min
@@ -1719,9 +1705,7 @@ def permutation_test_score(
     return score, permutation_scores, pvalue
 
 
-def _permutation_test_score(
-    estimator, X, y, cv, scorer, split_params, fit_params, score_params
-):
+def _permutation_test_score(estimator, X, y, cv, scorer, split_params, fit_params, score_params):
     """Auxiliary function for permutation_test_score"""
     # Adjust length of sample weights
     fit_params = fit_params if fit_params is not None else {}
@@ -1972,8 +1956,7 @@ def learning_curve(
     """
     if exploit_incremental_learning and not hasattr(estimator, "partial_fit"):
         raise ValueError(
-            "An estimator must support the partial_fit interface "
-            "to exploit incremental learning"
+            "An estimator must support the partial_fit interface " "to exploit incremental learning"
         )
 
     params = _check_params_groups_deprecation(fit_params, params, groups, "1.8")
@@ -2152,15 +2135,10 @@ def _translate_train_sizes(train_sizes, n_max_training_samples):
                 "must be within (0, 1], but is within [%f, %f]."
                 % (n_min_required_samples, n_max_required_samples)
             )
-        train_sizes_abs = (train_sizes_abs * n_max_training_samples).astype(
-            dtype=int, copy=False
-        )
+        train_sizes_abs = (train_sizes_abs * n_max_training_samples).astype(dtype=int, copy=False)
         train_sizes_abs = np.clip(train_sizes_abs, 1, n_max_training_samples)
     else:
-        if (
-            n_min_required_samples <= 0
-            or n_max_required_samples > n_max_training_samples
-        ):
+        if n_min_required_samples <= 0 or n_max_required_samples > n_max_training_samples:
             raise ValueError(
                 "train_sizes has been interpreted as absolute "
                 "numbers of training samples and must be within "

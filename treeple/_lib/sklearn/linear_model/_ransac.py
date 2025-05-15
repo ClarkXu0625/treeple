@@ -369,9 +369,7 @@ class RANSACRegressor(
         _raise_for_params(fit_params, self, "fit")
         check_X_params = dict(accept_sparse="csr", ensure_all_finite=False)
         check_y_params = dict(ensure_2d=False)
-        X, y = validate_data(
-            self, X, y, validate_separately=(check_X_params, check_y_params)
-        )
+        X, y = validate_data(self, X, y, validate_separately=(check_X_params, check_y_params))
         check_consistent_length(X, y)
 
         if self.estimator is not None:
@@ -406,16 +404,12 @@ class RANSACRegressor(
             if y.ndim == 1:
                 loss_function = lambda y_true, y_pred: np.abs(y_true - y_pred)
             else:
-                loss_function = lambda y_true, y_pred: np.sum(
-                    np.abs(y_true - y_pred), axis=1
-                )
+                loss_function = lambda y_true, y_pred: np.sum(np.abs(y_true - y_pred), axis=1)
         elif self.loss == "squared_error":
             if y.ndim == 1:
                 loss_function = lambda y_true, y_pred: (y_true - y_pred) ** 2
             else:
-                loss_function = lambda y_true, y_pred: np.sum(
-                    (y_true - y_pred) ** 2, axis=1
-                )
+                loss_function = lambda y_true, y_pred: np.sum((y_true - y_pred) ** 2, axis=1)
 
         elif callable(self.loss):
             loss_function = self.loss
@@ -468,9 +462,7 @@ class RANSACRegressor(
             self.n_trials_ += 1
 
             if (
-                self.n_skips_no_inliers_
-                + self.n_skips_invalid_data_
-                + self.n_skips_invalid_model_
+                self.n_skips_no_inliers_ + self.n_skips_invalid_data_ + self.n_skips_invalid_model_
             ) > self.max_skips:
                 break
 
@@ -482,9 +474,7 @@ class RANSACRegressor(
             y_subset = y[subset_idxs]
 
             # check if random sample set is valid
-            if self.is_data_valid is not None and not self.is_data_valid(
-                X_subset, y_subset
-            ):
+            if self.is_data_valid is not None and not self.is_data_valid(X_subset, y_subset):
                 self.n_skips_invalid_data_ += 1
                 continue
 
@@ -548,9 +538,7 @@ class RANSACRegressor(
 
             max_trials = min(
                 max_trials,
-                _dynamic_max_trials(
-                    n_inliers_best, n_samples, min_samples, self.stop_probability
-                ),
+                _dynamic_max_trials(n_inliers_best, n_samples, min_samples, self.stop_probability),
             )
 
             # break if sufficient number of inliers or score is reached
@@ -560,9 +548,7 @@ class RANSACRegressor(
         # if none of the iterations met the required criteria
         if inlier_mask_best is None:
             if (
-                self.n_skips_no_inliers_
-                + self.n_skips_invalid_data_
-                + self.n_skips_invalid_model_
+                self.n_skips_no_inliers_ + self.n_skips_invalid_data_ + self.n_skips_invalid_model_
             ) > self.max_skips:
                 raise ValueError(
                     "RANSAC skipped more iterations than `max_skips` without"
@@ -580,9 +566,7 @@ class RANSACRegressor(
                 )
         else:
             if (
-                self.n_skips_no_inliers_
-                + self.n_skips_invalid_data_
-                + self.n_skips_invalid_model_
+                self.n_skips_no_inliers_ + self.n_skips_invalid_data_ + self.n_skips_invalid_model_
             ) > self.max_skips:
                 warnings.warn(
                     (
@@ -643,9 +627,7 @@ class RANSACRegressor(
         _raise_for_params(params, self, "predict")
 
         if _routing_enabled():
-            predict_params = process_routing(self, "predict", **params).estimator[
-                "predict"
-            ]
+            predict_params = process_routing(self, "predict", **params).estimator["predict"]
         else:
             predict_params = {}
 
