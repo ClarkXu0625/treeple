@@ -3,6 +3,7 @@
 # cython: boundscheck=False
 # cython: wraparound=False
 # cython: initializedcheck=False
+# cython: profile=True
 
 import numpy as np
 
@@ -12,6 +13,7 @@ from libcpp.vector cimport vector
 from .._lib.sklearn.tree._criterion cimport Criterion
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 from ._utils cimport fisher_yates_shuffle, floyd_sample_indices
+
 
 
 cdef float64_t INFINITY = np.inf
@@ -238,6 +240,7 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         cdef intp_t[::1] indices_to_sample = self.indices_to_sample
         cdef intp_t grid_size = self.max_features * self.n_features
 
+
         # draw n_non_zeros random indices from the mTry x n_features set of indices
         floyd_sample_indices(indices_to_sample, n_non_zeros, grid_size, random_state)
 
@@ -246,6 +249,7 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         for i in range(0, n_non_zeros):
             # get the next index from the shuffled index array
             rand_vec_index = indices_to_sample[i]
+            #rand_vec_index = sampled_indices[i] # clark: new
 
             # get the projection index (i.e. row of the projection matrix) and
             # feature index (i.e. column of the projection matrix)

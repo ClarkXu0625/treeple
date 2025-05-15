@@ -35,6 +35,10 @@ from .unsupervised._unsup_tree import (
     UnsupervisedDepthFirstTreeBuilder,
     UnsupervisedTree,
 )
+########################################
+# Clark:
+import time
+########################################
 
 DTYPE = _sklearn_tree.DTYPE
 DOUBLE = _sklearn_tree.DOUBLE
@@ -932,6 +936,10 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
         random_state : int, RandomState instance or None, default=None
             Controls the randomness of the estimator.
         """
+        ########################################
+        # Clark:
+        start=time.perf_counter()
+        ########################################
         monotonic_cst = None
         self.monotonic_cst_ = monotonic_cst
         _, n_features = X.shape
@@ -977,6 +985,7 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
 
         self.tree_ = ObliqueTree(self.n_features_in_, self.n_classes_, self.n_outputs_)
 
+
         # Use BestFirst if max_leaf_nodes given; use DepthFirst otherwise
         if max_leaf_nodes < 0:
             builder = DepthFirstTreeBuilder(
@@ -998,7 +1007,7 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
                 self.min_impurity_decrease,
             )
 
-        builder.build(self.tree_, X, y, sample_weight, None)
+        builder.build(self.tree_, X, y, sample_weight, None)    # Clark: main loop
 
         if self.n_outputs_ == 1:
             self.n_classes_ = self.n_classes_[0]
