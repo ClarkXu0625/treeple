@@ -1,8 +1,8 @@
 Profile using AMD uProf: 
 
-/opt/AMDuProf_5.0-1479/bin/AMDuProfCLI collect
---output-dir ./profile_result
-python3 treeple/stats/tests/test_neofit.py
+/opt/AMDuProf_5.0-1479/bin/AMDuProfCLI collect \
+  --output-dir ./profile_result \
+  -- $(which python3) treeple/stats/tests/test_neofit.py
 
 
 installation procedure: 
