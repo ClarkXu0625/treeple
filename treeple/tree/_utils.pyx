@@ -47,27 +47,6 @@ cdef inline void fisher_yates_shuffle(
             indices_to_sample[i], indices_to_sample[j]
 '''
 
-
-cdef void floyd_sample_indices(
-    intp_t[::1] out,
-    intp_t k,
-    intp_t n,
-    uint32_t* random_state
-) noexcept nogil:
-    cdef unordered_set[intp_t] seen
-    cdef intp_t i, r, count = 0
-
-    for i in range(n - k, n):
-        r = rand_int(0, i + 1, random_state)
-        if seen.find(r) != seen.end():
-            seen.insert(r)
-            out[count] = r
-        else:
-            seen.insert(i)
-            out[count] = i
-        count += 1
-
-
 cdef void floyd_sample_indices(
     intp_t[::1] out,
     intp_t k,
