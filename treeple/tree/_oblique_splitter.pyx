@@ -248,7 +248,6 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
         for i in range(0, n_non_zeros):
             # get the next index from the shuffled index array
             rand_vec_index = indices_to_sample[i]
-            #rand_vec_index = sampled_indices[i] # clark: new
 
             # get the projection index (i.e. row of the projection matrix) and
             # feature index (i.e. column of the projection matrix)
