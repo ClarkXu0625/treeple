@@ -12,7 +12,7 @@ from libcpp.vector cimport vector
 
 from .._lib.sklearn.tree._criterion cimport Criterion
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
-from ._utils cimport fisher_yates_shuffle, floyd_sample_indices
+from ._utils cimport floyd_sample_indices
 
 
 
