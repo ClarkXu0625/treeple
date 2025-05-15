@@ -4,6 +4,7 @@ python_sources = [
   'utils.py',
   'permuteforest.py',
   'baseline.py',
+  'neofit.py',
 ]
 
 py.install_sources(
