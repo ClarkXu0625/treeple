@@ -11,6 +11,8 @@ cimport numpy as cnp
 
 cnp.import_array()
 
+from libcpp.unordered_set cimport unordered_set
+
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 from libcpp.unordered_set cimport unordered_set
 from libc.stdint cimport uint32_t
@@ -52,6 +54,40 @@ cdef void floyd_sample_indices(
     intp_t n,
     uint32_t* random_state
 ) noexcept nogil:
+    cdef unordered_set[intp_t] seen
+    cdef intp_t i, r, count = 0
+
+    for i in range(n - k, n):
+        r = rand_int(0, i + 1, random_state)
+        if seen.find(r) != seen.end():
+            seen.insert(r)
+            out[count] = r
+        else:
+            seen.insert(i)
+            out[count] = i
+        count += 1
+
+
+cdef void floyd_sample_indices(
+    intp_t[::1] out,
+    intp_t k,
+    intp_t n,
+    uint32_t* random_state
+) noexcept nogil:
+    '''
+    Rober Floyd's algorithm for sampling without replacement
+
+    Parameters
+    ----------
+    out : intp_t[::1]
+        Output memoryview where the sampled integers are stored.
+    k : intp_t
+        Number of samples to draw.
+    n : intp_t
+        Size of the domain to sample from
+    random_state : uint32_t*
+        The random state.
+    '''
     cdef unordered_set[intp_t] seen
     cdef intp_t i, r, count = 0
 
