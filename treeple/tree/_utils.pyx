@@ -16,7 +16,7 @@ from libcpp.unordered_set cimport unordered_set
 
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
 
-'''
+
 cdef inline void fisher_yates_shuffle(
     vector_or_memview indices_to_sample,
     intp_t grid_size,
@@ -44,7 +44,7 @@ cdef inline void fisher_yates_shuffle(
         j = rand_int(i, grid_size, random_state)    # clark: replace with numpy sampling, say numpy.random.randint
         indices_to_sample[j], indices_to_sample[i] = \
             indices_to_sample[i], indices_to_sample[j]
-'''
+
 
 cdef void floyd_sample_indices(
     intp_t[::1] out,
