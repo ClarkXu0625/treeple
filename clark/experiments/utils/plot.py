@@ -92,7 +92,8 @@ def plot_single_heatmap(
     title="Training Time Heatmap", 
     xlabel="Number of Features", 
     ylabel="Number of Projections", 
-    scale="log"
+    scale="log",
+    colorbar_label="Training Time (seconds)"
 ):
     """
     Plot a single heatmap for training time.
@@ -134,6 +135,6 @@ def plot_single_heatmap(
 
     # Add colorbar
     cbar = fig.colorbar(cax, ax=ax, orientation='vertical', fraction=0.045, pad=0.04)
-    cbar.set_label('Training Time (seconds)')
+    cbar.set_label(colorbar_label)
 
     plt.show()
