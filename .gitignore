@@ -16,6 +16,7 @@ treeple/_lib/sklearn
 
 *.png
 _data
+data/
 
 # Sphinx documentation
 doc/_build/
