@@ -1,0 +1,160 @@
+
+"AMD uProf (Version:5.0.1479.0)"
+PERFORMANCE ANALYSIS REPORT
+
+EXECUTION
+Target Path:,"python3"
+Command Line Arguments:,"clark/test_profile.py "
+Working Directory:,"/home/clark/Documents/GitHub/treeple"
+Environment Variables:
+CPU Details:,"Family(0x1a), Model(0x44), Number of Cores(16)"
+Operating System:,"Linux Ubuntu 24.04.2 LTS-64 Kernel:6.11.0-25-generic"
+Collect Command:,"./AMDuProfCLI collect --output-dir ./clark/experiments/result/uProf_reports python3 clark/test_profile.py"
+Report Command:,"./AMDuProfCLI report -i ./ --category cpu --detail --report-output ./function_report.csv"
+
+PROFILE DETAILS
+Profile Session Type:,"Time-based Sampling"
+Profile Scope:,"Single Application"
+CPU Mask:,"0-15"
+CPU Affinity Mask:,"0-15"
+Profile Start Time:,"Mon May 12 20:12:47 2025"
+Profile End Time:,"Mon May 12 20:13:06 2025"
+Profile Duration:,"18.979 seconds"
+Data Folder:,"/home/clark/Documents/GitHub/treeple/clark/experiments/result/uProf_reports/floyd_result/nj4_fc2_ne100"
+Virtual Machine:,"No"
+Call Stack Sampling:,"False"
+Selected View:,"Time based hotspots"
+
+MONITORED EVENTS
+TBP Events:,Name,Interval,Description
+,"CPU_TIME","1.000 milliseconds","CPU Time is the time in which the CPU core is executing the code."
+
+
+APPLICATION PERFORMANCE SNAPSHOT
+Number Of Threads,"38"
+
+
+"10 HOTTEST FUNCTIONS (Sort Event - CPU_TIME)"
+FUNCTION,"CPU_TIME" (seconds),Module
+"__pyx_f_7treeple_4tree_17_sklearn_splitter_introsort(float*, long*, long, int)",26.7990,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_sklearn_splitter.cpython-310-x86_64-linux-gnu.so"
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_23ClassificationCriterion_update(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_ClassificationCriterion*, long)",20.7500,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so"
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_7Entropy_children_impurity(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_Entropy*, double*, double*)",5.7010,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so"
+"__ieee754_log_fma",4.3830,"/usr/lib/x86_64-linux-gnu/libm.so.6"
+"__pyx_f_7treeple_4tree_17_oblique_splitter_19BaseObliqueSplitter_compute_features_over_samples(__pyx_obj_7treeple_4tree_17_oblique_splitter_BaseObliqueSplitter*, long, long, __Pyx_memviewslice, __Pyx_memviewslice, std::vector<float, std::allocator<float> >*, std::vector<long, std::allocator<long> >*)",3.9290,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_oblique_splitter.cpython-310-x86_64-linux-gnu.so"
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_13BaseCriterion_proxy_impurity_improvement(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_BaseCriterion*)",2.3510,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so"
+"blas_thread_server",1.8370,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/numpy.libs/libscipy_openblas64_-6bb31eeb.so"
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_6_utils_log(double)",1.7330,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_utils.cpython-310-x86_64-linux-gnu.so"
+"log@GLIBC_2.2.5",1.3530,"/usr/lib/x86_64-linux-gnu/libm.so.6"
+"__pyx_f_7treeple_4tree_17_oblique_splitter_19BestObliqueSplitter_node_split(__pyx_obj_7treeple_4tree_17_oblique_splitter_BestObliqueSplitter*, __pyx_t_7treeple_4_lib_7sklearn_4tree_5_tree_ParentInfo*, __pyx_t_7treeple_4_lib_7sklearn_4tree_9_splitter_SplitRecord*)",1.2400,"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_oblique_splitter.cpython-310-x86_64-linux-gnu.so"
+
+"10 HOTTEST PROCESSES (Sort Event - CPU_TIME)"
+PROCESS,"CPU_TIME" (seconds)
+"python3 (PID:786377)",73.4930
+
+"10 HOTTEST MODULES (Sort Event - CPU_TIME)"
+MODULE,"CPU_TIME" (seconds)
+"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so",28.8370
+"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_sklearn_splitter.cpython-310-x86_64-linux-gnu.so",26.8070
+"/usr/lib/x86_64-linux-gnu/libm.so.6",5.7360
+"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_oblique_splitter.cpython-310-x86_64-linux-gnu.so",5.3020
+"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/numpy.libs/libscipy_openblas64_-6bb31eeb.so",1.8520
+"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_utils.cpython-310-x86_64-linux-gnu.so",1.8040
+"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/scipy.libs/libscipy_openblas-68440149.so",0.8480
+"/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_splitter.cpython-310-x86_64-linux-gnu.so",0.8230
+"/usr/lib/x86_64-linux-gnu/libc.so.6",0.6070
+"/home/clark/anaconda3/envs/treeple1/bin/python3.10",0.4290
+
+"10 HOTTEST THREADS (Sort Event - CPU_TIME)"
+THREAD,THREAD ID,"CPU_TIME" (seconds)
+"Thread-786414 (PID:786377)","786414",17.8790
+"Thread-786412 (PID:786377)","786412",17.6030
+"Thread-786413 (PID:786377)","786413",17.4950
+"Thread-786411 (PID:786377)","786411",17.3780
+"python3 (PID:786377)","786377",0.4420
+"Thread-786382 (PID:786377)","786382",0.1250
+"Thread-786383 (PID:786377)","786383",0.1250
+"Thread-786384 (PID:786377)","786384",0.1250
+"Thread-786381 (PID:786377)","786381",0.1230
+"Thread-786385 (PID:786377)","786385",0.1230
+
+"ALL PROCESSES (Sort Event - CPU_TIME)"
+PROCESS,"CPU_TIME" (seconds)
+"python3 (PID:786377)",73.4930
+
+
+PROFILE REPORT FOR PROCESS - python3 (PID:786377)
+PROCESS,"CPU_TIME" (seconds)
+"python3 (PID:786377)",73.4930
+
+THREAD SUMMARY
+THREAD,THREAD ID,"CPU_TIME" (seconds)
+"Thread-786414 (PID:786377)","786414",17.8790
+"Thread-786412 (PID:786377)","786412",17.6030
+"Thread-786413 (PID:786377)","786413",17.4950
+"Thread-786411 (PID:786377)","786411",17.3780
+"python3 (PID:786377)","786377",0.4420
+"Thread-786382 (PID:786377)","786382",0.1250
+"Thread-786383 (PID:786377)","786383",0.1250
+"Thread-786384 (PID:786377)","786384",0.1250
+"Thread-786381 (PID:786377)","786381",0.1230
+"Thread-786385 (PID:786377)","786385",0.1230
+
+
+MODULE SUMMARY
+MODULE,"CPU_TIME" (seconds)
+/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so,28.8370
+/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_sklearn_splitter.cpython-310-x86_64-linux-gnu.so,26.8070
+/usr/lib/x86_64-linux-gnu/libm.so.6,5.7360
+/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_oblique_splitter.cpython-310-x86_64-linux-gnu.so,5.3020
+/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/numpy.libs/libscipy_openblas64_-6bb31eeb.so,1.8520
+/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_utils.cpython-310-x86_64-linux-gnu.so,1.8040
+/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/scipy.libs/libscipy_openblas-68440149.so,0.8480
+/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_splitter.cpython-310-x86_64-linux-gnu.so,0.8230
+/usr/lib/x86_64-linux-gnu/libc.so.6,0.6070
+/home/clark/anaconda3/envs/treeple1/bin/python3.10,0.4290
+
+
+FUNCTION SUMMARY
+FUNCTION,"CPU_TIME" (seconds),MODULE
+"__pyx_f_7treeple_4tree_17_sklearn_splitter_introsort(float*, long*, long, int)",26.7990,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_sklearn_splitter.cpython-310-x86_64-linux-gnu.so
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_23ClassificationCriterion_update(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_ClassificationCriterion*, long)",20.7500,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_7Entropy_children_impurity(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_Entropy*, double*, double*)",5.7010,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so
+"__ieee754_log_fma",4.3830,/usr/lib/x86_64-linux-gnu/libm.so.6
+"__pyx_f_7treeple_4tree_17_oblique_splitter_19BaseObliqueSplitter_compute_features_over_samples(__pyx_obj_7treeple_4tree_17_oblique_splitter_BaseObliqueSplitter*, long, long, __Pyx_memviewslice, __Pyx_memviewslice, std::vector<float, std::allocator<float> >*, std::vector<long, std::allocator<long> >*)",3.9290,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_oblique_splitter.cpython-310-x86_64-linux-gnu.so
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_13BaseCriterion_proxy_impurity_improvement(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_BaseCriterion*)",2.3510,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_criterion.cpython-310-x86_64-linux-gnu.so
+"blas_thread_server",1.8370,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/numpy.libs/libscipy_openblas64_-6bb31eeb.so
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_6_utils_log(double)",1.7330,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/_lib/sklearn/tree/_utils.cpython-310-x86_64-linux-gnu.so
+"log@GLIBC_2.2.5",1.3530,/usr/lib/x86_64-linux-gnu/libm.so.6
+"__pyx_f_7treeple_4tree_17_oblique_splitter_19BestObliqueSplitter_node_split(__pyx_obj_7treeple_4tree_17_oblique_splitter_BestObliqueSplitter*, __pyx_t_7treeple_4_lib_7sklearn_4tree_5_tree_ParentInfo*, __pyx_t_7treeple_4_lib_7sklearn_4tree_9_splitter_SplitRecord*)",1.2400,/home/clark/anaconda3/envs/treeple1/lib/python3.10/site-packages/treeple/tree/_oblique_splitter.cpython-310-x86_64-linux-gnu.so
+
+Function Detail Data
+Function,"CPU_TIME" (seconds)
+"__pyx_f_7treeple_4tree_17_sklearn_splitter_introsort(float*, long*, long, int)" (DEBUG INFO NOT FOUND),26.7990
+
+Function,"CPU_TIME" (seconds)
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_23ClassificationCriterion_update(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_ClassificationCriterion*, long)" (DEBUG INFO NOT FOUND),20.7500
+
+Function,"CPU_TIME" (seconds)
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_7Entropy_children_impurity(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_Entropy*, double*, double*)" (DEBUG INFO NOT FOUND),5.7010
+
+Function,"CPU_TIME" (seconds)
+"__ieee754_log_fma" (SYSTEM MODULE FUNCTION),4.3830
+
+Function,"CPU_TIME" (seconds)
+"__pyx_f_7treeple_4tree_17_oblique_splitter_19BaseObliqueSplitter_compute_features_over_samples(__pyx_obj_7treeple_4tree_17_oblique_splitter_BaseObliqueSplitter*, long, long, __Pyx_memviewslice, __Pyx_memviewslice, std::vector<float, std::allocator<float> >*, std::vector<long, std::allocator<long> >*)" (DEBUG INFO NOT FOUND),3.9290
+
+Function,"CPU_TIME" (seconds)
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_10_criterion_13BaseCriterion_proxy_impurity_improvement(__pyx_obj_7treeple_4_lib_7sklearn_4tree_10_criterion_BaseCriterion*)" (DEBUG INFO NOT FOUND),2.3510
+
+Function,"CPU_TIME" (seconds)
+"blas_thread_server" (DEBUG INFO NOT FOUND),1.8370
+
+Function,"CPU_TIME" (seconds)
+"__pyx_f_7treeple_4_lib_7sklearn_4tree_6_utils_log(double)" (DEBUG INFO NOT FOUND),1.7330
+
+Function,"CPU_TIME" (seconds)
+"log@GLIBC_2.2.5" (SYSTEM MODULE FUNCTION),1.3530
+
+Function,"CPU_TIME" (seconds)
+"__pyx_f_7treeple_4tree_17_oblique_splitter_19BestObliqueSplitter_node_split(__pyx_obj_7treeple_4tree_17_oblique_splitter_BestObliqueSplitter*, __pyx_t_7treeple_4_lib_7sklearn_4tree_5_tree_ParentInfo*, __pyx_t_7treeple_4_lib_7sklearn_4tree_9_splitter_SplitRecord*)" (DEBUG INFO NOT FOUND),1.2400
+
