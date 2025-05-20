@@ -11,7 +11,6 @@ cimport numpy as cnp
 
 cnp.import_array()
 
-from libc.stdint cimport uint32_t
 from libcpp.unordered_set cimport unordered_set
 
 from .._lib.sklearn.tree._utils cimport rand_int, rand_uniform
