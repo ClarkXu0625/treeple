@@ -112,4 +112,4 @@ endforeach
 # # install_subdir('sklearn', install_dir: py.get_install_dir())
 # install_subdir('sklearn', install_dir: join_paths(py.get_install_dir(), 'treeple/_lib'))
 
-# subdir('sklearn')
+subdir('sklearn')

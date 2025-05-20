@@ -270,3 +270,10 @@ cdef inline void sparse_swap(intp_t[::1] index_to_samples, intp_t[::1] samples,
     samples[pos_1], samples[pos_2] = samples[pos_2], samples[pos_1]
     index_to_samples[samples[pos_1]] = pos_1
     index_to_samples[samples[pos_2]] = pos_2
+
+
+# treeple/_lib/sklearn/neighbors/_quad_tree.pxd
+
+cdef class Cell:
+    cdef int level
+    cdef float radius

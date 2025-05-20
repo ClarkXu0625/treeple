@@ -78,13 +78,13 @@ def profiling_fit(n_estimators, n_dim, n_samples, max_features, feature_combinat
 
 
 report_njobs1 = profiling_fit(
-    n_estimators=100,
+    n_estimators=10,
     n_dim=2048,
     n_samples=1600,
     max_features=2048,
     feature_combinations=2.0,
     max_depth=10,
-    n_jobs=8,
+    n_jobs=1,
     max_leaf_nodes=30,
     treeple_params=params_treeple
 )
