@@ -12,7 +12,7 @@ from libcpp.vector cimport vector
 
 from ..._lib.sklearn.tree._criterion cimport Criterion
 from ..._lib.sklearn.tree._utils cimport rand_int
-from .._utils cimport ravel_multi_index_cython, unravel_index_cython
+from .._utils cimport ravel_multi_index_cython, unravel_index_cython, fisher_yates_shuffle, floyd_sample_indices
 
 
 cdef class PatchSplitter(BestObliqueSplitter):
@@ -333,6 +333,7 @@ cdef class BestPatchSplitter(BaseDensePatchSplitter):
         cdef intp_t i
         cdef intp_t num_rows = self.data_dims[0]
         if self._discontiguous:
+            
             # fill with values 0, 1, ..., dimension - 1
             for i in range(0, self.data_dims[0]):
                 self._index_data_buffer[i] = i
@@ -341,10 +342,21 @@ cdef class BestPatchSplitter(BaseDensePatchSplitter):
                 j = rand_int(0, num_rows - i, random_state)
                 self._index_data_buffer[i], self._index_data_buffer[j] = \
                     self._index_data_buffer[j], self._index_data_buffer[i]
+            
+            # for i in range(0, num_rows):
+            #     self._index_data_buffer[i] = i            
+            #  fisher_yates_shuffle(self._index_data_buffer, num_rows, random_state)
+
             # now select the first `patch_dims[0]` indices
             for i in range(num_rows):
                 self._index_patch_buffer[i] = self._index_data_buffer[i]
-
+            
+            #floyd_sample_indices(
+            #    self._index_patch_buffer,
+            #    patch_dims[0],
+            #    self.data_dims[0],
+            #    random_state
+            #)
         for patch_idx in range(patch_size):
             # keep track of which dimensions of the patch we have iterated over
             vectorized_patch_offset = 1
