@@ -76,16 +76,33 @@ def profiling_fit(n_estimators, n_dim, n_samples, max_features, feature_combinat
 
     return s.getvalue()
 
+import sys
+import time
+print("=== STARTING TREEPLE TEST ===", file=sys.stderr)
+print("Python executable:", sys.executable, file=sys.stderr)
 
-report_njobs1 = profiling_fit(
-    n_estimators=100,
-    n_dim=2048,
-    n_samples=1600,
-    max_features=2048,
-    feature_combinations=2.0,
-    max_depth=10,
-    n_jobs=8,
-    max_leaf_nodes=30,
-    treeple_params=params_treeple
-)
-print(report_njobs1)
+# Optional: force a long run
+print("Sleeping 1s...", file=sys.stderr)
+time.sleep(5)
+start_time = time.time()
+
+
+if __name__=="__main__":
+    print("=== RUNNING __main__ ===", file=sys.stderr)
+    #time.sleep(1)
+    report_njobs1 = profiling_fit(
+        n_estimators=100,
+        n_dim=2048,
+        n_samples=1600,
+        max_features=2048,
+        feature_combinations=2.0,
+        max_depth=10,
+        n_jobs=1,
+        max_leaf_nodes=30,
+        treeple_params=params_treeple
+    )
+
+    print(report_njobs1[0:2000])
+
+    time_taken = time.time()-start_time
+    print(f"time taken to train: {time_taken}")
