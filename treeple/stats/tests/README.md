@@ -32,3 +32,17 @@ To view full name of profiled functions, run the following command line:
       --category cpu \
       --detail \
       --report-output ./function_report.csv
+
+
+Intel vtune Profiler
+
+
+source /opt/intel/oneapi/vtune/latest/env/vars.sh
+
+cd /opt/intel/oneapi/vtune/latest/sepdk/src
+sudo ./insmod-sep -q
+
+sudo apt install linux-headers-$(uname -r)
+
+cd /opt/intel/oneapi/vtune/latest/sepdk/src
+sudo ./build-driver -ni
