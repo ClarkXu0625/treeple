@@ -47,8 +47,10 @@ def time_test(dim_range,sample_range):
     return results_df
 
 
-dim = range(1000,6000,1000)
-sample = range(1000,6000,1000)
+#dim = range(1000,6000,1000)
+dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
+sample = dim
+#sample = range(1000,6000,1000)
 results_time = time_test(dim, sample)
 
 # save results to a csv file
