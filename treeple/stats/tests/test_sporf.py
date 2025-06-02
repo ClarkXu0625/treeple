@@ -78,13 +78,13 @@ def profiling_fit(n_estimators, n_dim, n_samples, max_features, feature_combinat
 
 import sys
 import time
-print("=== STARTING TREEPLE TEST ===", file=sys.stderr)
-print("Python executable:", sys.executable, file=sys.stderr)
+# print("=== STARTING TREEPLE TEST ===", file=sys.stderr)
+# print("Python executable:", sys.executable, file=sys.stderr)
 
-# Optional: force a long run
-print("Sleeping 1s...", file=sys.stderr)
-time.sleep(5)
-start_time = time.time()
+# # Optional: force a long run
+# print("Sleeping 1s...", file=sys.stderr)
+# time.sleep(5)
+# start_time = time.time()
 
 
 if __name__=="__main__":
@@ -97,7 +97,7 @@ if __name__=="__main__":
         max_features=2048,
         feature_combinations=2.0,
         max_depth=10,
-        n_jobs=1,
+        n_jobs=-1,
         max_leaf_nodes=30,
         treeple_params=params_treeple
     )
