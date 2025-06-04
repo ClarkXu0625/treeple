@@ -47,77 +47,79 @@ from sklearn.inspection import permutation_importance
 # plt.ylabel("Importance")
 # plt.title("Importance Features")
 # plt.show()
-
-def time_test(dim_range,sample_range):
+def time_test(dim_range, sample_range):
     time_list_profit = []
     time_list_shap = []
     time_list_lime = []
     time_list_permutation = []
+
     for dim in dim_range:
         for sample in sample_range:
-            X, y = make_trunk_classification(n_samples=sample, n_dim=dim, n_informative=min(dim,600), seed=0)
+            X, y = make_trunk_classification(n_samples=sample, n_dim=dim, n_informative=min(dim, 600), seed=0)
             X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=0)
             X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=0)
-            
-            # profit testing
+
+            # PROFIT
             print(f"profit testing on dim: {dim}, sample: {sample}")
             start_time = time.time()
-            profit = NeuroExplainableOptimalFIT(n_estimators=5000,n_permutations=100000,clf_type="SPORF",alpha=0.05,verbose=True)
+            profit = NeuroExplainableOptimalFIT(n_estimators=5000, n_permutations=100000, clf_type="SPORF", alpha=0.05, verbose=True)
             p_values, imp_features, _ = profit.get_significant_features(X_train, y_train)
+            os.makedirs("./sex_classification/results", exist_ok=True)
             np.save(f"./sex_classification/results/p_values_{sample}_{dim}.npy", p_values)
             end_time = time.time()
             time_list_profit.append(end_time - start_time)
 
-            # save the random forest model
+            # Random Forest
             print(f"train random forest on dim: {dim}, sample: {sample}")
             start_time_rf = time.time()
             rf = RandomForestClassifier(n_estimators=5000, random_state=0)
             rf.fit(X_train, y_train)
+            os.makedirs("./sex_classification/models", exist_ok=True)
             joblib.dump(rf, f"./sex_classification/models/rf_{sample}_{dim}.pkl")
             end_time_rf = time.time()
 
-            # SHAP explain the model
+            # SHAP
             print(f"SHAP explain the model on dim: {dim}, sample: {sample}")
             start_time_shap = time.time()
             explainer = shap.TreeExplainer(rf)
             shap_values = explainer.shap_values(X_val)
+            os.makedirs("./sex_classification/results_SHAP_testing", exist_ok=True)
             np.save(f"./sex_classification/results_SHAP_testing/shap_values_{sample}_{dim}.npy", shap_values)
             end_time_shap = time.time()
-            time_list_shap.append(end_time_shap - start_time_shap+end_time_rf - start_time_rf)
-            print(f"Time taken for shap: {end_time_shap - start_time_shap+end_time_rf - start_time_rf} seconds")
+            time_list_shap.append(end_time_shap - start_time_shap + end_time_rf - start_time_rf)
+            print(f"Time taken for shap: {end_time_shap - start_time_shap + end_time_rf - start_time_rf} seconds")
 
-            # LIME explain the model
+            # LIME
             print(f"LIME explain the model on dim: {dim}, sample: {sample}")
             start_time_lime = time.time()
             explainer = lime.lime_tabular.LimeTabularExplainer(
                 training_data=X_train,
                 mode='classification',
-                feature_names=list(range(dim))  # Convert range to list to ensure compatibility
+                feature_names=list(range(dim))
             )
             lime_exp = explainer.explain_instance(
-                X_val[0].reshape(1, -1).flatten(),  # Use the specific sample from X_val
+                X_val[0].reshape(1, -1).flatten(),
                 rf.predict_proba,
                 num_features=dim
             )
             lime_values = lime_exp.as_list()
             importance_scores = np.array([value for _, value in lime_values])
+            os.makedirs("./sex_classification/results_LIME_testing", exist_ok=True)
             np.save(f"./sex_classification/results_LIME_testing/lime_values_{sample}_{dim}.npy", importance_scores)
             end_time_lime = time.time()
-            time_list_lime.append(end_time_lime - start_time_lime+end_time_rf - start_time_rf)
-            print(f"Time taken for lime: {end_time_lime - start_time_lime+end_time_rf - start_time_rf} seconds")
+            time_list_lime.append(end_time_lime - start_time_lime + end_time_rf - start_time_rf)
+            print(f"Time taken for lime: {end_time_lime - start_time_lime + end_time_rf - start_time_rf} seconds")
 
-            # permutation test using sklearn
+            # Permutation
             print(f"permutation test on dim: {dim}, sample: {sample}")
             start_time_permutation = time.time()
-            imp_features = permutation_importance(rf, X_val, y_val, n_repeats=1, scoring="accuracy",n_jobs=-1,random_state=0)
+            imp_features = permutation_importance(rf, X_val, y_val, n_repeats=1, scoring="accuracy", n_jobs=-1, random_state=0)
+            os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
             np.save(f"./sex_classification/results_permutation_testing/imp_features_{sample}_{dim}.npy", imp_features)
             end_time_permutation = time.time()
-            time_list_permutation.append(end_time_permutation - start_time_permutation+end_time_rf - start_time_rf)
+            time_list_permutation.append(end_time_permutation - start_time_permutation + end_time_rf - start_time_rf)
             print(f"Time taken for permutation: {end_time_permutation - start_time_permutation+end_time_rf - start_time_rf} seconds")
 
-
-            # time_list.append(end_time - start_time)
-            
 
     return time_list_profit, time_list_shap, time_list_lime, time_list_permutation
 
@@ -126,11 +128,10 @@ def time_test(dim_range,sample_range):
 #dim2 = np.array([128, 256, 512, 1024, 2048, 4096])
 dim = [100]
 dim2 = [100]
-os.makedirs("./sex_classification/results", exist_ok=True)  # for p_values_*.npy
-os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)  # for time_list_*.npy
+
 
 time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_test(dim,dim2)
-#os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
+os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
 np.save("./sex_classification/results_permutation_testing/time_list_profit.npy", time_list_profit)
 np.save("./sex_classification/results_permutation_testing/time_list_shap.npy", time_list_shap)
 np.save("./sex_classification/results_permutation_testing/time_list_lime.npy", time_list_lime)
