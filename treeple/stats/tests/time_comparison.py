@@ -1,17 +1,24 @@
 from treeple.datasets import make_trunk_classification
 from sklearn.model_selection import train_test_split
-from ..neofit import NeuroExplainableOptimalFIT
+import tqdm
+import joblib
+import shap
+import lime
+import os
+import sys
+
+# Add the root directory of treeple to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+from treeple.stats.neofit import NeuroExplainableOptimalFIT
+#from ..neofit import NeuroExplainableOptimalFIT
 #from treeple.stats import NeuroExplainableOptimalFIT
 import matplotlib.pyplot as plt
 import numpy as np
 import time
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.inspection import permutation_importance
-import tqdm
-import joblib
-import shap
-import lime
-import os
+
 # n_samples = 1000
 # n_dim = 784
 # X, y = make_trunk_classification(n_samples=n_samples, n_dim=n_dim, n_informative=600, seed=0)
