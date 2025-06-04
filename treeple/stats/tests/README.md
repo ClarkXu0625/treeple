@@ -24,6 +24,10 @@ installation procedure:
     pip install .
 
 
+Other packages to install to run test_neofit
+
+    pip install tqdm statsmodels matplotlib shap lime
+
 
 To view full name of profiled functions, run the following command line:
 
@@ -46,3 +50,18 @@ sudo apt install linux-headers-$(uname -r)
 
 cd /opt/intel/oneapi/vtune/latest/sepdk/src
 sudo ./build-driver -ni
+
+
+AWS env setup
+
+    # Download and install Miniconda
+    wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    bash Miniconda3-latest-Linux-x86_64.sh
+    # follow prompts and restart shell
+    source ~/.bashrc
+
+    conda create -n treeple python=3.10 
+    conda activate treeple
+
+    sudo apt update
+    sudo apt install -y build-essential
