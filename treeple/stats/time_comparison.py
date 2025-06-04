@@ -65,11 +65,11 @@ def time_test(dim_range, sample_range):
             start_time = time.time()
             profit = NeuroExplainableOptimalFIT(n_estimators=5000, n_permutations=100000, clf_type="SPORF", alpha=0.05, verbose=False)
             p_values, imp_features, _ = profit.get_significant_features(X_train, y_train)
-            os.makedirs("./sex_classification/results", exist_ok=True)
-            np.save(f"./sex_classification/results/p_values_{sample}_{dim}.npy", p_values)
             end_time = time.time()
+            os.makedirs("./sex_classification/results", exist_ok=True)
+            np.save(f"./sex_classification/results/p_values_{sample}_{dim}.npy", p_values)            
             time_list_profit.append(end_time - start_time)
-            
+            print(f"Time taken for profit: {end_time - start_time} seconds")
 
             # Random Forest
             print(f"train random forest on dim: {dim}, sample: {sample}")
