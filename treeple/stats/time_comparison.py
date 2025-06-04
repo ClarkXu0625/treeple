@@ -74,8 +74,8 @@ def time_test(dim_range, sample_range):
             start_time_rf = time.time()
             rf = RandomForestClassifier(n_estimators=5000, random_state=0)
             rf.fit(X_train, y_train)
-            os.makedirs("./sex_classification/models", exist_ok=True)
-            joblib.dump(rf, f"./sex_classification/models/rf_{sample}_{dim}.pkl")
+            #os.makedirs("./sex_classification/models", exist_ok=True)
+            #joblib.dump(rf, f"./sex_classification/models/rf_{sample}_{dim}.pkl")
             end_time_rf = time.time()
 
             # SHAP
@@ -132,6 +132,7 @@ dim2 = [100]
 
 time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_test(dim,dim2)
 os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
+
 np.save("./sex_classification/results_permutation_testing/time_list_profit.npy", time_list_profit)
 np.save("./sex_classification/results_permutation_testing/time_list_shap.npy", time_list_shap)
 np.save("./sex_classification/results_permutation_testing/time_list_lime.npy", time_list_lime)
