@@ -128,8 +128,8 @@ def time_test(dim_range, sample_range):
 
 dim1 = np.array([512, 1024, 2048, 4096, 8192])
 dim2 = dim1
-dim1 = [100]
-dim2 = [100]
+# dim1 = [100]
+# dim2 = [100]
 dim_vals = dim1
 sample_vals = dim2
 index = pd.MultiIndex.from_product([dim_vals, sample_vals], names=["dim", "sample"])
