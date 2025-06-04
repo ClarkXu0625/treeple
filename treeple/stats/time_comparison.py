@@ -63,12 +63,13 @@ def time_test(dim_range, sample_range):
             # PROFIT
             print(f"profit testing on dim: {dim}, sample: {sample}")
             start_time = time.time()
-            profit = NeuroExplainableOptimalFIT(n_estimators=5000, n_permutations=100000, clf_type="SPORF", alpha=0.05, verbose=True)
+            profit = NeuroExplainableOptimalFIT(n_estimators=5000, n_permutations=100000, clf_type="SPORF", alpha=0.05, verbose=False)
             p_values, imp_features, _ = profit.get_significant_features(X_train, y_train)
             os.makedirs("./sex_classification/results", exist_ok=True)
             np.save(f"./sex_classification/results/p_values_{sample}_{dim}.npy", p_values)
             end_time = time.time()
             time_list_profit.append(end_time - start_time)
+            
 
             # Random Forest
             print(f"train random forest on dim: {dim}, sample: {sample}")
@@ -111,6 +112,11 @@ def time_test(dim_range, sample_range):
             time_list_lime.append(end_time_lime - start_time_lime + end_time_rf - start_time_rf)
             print(f"Time taken for lime: {end_time_lime - start_time_lime + end_time_rf - start_time_rf} seconds")
 
+            with open("time_log.txt", "a") as log_file:
+                log_file.write(f"Time taken for sample {sample} and dim {dim} \n")
+                log_file.write(f"neofit: {end_time - start_time:.2f} seconds\n")
+                log_file.write(f"shap: {end_time_shap - start_time_shap + end_time_rf - start_time_rf:.2f} seconds\n")
+                log_file.write(f"lime: {end_time_lime - start_time_lime + end_time_rf - start_time_rf:.2f} seconds\n")
             # sklearn permutation
             # print(f"permutation test on dim: {dim}, sample: {sample}")
             # start_time_permutation = time.time()
@@ -126,7 +132,7 @@ def time_test(dim_range, sample_range):
     return time_list_profit, time_list_shap, time_list_lime     #, time_list_permutation
 
 
-dim1 = np.array([512, 1024, 2048, 4096, 8192])
+dim1 = np.array([512, 1024, 2048, 4096])
 dim2 = dim1
 # dim1 = [100]
 # dim2 = [100]
