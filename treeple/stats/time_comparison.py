@@ -7,11 +7,10 @@ import lime
 import os
 import sys
 
-# Add the root directory of treeple to sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+#sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 
-from stats.neofit import NeuroExplainableOptimalFIT
-from datasets.hyppo import make_trunk_classification
+from neofit import NeuroExplainableOptimalFIT
+from treeple.datasets import make_trunk_classification
 #from ..neofit import NeuroExplainableOptimalFIT
 #from treeple.stats import NeuroExplainableOptimalFIT
 import matplotlib.pyplot as plt
