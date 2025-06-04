@@ -8,7 +8,7 @@ import os
 import sys
 
 # Add the root directory of treeple to sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
 
 from treeple.stats.neofit import NeuroExplainableOptimalFIT
 #from ..neofit import NeuroExplainableOptimalFIT
