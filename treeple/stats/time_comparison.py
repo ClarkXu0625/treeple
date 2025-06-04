@@ -52,7 +52,7 @@ def time_test(dim_range, sample_range):
     time_list_profit = []
     time_list_shap = []
     time_list_lime = []
-    time_list_permutation = []
+    #time_list_permutation = []
 
     for dim in dim_range:
         for sample in sample_range:
@@ -111,19 +111,19 @@ def time_test(dim_range, sample_range):
             time_list_lime.append(end_time_lime - start_time_lime + end_time_rf - start_time_rf)
             print(f"Time taken for lime: {end_time_lime - start_time_lime + end_time_rf - start_time_rf} seconds")
 
-            # Permutation
-            print(f"permutation test on dim: {dim}, sample: {sample}")
-            start_time_permutation = time.time()
-            imp_features = permutation_importance(rf, X_val, y_val, n_repeats=1, scoring="accuracy", n_jobs=-1, random_state=0)
-            end_time_permutation = time.time()
-            os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
-            np.save(f"./sex_classification/results_permutation_testing/imp_features_{sample}_{dim}.npy", imp_features)
+            # sklearn permutation
+            # print(f"permutation test on dim: {dim}, sample: {sample}")
+            # start_time_permutation = time.time()
+            # imp_features = permutation_importance(rf, X_val, y_val, n_repeats=1, scoring="accuracy", n_jobs=-1, random_state=0)
+            # end_time_permutation = time.time()
+            # os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
+            # np.save(f"./sex_classification/results_permutation_testing/imp_features_{sample}_{dim}.npy", imp_features)
             
-            time_list_permutation.append(end_time_permutation - start_time_permutation + end_time_rf - start_time_rf)
-            print(f"Time taken for permutation: {end_time_permutation - start_time_permutation+end_time_rf - start_time_rf} seconds")
+            # time_list_permutation.append(end_time_permutation - start_time_permutation + end_time_rf - start_time_rf)
+            # print(f"Time taken for permutation: {end_time_permutation - start_time_permutation+end_time_rf - start_time_rf} seconds")
 
 
-    return time_list_profit, time_list_shap, time_list_lime, time_list_permutation
+    return time_list_profit, time_list_shap, time_list_lime     #, time_list_permutation
 
 
 dim1 = np.array([512, 1024, 2048, 4096, 8192])
@@ -140,7 +140,7 @@ time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_t
 df_profit = pd.DataFrame({"time": time_list_profit}, index=index).unstack(level=-1)
 df_shap = pd.DataFrame({"time": time_list_shap}, index=index).unstack(level=-1)
 df_lime = pd.DataFrame({"time": time_list_lime}, index=index).unstack(level=-1)
-df_permutation = pd.DataFrame({"time": time_list_permutation}, index=index).unstack(level=-1)
+#df_permutation = pd.DataFrame({"time": time_list_permutation}, index=index).unstack(level=-1)
 
 os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
 
@@ -148,4 +148,4 @@ os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
 df_profit.to_csv("./sex_classification/results_permutation_testing/time_list_profit.csv")
 df_shap.to_csv("./sex_classification/results_permutation_testing/time_list_shap.csv")
 df_lime.to_csv("./sex_classification/results_permutation_testing/time_list_lime.csv")
-df_permutation.to_csv("./sex_classification/results_permutation_testing/time_list_permutation.csv")
+#df_permutation.to_csv("./sex_classification/results_permutation_testing/time_list_permutation.csv")
