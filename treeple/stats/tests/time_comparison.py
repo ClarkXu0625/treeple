@@ -11,7 +11,7 @@ import tqdm
 import joblib
 import shap
 import lime
-
+import os
 # n_samples = 1000
 # n_dim = 784
 # X, y = make_trunk_classification(n_samples=n_samples, n_dim=n_dim, n_informative=600, seed=0)
@@ -118,6 +118,7 @@ def time_test(dim_range,sample_range):
 dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
 dim2 = np.array([128, 256, 512, 1024, 2048, 4096])
 time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_test(dim,dim2)
+os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
 np.save("./sex_classification/results_permutation_testing/time_list_profit.npy", time_list_profit)
 np.save("./sex_classification/results_permutation_testing/time_list_shap.npy", time_list_shap)
 np.save("./sex_classification/results_permutation_testing/time_list_lime.npy", time_list_lime)
