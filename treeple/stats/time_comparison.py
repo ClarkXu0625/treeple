@@ -18,6 +18,7 @@ import numpy as np
 import time
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.inspection import permutation_importance
+import pandas as pd
 
 # n_samples = 1000
 # n_dim = 784
@@ -124,17 +125,26 @@ def time_test(dim_range, sample_range):
     return time_list_profit, time_list_shap, time_list_lime, time_list_permutation
 
 
-#dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
+#dim = np.array([128, 256, 512, 1024, 2048, 4096])
 #dim2 = np.array([128, 256, 512, 1024, 2048, 4096])
-dim = [100]
+dim1 = [100]
 dim2 = [100]
+dim_vals = dim1
+sample_vals = dim2
+index = pd.MultiIndex.from_product([dim_vals, sample_vals], names=["dim", "sample"])
 
 
-time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_test(dim,dim2)
+time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_test(dim1,dim2)
+
+df_profit = pd.DataFrame({"time": time_list_profit}, index=index).unstack(level=-1)
+df_shap = pd.DataFrame({"time": time_list_shap}, index=index).unstack(level=-1)
+df_lime = pd.DataFrame({"time": time_list_lime}, index=index).unstack(level=-1)
+df_permutation = pd.DataFrame({"time": time_list_permutation}, index=index).unstack(level=-1)
+
 os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
 
-np.save("./sex_classification/results_permutation_testing/time_list_profit.npy", time_list_profit)
-np.save("./sex_classification/results_permutation_testing/time_list_shap.npy", time_list_shap)
-np.save("./sex_classification/results_permutation_testing/time_list_lime.npy", time_list_lime)
-np.save("./sex_classification/results_permutation_testing/time_list_permutation.npy", time_list_permutation)
-  
+# Save to CSV
+df_profit.to_csv("./sex_classification/results_permutation_testing/time_list_profit.csv")
+df_shap.to_csv("./sex_classification/results_permutation_testing/time_list_shap.csv")
+df_lime.to_csv("./sex_classification/results_permutation_testing/time_list_lime.csv")
+df_permutation.to_csv("./sex_classification/results_permutation_testing/time_list_permutation.csv")
