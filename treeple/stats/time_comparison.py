@@ -84,9 +84,9 @@ def time_test(dim_range, sample_range):
             start_time_shap = time.time()
             explainer = shap.TreeExplainer(rf)
             shap_values = explainer.shap_values(X_val)
+            end_time_shap = time.time()
             os.makedirs("./sex_classification/results_SHAP_testing", exist_ok=True)
             np.save(f"./sex_classification/results_SHAP_testing/shap_values_{sample}_{dim}.npy", shap_values)
-            end_time_shap = time.time()
             time_list_shap.append(end_time_shap - start_time_shap + end_time_rf - start_time_rf)
             print(f"Time taken for shap: {end_time_shap - start_time_shap + end_time_rf - start_time_rf} seconds")
 
@@ -105,9 +105,9 @@ def time_test(dim_range, sample_range):
             )
             lime_values = lime_exp.as_list()
             importance_scores = np.array([value for _, value in lime_values])
-            os.makedirs("./sex_classification/results_LIME_testing", exist_ok=True)
-            np.save(f"./sex_classification/results_LIME_testing/lime_values_{sample}_{dim}.npy", importance_scores)
             end_time_lime = time.time()
+            os.makedirs("./sex_classification/results_LIME_testing", exist_ok=True)
+            np.save(f"./sex_classification/results_LIME_testing/lime_values_{sample}_{dim}.npy", importance_scores)  
             time_list_lime.append(end_time_lime - start_time_lime + end_time_rf - start_time_rf)
             print(f"Time taken for lime: {end_time_lime - start_time_lime + end_time_rf - start_time_rf} seconds")
 
@@ -115,9 +115,10 @@ def time_test(dim_range, sample_range):
             print(f"permutation test on dim: {dim}, sample: {sample}")
             start_time_permutation = time.time()
             imp_features = permutation_importance(rf, X_val, y_val, n_repeats=1, scoring="accuracy", n_jobs=-1, random_state=0)
+            end_time_permutation = time.time()
             os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
             np.save(f"./sex_classification/results_permutation_testing/imp_features_{sample}_{dim}.npy", imp_features)
-            end_time_permutation = time.time()
+            
             time_list_permutation.append(end_time_permutation - start_time_permutation + end_time_rf - start_time_rf)
             print(f"Time taken for permutation: {end_time_permutation - start_time_permutation+end_time_rf - start_time_rf} seconds")
 
@@ -125,8 +126,8 @@ def time_test(dim_range, sample_range):
     return time_list_profit, time_list_shap, time_list_lime, time_list_permutation
 
 
-#dim = np.array([128, 256, 512, 1024, 2048, 4096])
-#dim2 = np.array([128, 256, 512, 1024, 2048, 4096])
+dim1 = np.array([512, 1024, 2048, 4096, 8192])
+dim2 = dim1
 dim1 = [100]
 dim2 = [100]
 dim_vals = dim1
