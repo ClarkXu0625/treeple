@@ -115,8 +115,10 @@ def time_test(dim_range,sample_range):
     return time_list_profit, time_list_shap, time_list_lime, time_list_permutation
 
 
-dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
-dim2 = np.array([128, 256, 512, 1024, 2048, 4096])
+#dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
+#dim2 = np.array([128, 256, 512, 1024, 2048, 4096])
+dim = [128]
+dim2 = [128]
 time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_test(dim,dim2)
 os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
 np.save("./sex_classification/results_permutation_testing/time_list_profit.npy", time_list_profit)
