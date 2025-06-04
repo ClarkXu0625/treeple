@@ -1,7 +1,7 @@
 from treeple.datasets import make_trunk_classification
 from sklearn.model_selection import train_test_split
-#from profit import PermutateRankingOFIT
-from treeple.stats import NeuroExplainableOptimalFIT
+from ..neofit import NeuroExplainableOptimalFIT
+#from treeple.stats import NeuroExplainableOptimalFIT
 import matplotlib.pyplot as plt
 import numpy as np
 import time
