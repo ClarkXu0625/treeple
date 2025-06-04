@@ -124,7 +124,7 @@ def time_test(dim_range,sample_range):
 
 #dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
 #dim2 = np.array([128, 256, 512, 1024, 2048, 4096])
-dim = [10]
+dim = [100]
 dim2 = [10]
 os.makedirs("./sex_classification/results", exist_ok=True)  # for p_values_*.npy
 os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)  # for time_list_*.npy
