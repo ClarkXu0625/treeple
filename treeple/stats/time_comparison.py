@@ -141,7 +141,7 @@ sample_vals = dim2
 index = pd.MultiIndex.from_product([dim_vals, sample_vals], names=["dim", "sample"])
 
 
-time_list_profit, time_list_shap, time_list_lime, time_list_permutation = time_test(dim1,dim2)
+time_list_profit, time_list_shap, time_list_lime = time_test(dim1,dim2)
 
 df_profit = pd.DataFrame({"time": time_list_profit}, index=index).unstack(level=-1)
 df_shap = pd.DataFrame({"time": time_list_shap}, index=index).unstack(level=-1)
