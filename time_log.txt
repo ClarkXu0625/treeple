@@ -1,0 +1,68 @@
+Time taken for sample 512 and dim 512 
+neofit: 378.51 seconds
+shap: 26.00 seconds
+lime: 24.19 seconds
+Time taken for sample 512 and dim 512 
+neofit: 378.70 seconds
+shap: 26.11 seconds
+lime: 24.26 seconds
+Time taken for sample 1024 and dim 512 
+neofit: 377.38 seconds
+shap: 71.15 seconds
+lime: 50.61 seconds
+Time taken for sample 2048 and dim 512 
+neofit: 382.62 seconds
+shap: 233.12 seconds
+lime: 114.10 seconds
+Time taken for sample 4096 and dim 512 
+neofit: 396.35 seconds
+shap: 885.12 seconds
+lime: 262.43 seconds
+Time taken for sample 512 and dim 1024 
+neofit: 425.53 seconds
+shap: 33.10 seconds
+lime: 34.00 seconds
+Time taken for sample 1024 and dim 1024 
+neofit: 419.00 seconds
+shap: 90.67 seconds
+lime: 73.84 seconds
+Time taken for sample 2048 and dim 1024 
+neofit: 437.94 seconds
+shap: 285.76 seconds
+lime: 171.72 seconds
+Time taken for sample 4096 and dim 1024 
+neofit: 462.75 seconds
+shap: 1002.62 seconds
+lime: 394.57 seconds
+Time taken for sample 512 and dim 2048 
+neofit: 538.84 seconds
+shap: 42.92 seconds
+lime: 47.58 seconds
+Time taken for sample 1024 and dim 2048 
+neofit: 548.10 seconds
+shap: 117.24 seconds
+lime: 105.14 seconds
+Time taken for sample 2048 and dim 2048 
+neofit: 566.79 seconds
+shap: 351.13 seconds
+lime: 244.88 seconds
+Time taken for sample 4096 and dim 2048 
+neofit: 617.77 seconds
+shap: 1191.32 seconds
+lime: 579.69 seconds
+Time taken for sample 512 and dim 4096 
+neofit: 832.38 seconds
+shap: 61.12 seconds
+lime: 82.30 seconds
+Time taken for sample 1024 and dim 4096 
+neofit: 848.51 seconds
+shap: 165.13 seconds
+lime: 171.37 seconds
+Time taken for sample 2048 and dim 4096 
+neofit: 872.07 seconds
+shap: 480.01 seconds
+lime: 395.45 seconds
+Time taken for sample 4096 and dim 4096 
+neofit: 923.61 seconds
+shap: 1514.78 seconds
+lime: 938.38 seconds
