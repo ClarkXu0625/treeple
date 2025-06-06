@@ -54,5 +54,5 @@ sample = dim
 results_time = time_test(dim, sample)
 
 # save results to a csv file
-results_time.to_csv('time_results.csv', index=False)
+results_time.to_csv('time_results_fast.csv', index=False)
   
