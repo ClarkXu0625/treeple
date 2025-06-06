@@ -132,7 +132,7 @@ def time_test(dim_range, sample_range):
     return time_list_profit, time_list_shap, time_list_lime     #, time_list_permutation
 
 
-dim1 = np.array([512, 1024, 2048, 4096])
+dim1 = np.array([256, 512, 1024, 2048, 4096, 8192])
 dim2 = dim1
 # dim1 = [100]
 # dim2 = [100]
