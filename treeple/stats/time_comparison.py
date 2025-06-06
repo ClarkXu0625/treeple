@@ -29,7 +29,7 @@ import pandas as pd
 
 
 # print(f"imp_features: {imp_features}")
-# np.save("./sex_classification/results/imp_features.npy", imp_features)
+# np.save("./sex_classification2/results/imp_features.npy", imp_features)
 # np.save("./sexclassification/results/p_values.npy", p_values)
 
 # plot the p-values
@@ -39,7 +39,7 @@ import pandas as pd
 # plt.ylabel("P-value")
 # plt.title("P-values for Feature Importance")
 # plt.show()
-# plt.savefig("./sex_classification/results/p_values.png")
+# plt.savefig("./sex_classification2/results/p_values.png")
 
 # plot the importance features
 # plt.figure(figsize=(10, 6))
@@ -66,8 +66,8 @@ def time_test(dim_range, sample_range):
             profit = NeuroExplainableOptimalFIT(n_estimators=5000, n_permutations=100000, clf_type="SPORF", alpha=0.05, verbose=False)
             p_values, imp_features, _ = profit.get_significant_features(X_train, y_train)
             end_time = time.time()
-            os.makedirs("./sex_classification/results", exist_ok=True)
-            np.save(f"./sex_classification/results/p_values_{sample}_{dim}.npy", p_values)            
+            os.makedirs("./sex_classification2/results", exist_ok=True)
+            np.save(f"./sex_classification2/results/p_values_{sample}_{dim}.npy", p_values)            
             time_list_profit.append(end_time - start_time)
             print(f"Time taken for profit: {end_time - start_time} seconds")
 
@@ -76,8 +76,8 @@ def time_test(dim_range, sample_range):
             start_time_rf = time.time()
             rf = RandomForestClassifier(n_estimators=5000, random_state=0)
             rf.fit(X_train, y_train)
-            #os.makedirs("./sex_classification/models", exist_ok=True)
-            #joblib.dump(rf, f"./sex_classification/models/rf_{sample}_{dim}.pkl")
+            #os.makedirs("./sex_classification2/models", exist_ok=True)
+            #joblib.dump(rf, f"./sex_classification2/models/rf_{sample}_{dim}.pkl")
             end_time_rf = time.time()
 
             # SHAP
@@ -85,9 +85,10 @@ def time_test(dim_range, sample_range):
             start_time_shap = time.time()
             explainer = shap.TreeExplainer(rf)
             shap_values = explainer.shap_values(X_val)
+            
+            os.makedirs("./sex_classification2/results_SHAP_testing", exist_ok=True)
+            np.save(f"./sex_classification2/results_SHAP_testing/shap_values_{sample}_{dim}.npy", shap_values)
             end_time_shap = time.time()
-            os.makedirs("./sex_classification/results_SHAP_testing", exist_ok=True)
-            np.save(f"./sex_classification/results_SHAP_testing/shap_values_{sample}_{dim}.npy", shap_values)
             time_list_shap.append(end_time_shap - start_time_shap + end_time_rf - start_time_rf)
             print(f"Time taken for shap: {end_time_shap - start_time_shap + end_time_rf - start_time_rf} seconds")
 
@@ -106,13 +107,14 @@ def time_test(dim_range, sample_range):
             )
             lime_values = lime_exp.as_list()
             importance_scores = np.array([value for _, value in lime_values])
+            
+            os.makedirs("./sex_classification2/results_LIME_testing", exist_ok=True)
+            np.save(f"./sex_classification2/results_LIME_testing/lime_values_{sample}_{dim}.npy", importance_scores)  
             end_time_lime = time.time()
-            os.makedirs("./sex_classification/results_LIME_testing", exist_ok=True)
-            np.save(f"./sex_classification/results_LIME_testing/lime_values_{sample}_{dim}.npy", importance_scores)  
             time_list_lime.append(end_time_lime - start_time_lime + end_time_rf - start_time_rf)
             print(f"Time taken for lime: {end_time_lime - start_time_lime + end_time_rf - start_time_rf} seconds")
 
-            with open("time_log.txt", "a") as log_file:
+            with open("time_log2.txt", "a") as log_file:
                 log_file.write(f"Time taken for sample {sample} and dim {dim} \n")
                 log_file.write(f"neofit: {end_time - start_time:.2f} seconds\n")
                 log_file.write(f"shap: {end_time_shap - start_time_shap + end_time_rf - start_time_rf:.2f} seconds\n")
@@ -122,8 +124,8 @@ def time_test(dim_range, sample_range):
             # start_time_permutation = time.time()
             # imp_features = permutation_importance(rf, X_val, y_val, n_repeats=1, scoring="accuracy", n_jobs=-1, random_state=0)
             # end_time_permutation = time.time()
-            # os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
-            # np.save(f"./sex_classification/results_permutation_testing/imp_features_{sample}_{dim}.npy", imp_features)
+            # os.makedirs("./sex_classification2/results_permutation_testing", exist_ok=True)
+            # np.save(f"./sex_classification2/results_permutation_testing/imp_features_{sample}_{dim}.npy", imp_features)
             
             # time_list_permutation.append(end_time_permutation - start_time_permutation + end_time_rf - start_time_rf)
             # print(f"Time taken for permutation: {end_time_permutation - start_time_permutation+end_time_rf - start_time_rf} seconds")
@@ -148,10 +150,10 @@ df_shap = pd.DataFrame({"time": time_list_shap}, index=index).unstack(level=-1)
 df_lime = pd.DataFrame({"time": time_list_lime}, index=index).unstack(level=-1)
 #df_permutation = pd.DataFrame({"time": time_list_permutation}, index=index).unstack(level=-1)
 
-os.makedirs("./sex_classification/results_permutation_testing", exist_ok=True)
+os.makedirs("./sex_classification2/results_permutation_testing", exist_ok=True)
 
 # Save to CSV
-df_profit.to_csv("./sex_classification/results_permutation_testing/time_list_profit.csv")
-df_shap.to_csv("./sex_classification/results_permutation_testing/time_list_shap.csv")
-df_lime.to_csv("./sex_classification/results_permutation_testing/time_list_lime.csv")
-#df_permutation.to_csv("./sex_classification/results_permutation_testing/time_list_permutation.csv")
+df_profit.to_csv("./sex_classification2/results_permutation_testing/time_list_profit.csv")
+df_shap.to_csv("./sex_classification2/results_permutation_testing/time_list_shap.csv")
+df_lime.to_csv("./sex_classification2/results_permutation_testing/time_list_lime.csv")
+#df_permutation.to_csv("./sex_classification2/results_permutation_testing/time_list_permutation.csv")
