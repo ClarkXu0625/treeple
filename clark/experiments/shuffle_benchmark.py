@@ -13,7 +13,7 @@ suffix = sys.argv[1] if len(sys.argv) > 1 else "default"
 MAX_DEPTH = 10
 N_ESTIMATORS = 100
 RANDOM_SEED = 42
-N_JOBS = -1
+N_JOBS = 8
 BOOTSTRAP = True
 MAX_FEATURE = 3000
 FEATURE_COMBINATIONS = 1000.0
@@ -50,10 +50,10 @@ accs_treeple, times_treeple = constant_nNonzeros_simulation_treeple(
 
 times_treeple = np.transpose(times_treeple)
 accs_treeple = np.transpose(accs_treeple)
-os.makedirs("result/shuffle3", exist_ok=True)
+os.makedirs("result/shuffle4", exist_ok=True)
 pd.DataFrame(times_treeple, index=n_rows, columns=n_columns).to_csv(
-    f"result/shuffle3/times_treeple_{suffix}.txt", sep="\t"
+    f"result/shuffle4/times_treeple_{suffix}.txt", sep="\t"
 )
 pd.DataFrame(accs_treeple, index=n_rows, columns=n_columns).to_csv(
-    f"result/shuffle3/accs_treeple_{suffix}.txt", sep="\t"
+    f"result/shuffle4/accs_treeple_{suffix}.txt", sep="\t"
 )
