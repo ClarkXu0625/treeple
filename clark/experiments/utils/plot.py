@@ -1,21 +1,6 @@
 import numpy as np
-import time
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from treeple.datasets import make_trunk_classification
-import ydf
 import matplotlib.pyplot as plt
-from treeple import ObliqueRandomForestClassifier
-from sklearn.metrics import confusion_matrix, f1_score
-from sklearn.metrics import ConfusionMatrixDisplay
-from matplotlib.cm import ScalarMappable
-from matplotlib.colors import ListedColormap
-from treeple._lib.sklearn.tree._criterion import Gini
-from treeple.tree._oblique_splitter import BestObliqueSplitterTester
-from treeple.datasets import make_trunk_classification
 import pandas as pd
-import math
 from matplotlib.colors import LogNorm    
 
 
@@ -140,7 +125,7 @@ def plot_single_heatmap(
     plt.show()
 
 
-def plot_multiple_heatmaps(heatmaps, titles, xlabels, ylabels,
+def plot_multiple_heatmaps(heatmaps, titles, xlabels, ylabels, xtitle="n_features", ytitle="n_projections",
                            subplot_shape=(1, -1), scale="log", cmap='RdYlGn_r'):
     """
     Plot multiple training time heatmaps with flexible layout.
@@ -179,8 +164,8 @@ def plot_multiple_heatmaps(heatmaps, titles, xlabels, ylabels,
 
         im = ax.imshow(data, cmap=cmap, norm=norm, aspect='equal')
         ax.set_title(titles[idx])
-        ax.set_xlabel("Features")
-        ax.set_ylabel("Projections")
+        ax.set_xlabel(xtitle)
+        ax.set_ylabel(ytitle)
         ax.set_xticks(np.arange(len(xlabels)))
         ax.set_yticks(np.arange(len(ylabels)))
         ax.set_xticklabels(xlabels)
