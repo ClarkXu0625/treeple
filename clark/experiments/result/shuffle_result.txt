@@ -4,3 +4,4 @@ shuffle_benchmark_result: compare fisher yates shuffle and floyd, saved from shu
 shuffle2: compare fisher yates shuffle and floyd, saved from shuffle_benchmark2.ipynb
 shuffle3: introduce inlined floyd - njobs=-1, saved from shuffle_benchmakr.py and shuffle_all.sh
 shuffle4: same as shuffle3, change njobs to 8
+shuffle5: slightly improved inlined floyd results comparison
