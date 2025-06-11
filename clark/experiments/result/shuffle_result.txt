@@ -1,0 +1,6 @@
+shuffle experiment setup: run on AMD 9800X3d (8 core 16 thread)
+
+shuffle_benchmark_result: compare fisher yates shuffle and floyd, saved from shuffle_benchmark.ipynb
+shuffle2: compare fisher yates shuffle and floyd, saved from shuffle_benchmark2.ipynb
+shuffle3: introduce inlined floyd - njobs=-1, saved from shuffle_benchmakr.py and shuffle_all.sh
+shuffle4: same as shuffle3, change njobs to 8
