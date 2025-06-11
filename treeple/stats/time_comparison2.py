@@ -3,6 +3,8 @@ import time
 import numpy as np
 import pandas as pd
 import gc
+import cProfile
+import pstats
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -13,7 +15,12 @@ import shap
 import lime
 
 def test_profit(X_train, y_train, sample, dim):
+
+    profiler = cProfile.Profile()
+    profiler.enable()
+
     start = time.time()
+    
     profit = NeuroExplainableOptimalFIT(
         n_estimators=5000,
         n_permutations=100000,
@@ -22,6 +29,13 @@ def test_profit(X_train, y_train, sample, dim):
         verbose=False
     )
     p_values, imp_features, _ = profit.get_significant_features(X_train, y_train)
+
+    profiler.disable()
+
+    stats = pstats.Stats(profiler).strip_dirs().sort_stats("cumulative")
+    stats.print_stats(30)
+
+
     os.makedirs("./sex_classification3/results", exist_ok=True)
     np.save(f"./sex_classification3/results/p_values_{sample}_{dim}.npy", p_values)
     duration = time.time() - start
