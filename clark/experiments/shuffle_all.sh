@@ -11,3 +11,6 @@ conda run -n treeple_neofit python shuffle_benchmark.py floyd
 
 echo "Running with floyd_inline environment..."
 conda run -n floyd_inline python shuffle_benchmark.py inline
+
+echo "Running with floyd_inline_improved environment..."
+conda run -n floyd_inline_improved python shuffle_benchmark.py inline_improved
