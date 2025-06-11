@@ -149,6 +149,7 @@ class NeuroExplainableOptimalFIT:
         else:
             raise ValueError(f"Classifier type {self.clf_type} not implemented yet.")
 
+    @profile
     def train(self, ii, X, y):
         """
         Train a classifier based on MORF or SPORF,
@@ -206,6 +207,7 @@ class NeuroExplainableOptimalFIT:
             lambda x: ss.rankdata(1 - x, method="max"), axis=1, arr=feature_importance
         )
 
+    @profile
     def statistics(self, ranks, idx):
         """
         Calculate the feature importance test statistic.
@@ -251,6 +253,7 @@ class NeuroExplainableOptimalFIT:
         idx = rng.permutation(2 * self.n_estimators)
         return self.statistics(ranks, idx)
 
+    @profile
     def test(self, feature_importance):
         """
         Permutation test to compare real vs shuffled feature importance.
@@ -319,6 +322,7 @@ class NeuroExplainableOptimalFIT:
         p_corrected = multipletests(p, method="holm")[1]
         return p_corrected
 
+    @profile
     def feat_imp_test(self, X, y):
         """
         Main method to test for significant features.
