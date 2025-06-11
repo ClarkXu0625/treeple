@@ -28,7 +28,8 @@ def test_profit(X_train, y_train, sample, dim):
         n_permutations=100000,
         clf_type="SPORF",
         alpha=0.05,
-        verbose=False
+        verbose=False,
+        n_jobs=1,
     )
     p_values, imp_features, _ = profit.get_significant_features(X_train, y_train)
 
