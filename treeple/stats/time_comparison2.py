@@ -120,7 +120,9 @@ def time_test(dim_range, sample_range):
             # Filter and print only neofit.py function calls
             stream = io.StringIO()
             stats = pstats.Stats(profiler, stream=stream).strip_dirs().sort_stats("cumulative")
-            stats.print_stats(str(Path("neofit.py").resolve()))
+            stats.print_stats(50)
+            print("===================================")
+            stats.print_stats(str(Path("/home/clark/Documents/GitHub/treeple/treeple/stats/neofit.py").resolve()))
             print(stream.getvalue())
 
             # Store time
