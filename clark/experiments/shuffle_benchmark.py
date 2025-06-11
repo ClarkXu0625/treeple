@@ -39,8 +39,8 @@ params_treeple = {
     "feature_combinations": FEATURE_COMBINATIONS,
 }
 
-n_rows = np.array([64, 128, 256, 512, 1024, 2048, 4096])
-n_columns = np.array([64, 128, 256, 512, 1024, 2048, 4096])
+n_rows = np.array([64, 128, 256, 512, 1024])
+n_columns = np.array([64, 128, 256, 512, 1024])
 target_non_zeros_per_row = float(2.0)
 
 accs_treeple, times_treeple = constant_nNonzeros_simulation_treeple(
@@ -50,10 +50,10 @@ accs_treeple, times_treeple = constant_nNonzeros_simulation_treeple(
 
 times_treeple = np.transpose(times_treeple)
 accs_treeple = np.transpose(accs_treeple)
-os.makedirs("result/shuffle4", exist_ok=True)
+os.makedirs("result/shuffle5", exist_ok=True)
 pd.DataFrame(times_treeple, index=n_rows, columns=n_columns).to_csv(
-    f"result/shuffle4/times_treeple_{suffix}.txt", sep="\t"
+    f"result/shuffle5/times_treeple_{suffix}.txt", sep="\t"
 )
 pd.DataFrame(accs_treeple, index=n_rows, columns=n_columns).to_csv(
-    f"result/shuffle4/accs_treeple_{suffix}.txt", sep="\t"
+    f"result/shuffle5/accs_treeple_{suffix}.txt", sep="\t"
 )
