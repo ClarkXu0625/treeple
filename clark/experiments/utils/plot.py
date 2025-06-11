@@ -138,3 +138,64 @@ def plot_single_heatmap(
     cbar.set_label(colorbar_label)
 
     plt.show()
+
+
+def plot_multiple_heatmaps(heatmaps, titles, xlabels, ylabels,
+                           subplot_shape=(1, -1), scale="log", cmap='RdYlGn_r'):
+    """
+    Plot multiple training time heatmaps with flexible layout.
+
+    Parameters:
+    - heatmaps: list of 2D numpy arrays
+    - titles: list of titles, one per heatmap
+    - xlabels, ylabels: list of tick labels (shared across all plots)
+    - subplot_shape: tuple of (n_rows, n_cols) defining subplot grid
+                     use -1 to auto-compute one dimension
+    - scale: "log" (default) or "linear"
+    - cmap: matplotlib colormap
+    """
+
+    n_heatmaps = len(heatmaps)
+    assert len(titles) == n_heatmaps, "Each heatmap must have a title."
+
+    # Auto-fill subplot shape if user uses -1
+    n_rows, n_cols = subplot_shape
+    if n_rows == -1:
+        n_rows = int(np.ceil(n_heatmaps / n_cols))
+    elif n_cols == -1:
+        n_cols = int(np.ceil(n_heatmaps / n_rows))
+
+    # Normalize for shared color scale
+    all_data = np.stack([np.maximum(h, 1e-3) if scale == "log" else h for h in heatmaps])
+    vmin, vmax = all_data.min(), all_data.max()
+    norm = LogNorm(vmin=vmin, vmax=vmax) if scale == "log" else None
+
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 4 * n_rows), constrained_layout=True)
+    axes = np.array(axes).reshape(-1)
+
+    for idx, heatmap in enumerate(heatmaps):
+        ax = axes[idx]
+        data = np.maximum(heatmap, 1e-3) if scale == "log" else heatmap
+
+        im = ax.imshow(data, cmap=cmap, norm=norm, aspect='equal')
+        ax.set_title(titles[idx])
+        ax.set_xlabel("Features")
+        ax.set_ylabel("Projections")
+        ax.set_xticks(np.arange(len(xlabels)))
+        ax.set_yticks(np.arange(len(ylabels)))
+        ax.set_xticklabels(xlabels)
+        ax.set_yticklabels(ylabels)
+
+        # Annotate values
+        for i in range(len(ylabels)):
+            for j in range(len(xlabels)):
+                text_color = 'black' if (norm(data[i, j]) if scale == "log" else data[i, j]) > 0.3 else 'white'
+                ax.text(j, i, f"{data[i, j]:.2f}", ha='center', va='center', color=text_color)
+
+    # Hide any unused subplots
+    for idx in range(n_heatmaps, len(axes)):
+        fig.delaxes(axes[idx])
+
+    # Add one shared colorbar
+    fig.colorbar(im, ax=axes[:n_heatmaps], orientation='vertical', fraction=0.02, pad=0.04, label='Training Time (seconds)')
+    plt.show()
