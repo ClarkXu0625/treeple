@@ -5,6 +5,8 @@ import pandas as pd
 import gc
 import cProfile
 import pstats
+from pathlib import Path
+import io
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -16,8 +18,8 @@ import lime
 
 def test_profit(X_train, y_train, sample, dim):
 
-    profiler = cProfile.Profile()
-    profiler.enable()
+    # profiler = cProfile.Profile()
+    # profiler.enable()
 
     start = time.time()
     
@@ -30,10 +32,10 @@ def test_profit(X_train, y_train, sample, dim):
     )
     p_values, imp_features, _ = profit.get_significant_features(X_train, y_train)
 
-    profiler.disable()
+    # profiler.disable()
 
-    stats = pstats.Stats(profiler).strip_dirs().sort_stats("cumulative")
-    stats.print_stats(30)
+    # stats = pstats.Stats(profiler).strip_dirs().sort_stats("cumulative")
+    # stats.print_stats(30)
 
 
     os.makedirs("./sex_classification3/results", exist_ok=True)
@@ -98,8 +100,29 @@ def time_test(dim_range, sample_range):
             X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=0)
 
             # PROFIT
-            print("Running PROFIT...")
+            
+            # print("Running PROFIT...")
+            # t_profit = test_profit(X_train, y_train, sample, dim)
+            # print(f"Time PROFIT: {t_profit:.2f}s")
+            # time_list_neofit.append(t_profit)
+
+            # --- Start profiling
+            profiler = cProfile.Profile()
+            profiler.enable()
+
+            # Run test_profit as usual
             t_profit = test_profit(X_train, y_train, sample, dim)
+
+            # --- Stop profiling
+            profiler.disable()
+
+            # Filter and print only neofit.py function calls
+            stream = io.StringIO()
+            stats = pstats.Stats(profiler, stream=stream).strip_dirs().sort_stats("cumulative")
+            stats.print_stats(str(Path("neofit.py").resolve()))
+            print(stream.getvalue())
+
+            # Store time
             print(f"Time PROFIT: {t_profit:.2f}s")
             time_list_neofit.append(t_profit)
 
