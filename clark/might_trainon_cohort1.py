@@ -31,20 +31,20 @@ import pandas as pd
 
 n_estimators = 100000
 MODEL_NAMES = {
-    # "might": {
-    #     "n_estimators": n_estimators,
-    #     "honest_fraction": 0.367,
-    #     "n_jobs": 40,
-    #     "bootstrap": True,
-    #     "stratify": True,
-    #     "max_samples": 1.6,
-    #     # "max_features":  'sqrt',
-    #     # "max_features":  0.3,
-    #     "honest_prior": "ignore",
-    #     "honest_method": 'apply',
-    #     "kernel_method": True,
-    #     # 'random_state': 80515
-    # },
+    "might": {
+        # "n_estimators": n_estimators,
+        # "honest_fraction": 0.367,
+        # "n_jobs": 40,
+        # "bootstrap": True,
+        # "stratify": True,
+        # "max_samples": 1.6,
+        # # "max_features":  'sqrt',
+        # # "max_features":  0.3,
+        # "honest_prior": "ignore",
+        # "honest_method": 'apply',
+        # "kernel_method": True,
+        # # 'random_state': 80515
+    },
         "rf": {
         "n_estimators": int(n_estimators/5),
         "max_features": 'sqrt',
