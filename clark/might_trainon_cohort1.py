@@ -28,6 +28,9 @@ from sklearn.manifold import MDS
 # from random import shuffle
 
 import pandas as pd
+import os
+import time
+import sys
 
 n_estimators = 100000
 MODEL_NAMES = {
@@ -328,9 +331,48 @@ def run_might(f1,cohort = cohort2,model_name='might',rep = 1):
         print(posterior_arr.shape)
         print(model_name,f1,tpr_s_kernel)
         return tpr_s_kernel,tpr_s
-# run_might(os.path.splitext(filelist[6])[0],cohort = cohort1,model_name='might',rep = 1) 
-Parallel(n_jobs=45)(delayed(run_might)(os.path.splitext(filelist[i])[0],cohort = cohort1,model_name='might',rep = k) 
-                    for i in [23]
-                    for k in range(1))
+
+# Parallel(n_jobs=45)(delayed(run_might)(os.path.splitext(filelist[i])[0],cohort = cohort1,model_name='might',rep = k) 
+#                     for i in [23]
+#                     for k in range(1))
 
 
+# script_dir = os.path.dirname(os.path.abspath(__file__))
+# log_file = os.path.join(script_dir, "model_compare_log.txt")
+
+# # Redirect stdout and stderr
+# sys.stdout = open(log_file, "w")
+# sys.stderr = sys.stdout
+
+i = 23
+file_base = os.path.splitext(filelist[i])[0]
+
+model_list = ['might', 'rf', 'knn', 'svm', 'lr']
+run_times = {}
+tpr_results = {}
+
+for model in model_list:
+    print(f"\nRunning model: {model}")
+    start_time = time.time()
+    
+    try:
+        tpr_kernel, tpr_avg = run_might(file_base, cohort=cohort1, model_name=model, rep=1)
+        tpr_results[model] = (tpr_kernel, tpr_avg)
+    except Exception as e:
+        print(f"Error while running {model}: {e}")
+        tpr_results[model] = None
+    
+    elapsed = time.time() - start_time
+    run_times[model] = elapsed
+    print(f"Model {model} finished in {elapsed:.2f} seconds")
+
+print("\n=== Timing Summary ===")
+for model in model_list:
+    print(f"{model}: {run_times[model]:.2f}s")
+
+print("\n=== TPR Summary ===")
+for model, tpr in tpr_results.items():
+    if tpr is not None:
+        print(f"{model}: TPR@FPR<0.02 (kernel) = {tpr[0]:.4f}, average = {tpr[1]:.4f}")
+    else:
+        print(f"{model}: failed to compute TPR")
