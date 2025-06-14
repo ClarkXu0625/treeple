@@ -4,7 +4,7 @@
 source ~/miniconda3/etc/profile.d/conda.sh
 
 # Define Python script path
-PY_SCRIPT="run_model_comparison.py"
+PY_SCRIPT="might_trainon_cohort1.py"
 SCRIPT_DIR=$(dirname "$PY_SCRIPT")
 SCRIPT_BASE=$(basename "$PY_SCRIPT" .py)
 
