@@ -1,120 +1,104 @@
-/home/yxu233/GitHub/treeple/clark/might_trainon_cohort1.py:167: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  y = y.replace("Cancer", 1)
-/home/yxu233/GitHub/treeple/clark/might_trainon_cohort1.py:167: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  y = y.replace("Cancer", 1)
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/GitHub/treeple/clark/might_trainon_cohort1.py:167: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  y = y.replace("Cancer", 1)
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/GitHub/treeple/clark/might_trainon_cohort1.py:167: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  y = y.replace("Cancer", 1)
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/GitHub/treeple/clark/might_trainon_cohort1.py:167: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  y = y.replace("Cancer", 1)
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-/home/yxu233/miniconda3/envs/treeple_fast/lib/python3.10/site-packages/sklearn/calibration.py:330: FutureWarning: The `cv='prefit'` option is deprecated in 1.6 and will be removed in 1.8. You can use CalibratedClassifierCV(FrozenEstimator(estimator)) instead.
-  warnings.warn(
-549
+================================================
+Running file 5: MotifAnalysis.CongruentHexamer
 
 Running model: might
-1989
-WiseCondorX.Wise-1.csv
-X shape: (352, 2524), y shape: (352,)
-num of cancer 102
-WiseCondorX.Wise-1 (352, 2523) 102
-(352, 2)
-kernel:  0.696078431372549
-average:  0.6470588235294118
-the tree depths:  9.5401 20 5
-the # of nodes:  45.23074 67 27
-[0.00024314 0.00032581 0.00031142 ... 0.00036404 0.00026128 0.00031198]
-(100000, 352, 2)
-might WiseCondorX.Wise-1 0.696078431372549
-Model might finished in 2160.48 seconds
+Model might finished in 2057.20 seconds
 
 Running model: rf
-1989
-WiseCondorX.Wise-1.csv
-X shape: (352, 2524), y shape: (352,)
-num of cancer 102
-WiseCondorX.Wise-1 (352, 2523) 102
-(352, 3)
 Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
-Model rf finished in 332.48 seconds
+Model rf finished in 325.33 seconds
 
 Running model: knn
-1989
-WiseCondorX.Wise-1.csv
-X shape: (352, 2524), y shape: (352,)
-num of cancer 102
-WiseCondorX.Wise-1 (352, 2523) 102
-(352, 3)
 Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
-Model knn finished in 3.02 seconds
+Model knn finished in 5.96 seconds
 
 Running model: svm
-1989
-WiseCondorX.Wise-1.csv
-X shape: (352, 2524), y shape: (352,)
-num of cancer 102
-WiseCondorX.Wise-1 (352, 2523) 102
-(352, 3)
 Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
-Model svm finished in 3.80 seconds
+Model svm finished in 6.83 seconds
 
 Running model: lr
-1989
-WiseCondorX.Wise-1.csv
-X shape: (352, 2524), y shape: (352,)
-num of cancer 102
-WiseCondorX.Wise-1 (352, 2523) 102
-(352, 3)
 Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
-Model lr finished in 3.00 seconds
+Model lr finished in 6.17 seconds
 
 === Timing Summary ===
-might: 2160.48s
-rf: 332.48s
-knn: 3.02s
-svm: 3.80s
-lr: 3.00s
+might: 2057.20s
+rf: 325.33s
+knn: 5.96s
+svm: 6.83s
+lr: 6.17s
 
 === TPR Summary ===
-might: TPR@FPR<0.02 (kernel) = 0.6961, average = 0.6471
+might: TPR@FPR<0.02 (kernel) = 0.4118, average = 0.4314
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR
+================================================
+Running file 7: MotifAnalysis.DegenerateHexamer
+
+Running model: might
+Model might finished in 2597.93 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 338.37 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 26.52 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 36.27 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 27.82 seconds
+
+=== Timing Summary ===
+might: 2597.93s
+rf: 338.37s
+knn: 26.52s
+svm: 36.27s
+lr: 27.82s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.4020, average = 0.4020
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR
+================================================
+Running file 23: WiseCondorX.Wise-1
+
+Running model: might
+Model might finished in 2169.32 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 331.69 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 3.09 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 3.86 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 3.12 seconds
+
+=== Timing Summary ===
+might: 2169.32s
+rf: 331.69s
+knn: 3.09s
+svm: 3.86s
+lr: 3.12s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.6078, average = 0.6176
 rf: failed to compute TPR
 knn: failed to compute TPR
 svm: failed to compute TPR

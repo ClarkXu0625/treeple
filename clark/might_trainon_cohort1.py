@@ -31,6 +31,9 @@ import pandas as pd
 import os
 import time
 import sys
+import argparse
+import contextlib
+import io
 
 n_estimators = 100000
 MODEL_NAMES = {
@@ -206,7 +209,7 @@ def get_X_y(f, root="/home/hao/comight_real_data/ManuscriptFeatureMatrices/", co
 
 def run_might(f1,cohort = cohort2,model_name='might',rep = 1):
     # print()
-    X_1,y_1 = get_X_y('{}.csv'.format(f1), cohort=cohort, verbose=True)
+    X_1,y_1 = get_X_y('{}.csv'.format(f1), cohort=cohort, verbose=False)
     X_combine = X_1.iloc[:,1:]
     y = y_1
 
@@ -231,7 +234,7 @@ def run_might(f1,cohort = cohort2,model_name='might',rep = 1):
             est = HonestForestClassifier(
                 n_estimators=100000,
                 max_samples=1.6,
-                max_features = 'sqrt',
+                max_features = 0.3, # modified, original is sqrt
                 bootstrap=True,
                 stratify=True,
                 n_jobs=40,
@@ -344,35 +347,106 @@ def run_might(f1,cohort = cohort2,model_name='might',rep = 1):
 # sys.stdout = open(log_file, "w")
 # sys.stderr = sys.stdout
 
-i = 23
-file_base = os.path.splitext(filelist[i])[0]
+# file_list = [5 ,7 ,23]
+ 
+# for i in file_list:
+#     print("================================================")
+#     print(f"Running file {i}")
+#     file_base = os.path.splitext(filelist[i])[0]
 
+#     model_list = ['might', 'rf', 'knn', 'svm', 'lr']
+#     run_times = {}
+#     tpr_results = {}
+
+#     for model in model_list:
+#         print(f"\nRunning model: {model}")
+#         start_time = time.time()
+        
+#         try:
+#             tpr_kernel, tpr_avg = run_might(file_base, cohort=cohort1, model_name=model, rep=1)
+#             tpr_results[model] = (tpr_kernel, tpr_avg)
+#         except Exception as e:
+#             print(f"Error while running {model}: {e}")
+#             tpr_results[model] = None
+        
+#         elapsed = time.time() - start_time
+#         run_times[model] = elapsed
+#         print(f"Model {model} finished in {elapsed:.2f} seconds")
+
+#     print("\n=== Timing Summary ===")
+#     for model in model_list:
+#         print(f"{model}: {run_times[model]:.2f}s")
+
+#     print("\n=== TPR Summary ===")
+#     for model, tpr in tpr_results.items():
+#         if tpr is not None:
+#             print(f"{model}: TPR@FPR<0.02 (kernel) = {tpr[0]:.4f}, average = {tpr[1]:.4f}")
+#         else:
+#             print(f"{model}: failed to compute TPR")
+
+
+# === Parse CLI argument for environment tag (e.g. "fast", "standard") ===
+parser = argparse.ArgumentParser()
+parser.add_argument("env_tag", type=str, help="Environment tag for log filename")
+args = parser.parse_args()
+
+# === Set up log file ===
+script_dir = os.path.dirname(os.path.abspath(__file__))
+log_file = os.path.join(script_dir, f"might_trainon_cohort1_{args.env_tag}.txt")
+log_fh = open(log_file, "w")
+
+# Redirect stdout to log file only for outer prints
+sys.stdout = log_fh
+sys.stderr = log_fh
+
+file_list = [5, 7, 23]
 model_list = ['might', 'rf', 'knn', 'svm', 'lr']
-run_times = {}
-tpr_results = {}
 
-for model in model_list:
-    print(f"\nRunning model: {model}")
-    start_time = time.time()
-    
-    try:
-        tpr_kernel, tpr_avg = run_might(file_base, cohort=cohort1, model_name=model, rep=1)
-        tpr_results[model] = (tpr_kernel, tpr_avg)
-    except Exception as e:
-        print(f"Error while running {model}: {e}")
-        tpr_results[model] = None
-    
-    elapsed = time.time() - start_time
-    run_times[model] = elapsed
-    print(f"Model {model} finished in {elapsed:.2f} seconds")
+for i in file_list:
+    print("================================================")
+    file_base = os.path.splitext(filelist[i])[0]
+    print(f"Running file {i}: {file_base}")
 
-print("\n=== Timing Summary ===")
-for model in model_list:
-    print(f"{model}: {run_times[model]:.2f}s")
+    run_times = {}
+    tpr_results = {}
 
-print("\n=== TPR Summary ===")
-for model, tpr in tpr_results.items():
-    if tpr is not None:
-        print(f"{model}: TPR@FPR<0.02 (kernel) = {tpr[0]:.4f}, average = {tpr[1]:.4f}")
-    else:
-        print(f"{model}: failed to compute TPR")
+    for model in model_list:
+        print(f"\nRunning model: {model}")
+        start_time = time.time()
+
+        try:
+            # === Temporarily suppress inner output ===
+            with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                tpr_kernel, tpr_avg = run_might(file_base, cohort=cohort1, model_name=model, rep=1)
+            tpr_results[model] = (tpr_kernel, tpr_avg)
+        except Exception as e:
+            print(f"Error while running {model}: {e}")
+            tpr_results[model] = None
+
+        elapsed = time.time() - start_time
+        print(f"Model {model} finished in {elapsed:.2f} seconds")
+        run_times[model] = elapsed
+
+    # === Summary ===
+    print("\n=== Timing Summary ===")
+    for model in model_list:
+        print(f"{model}: {run_times.get(model, 0):.2f}s")
+
+    print("\n=== TPR Summary ===")
+    for model, tpr in tpr_results.items():
+        if tpr is not None:
+            print(f"{model}: TPR@FPR<0.02 (kernel) = {tpr[0]:.4f}, average = {tpr[1]:.4f}")
+        else:
+            print(f"{model}: failed to compute TPR")
+
+# === Restore stdout and close log file ===
+sys.stdout = sys.__stdout__
+sys.stderr = sys.__stderr__
+log_fh.close()
+
+
+# Try below:
+# file 6 ~ 4096
+# file 8 ~ 16000
+# No.6 >> MotifAnalysis.CongruentHexamer 4097
+# No.8 >> MotifAnalysis.DegenerateHexamer,15361
