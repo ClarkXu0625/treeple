@@ -1,0 +1,35 @@
+================================================
+Running file 5: MotifAnalysis.CongruentHexamer
+
+Running model: might
+Model might finished in 16142.79 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 320.97 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 5.95 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 6.80 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 6.09 seconds
+
+=== Timing Summary ===
+might: 16142.79s
+rf: 320.97s
+knn: 5.95s
+svm: 6.80s
+lr: 6.09s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.4118, average = 0.4314
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR

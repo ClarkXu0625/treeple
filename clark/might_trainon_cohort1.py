@@ -399,7 +399,7 @@ log_fh = open(log_file, "w")
 sys.stdout = log_fh
 sys.stderr = log_fh
 
-file_list = [5, 7, 23]
+file_list = [7]
 model_list = ['might', 'rf', 'knn', 'svm', 'lr']
 
 for i in file_list:
