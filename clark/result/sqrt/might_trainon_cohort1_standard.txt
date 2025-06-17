@@ -119,3 +119,75 @@ rf: failed to compute TPR
 knn: failed to compute TPR
 svm: failed to compute TPR
 lr: failed to compute TPR
+
+
+================================================
+Running file 5: MotifAnalysis.CongruentHexamer
+
+Running model: might
+Model might finished in 2107.39 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 318.39 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 5.75 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 6.44 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 5.77 seconds
+
+=== Timing Summary ===
+might: 2107.39s
+rf: 318.39s
+knn: 5.75s
+svm: 6.44s
+lr: 5.77s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.3725, average = 0.3725
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR
+================================================
+Running file 7: MotifAnalysis.DegenerateHexamer
+
+Running model: might
+Model might finished in 7374.62 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 328.57 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 25.54 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 34.04 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 25.97 seconds
+
+=== Timing Summary ===
+might: 7374.62s
+rf: 328.57s
+knn: 25.54s
+svm: 34.04s
+lr: 25.97s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.3725, average = 0.3627
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR

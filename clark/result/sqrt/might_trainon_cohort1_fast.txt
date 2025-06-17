@@ -119,3 +119,74 @@ rf: failed to compute TPR
 knn: failed to compute TPR
 svm: failed to compute TPR
 lr: failed to compute TPR
+
+================================================
+Running file 5: MotifAnalysis.CongruentHexamer
+
+Running model: might
+Model might finished in 2214.15 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 322.85 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 5.96 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 6.85 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 6.17 seconds
+
+=== Timing Summary ===
+might: 2214.15s
+rf: 322.85s
+knn: 5.96s
+svm: 6.85s
+lr: 6.17s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.3922, average = 0.3627
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR
+================================================
+Running file 7: MotifAnalysis.DegenerateHexamer
+
+Running model: might
+Model might finished in 2366.94 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 336.21 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 26.44 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 35.06 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 26.86 seconds
+
+=== Timing Summary ===
+might: 2366.94s
+rf: 336.21s
+knn: 26.44s
+svm: 35.06s
+lr: 26.86s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.3725, average = 0.3627
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR
