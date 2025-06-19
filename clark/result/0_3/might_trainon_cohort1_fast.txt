@@ -103,3 +103,73 @@ rf: failed to compute TPR
 knn: failed to compute TPR
 svm: failed to compute TPR
 lr: failed to compute TPR
+================================================
+Running file 23: WiseCondorX.Wise-1
+
+Running model: might
+Model might finished in 2116.21 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 331.35 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 3.09 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 3.95 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 3.14 seconds
+
+=== Timing Summary ===
+might: 2116.21s
+rf: 331.35s
+knn: 3.09s
+svm: 3.95s
+lr: 3.14s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.6078, average = 0.6176
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR
+================================================
+Running file 24: WiseCondorX.Wise-5
+
+Running model: might
+Model might finished in 2190.55 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 348.63 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 0.64 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 0.79 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 0.65 seconds
+
+=== Timing Summary ===
+might: 2190.55s
+rf: 348.63s
+knn: 0.64s
+svm: 0.79s
+lr: 0.65s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.6667, average = 0.6471
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR
