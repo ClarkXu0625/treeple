@@ -4,6 +4,8 @@ from scipy import stats as ss
 from sklearn.utils import shuffle
 from statsmodels.stats.multitest import multipletests
 from tqdm import tqdm
+import time
+import pdb
 
 #from treeple import ObliqueRandomForestClassifier, PatchObliqueRandomForestClassifier
 from treeple.ensemble._supervised_forest import (
@@ -213,9 +215,9 @@ class NeuroExplainableOptimalFIT:
 
         Parameters:
         -----------
-        ranks: array-like of shape (n_samples, n_features)
+        ranks: array-like of shape (n_samples, n_features), (10000,4096)
             The ranks of the feature importance.
-        idx: array-like of shape (2 * n_estimators,)
+        idx: array-like of shape (2 * n_estimators,), (10000,)
             The indices of the feature importance.
 
         Returns:
@@ -226,12 +228,26 @@ class NeuroExplainableOptimalFIT:
         stat = np.zeros(ranks.shape[1])
 
         for ii in range(self.n_estimators):
-            r = ranks[idx[ii]]
+            r = ranks[idx[ii]]  # (4096,)
             r_0 = ranks[idx[self.n_estimators + ii]]
             stat += (r_0 > r) * 1  # Boolean Comparison
+            #pdb.set_trace()
 
         stat /= self.n_estimators
         return stat
+
+        # # vectorized version
+        # n = self.n_estimators
+        # ranks_a = ranks[idx[:n]]        # shape (n, 4096)
+        # ranks_b = ranks[idx[n:]]        # shape (n, 4096)
+
+        # # Compare all at once: result is (n, 4096) of booleans
+        # comparisons = (ranks_b > ranks_a)
+
+        # # Sum over estimators, divide to get average "win rate"
+        # stat = comparisons.sum(axis=0) / n
+
+        # return stat
 
     def perm_stat(self, ranks):
         """
@@ -257,7 +273,7 @@ class NeuroExplainableOptimalFIT:
 
         Parameters:
         -----------
-        feature_importance: array-like of shape (n_samples, n_features)
+        feature_importance: array-like of shape (n_permutations, n_features)
             The feature importance.
         n_permutations: int
             The number of permutations. Ref to Coleman et al. [3]
@@ -276,8 +292,11 @@ class NeuroExplainableOptimalFIT:
         ranks = self.compute_ranks(feature_importance)
 
         # Compute actual statistic
+        start = time.time()        
         stat = self.statistics(ranks, np.arange(2 * self.n_estimators))
+        print(f"Time taken for statisitcs: {time.time() - start:.2f} seconds")
 
+        start = time.time()
         # Parallel computation of null distribution
         null_stat = np.array(
             Parallel(n_jobs=self.n_jobs)(
@@ -289,6 +308,30 @@ class NeuroExplainableOptimalFIT:
                 )
             )
         )
+        print(f"Time taken for statisitcs: {time.time() - start:.2f} seconds")
+        ###################################
+        # Precompute permutation indices
+        # rng = np.random.default_rng(self.random_state)
+        # perm_indices = np.array([
+        #     rng.permutation(2 * self.n_estimators)
+        #     for _ in range(self.n_permutations)
+        # ])
+
+        # # Function to compute null stats for a batch
+        # def compute_batch(batch):
+        #     return np.array([self.statistics(ranks, idx) for idx in batch])
+
+        # # Split permutations into roughly equal batches for n_jobs
+        # batches = np.array_split(perm_indices, self.n_jobs)
+
+        # # Parallel compute null stats
+        # null_stats_batches = Parallel(n_jobs=self.n_jobs, backend='threading')(
+        #     delayed(compute_batch)(batch) for batch in batches
+        # )
+
+        # # Concatenate results
+        # null_stat = np.vstack(null_stats_batches)
+        #########################################
 
         # Compute p-values
         count = np.sum(null_stat >= stat, axis=0)
@@ -313,7 +356,7 @@ class NeuroExplainableOptimalFIT:
         p_corrected: array-like of shape (n_features,)
             Corrected p-values.
         """
-        _, p = self.test(np.concatenate((feat_imp_all, feat_imp_all_rand)))
+        _, p = self.test(np.concatenate((feat_imp_all, feat_imp_all_rand))) # note
 
         # Apply Bonferroni-Holm correction
         p_corrected = multipletests(p, method="holm")[1]
@@ -335,24 +378,54 @@ class NeuroExplainableOptimalFIT:
         p_corrected : array-like of shape (n_features,)
             Corrected p-values for each feature.
         """
+        # # Training on original data
+        # print(f"Training forest with {self.n_estimators} trees on original data...")
+        # results = Parallel(n_jobs=self.n_jobs)(
+        #     delayed(self.train)(ii, X, y) for ii in tqdm(range(self.n_estimators))
+        # )
+        # feat_imp_all, _ = zip(*results)
+
+        # # Training on shuffled data
+        # print(f"Training forest with {self.n_estimators} trees on shuffled data...")
+        # y_shuffled = shuffle(y, random_state=0)
+        # results = Parallel(n_jobs=self.n_jobs)(
+        #     delayed(self.train)(ii, X, y_shuffled) for ii in tqdm(range(self.n_estimators))
+        # )
+        # feat_imp_all_rand, _ = zip(*results)
+
+        # # Computing p-values
+        # print(f"Computing p-values with {self.n_permutations} permutations...")
+        # p_corrected = self.get_p(np.array(feat_imp_all), np.array(feat_imp_all_rand))
+
+        # return p_corrected
+        total_start = time.time()
+
         # Training on original data
         print(f"Training forest with {self.n_estimators} trees on original data...")
+        start = time.time()
         results = Parallel(n_jobs=self.n_jobs)(
             delayed(self.train)(ii, X, y) for ii in tqdm(range(self.n_estimators))
         )
         feat_imp_all, _ = zip(*results)
+        print(f"Time taken for training on original data: {time.time() - start:.2f} seconds")
 
         # Training on shuffled data
         print(f"Training forest with {self.n_estimators} trees on shuffled data...")
+        start = time.time()
         y_shuffled = shuffle(y, random_state=0)
         results = Parallel(n_jobs=self.n_jobs)(
             delayed(self.train)(ii, X, y_shuffled) for ii in tqdm(range(self.n_estimators))
         )
         feat_imp_all_rand, _ = zip(*results)
+        print(f"Time taken for training on shuffled data: {time.time() - start:.2f} seconds")
 
         # Computing p-values
         print(f"Computing p-values with {self.n_permutations} permutations...")
+        start = time.time()
         p_corrected = self.get_p(np.array(feat_imp_all), np.array(feat_imp_all_rand))
+        print(f"Time taken for get_p(): {time.time() - start:.2f} seconds")
+
+        print(f"Total time for feat_imp_test(): {time.time() - total_start:.2f} seconds")
 
         return p_corrected
 
