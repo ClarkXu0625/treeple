@@ -1,7 +1,7 @@
 from treeple.datasets import make_trunk_classification
 from sklearn.model_selection import train_test_split
-#from neofit import NeuroExplainableOptimalFIT
-from treeple.stats import NeuroExplainableOptimalFIT
+from neofit_ydf import NeuroExplainableOptimalFIT_ydf
+#from treeple.stats import NeuroExplainableOptimalFIT
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -22,16 +22,16 @@ def time_test(dim_range,sample_range):
             start_time = time.time()
 
             # neofit testing
-            neofit = NeuroExplainableOptimalFIT(n_estimators=5000,n_permutations=100000,clf_type="SPORF",alpha=0.05, verbose=True)
+            neofit = NeuroExplainableOptimalFIT_ydf(n_estimators=5000,n_permutations=100000,clf_type="SPORF",alpha=0.05, verbose=False)
             p_values, imp_features, _ = neofit.get_significant_features(X_train, y_train)
             end_time = time.time()
             # save results of each run
-            os.makedirs("./sex_classification/results/", exist_ok=True)
-            np.save(f"./sex_classification/results/p_values_{sample}_{dim}.npy", p_values)
+            #os.makedirs("./sex_classification/results/", exist_ok=True)
+            #np.save(f"./sex_classification/results/p_values_{sample}_{dim}.npy", p_values)
 
             time_list.append(end_time - start_time)
-            with open("time_log.txt", "a") as log_file:
-                log_file.write(f"Time taken for sample {sample} and dim {dim} is: {end_time - start_time:.2f} seconds\n")
+            #with open("time_log.txt", "a") as log_file:
+            #    log_file.write(f"Time taken for sample {sample} and dim {dim} is: {end_time - start_time:.2f} seconds\n")
             dim_list.append(dim)
             sample_list.append(sample)
     # save time_list, dim_list and sample_list
@@ -48,11 +48,13 @@ def time_test(dim_range,sample_range):
 
 
 #dim = range(1000,6000,1000)
-dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
+#dim = np.array([128, 256, 512, 1024, 2048, 4096, 8192])
+dim = np.array([124])
 sample = dim
 #sample = range(1000,6000,1000)
 results_time = time_test(dim, sample)
+print(results_time)
 
 # save results to a csv file
-results_time.to_csv('time_results_fast.csv', index=False)
+#results_time.to_csv('time_results_fast.csv', index=False)
   
