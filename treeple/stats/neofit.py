@@ -1,4 +1,6 @@
 import numpy as np
+import numba
+from numba import njit
 from joblib import Parallel, delayed
 from scipy import stats as ss
 from sklearn.utils import shuffle
@@ -6,6 +8,7 @@ from statsmodels.stats.multitest import multipletests
 from tqdm import tqdm
 import time
 import pdb
+import torch
 
 #from treeple import ObliqueRandomForestClassifier, PatchObliqueRandomForestClassifier
 from treeple.ensemble._supervised_forest import (
@@ -110,6 +113,8 @@ class NeuroExplainableOptimalFIT:
         n_permutations=5000,
         clf_type="SPORF",
         alpha=0.05,
+        device='cuda',
+        
     ):
         self.n_estimators = n_estimators
         self.max_features = max_features
@@ -119,6 +124,7 @@ class NeuroExplainableOptimalFIT:
         self.n_permutations = n_permutations
         self.clf_type = clf_type
         self.alpha = alpha
+        self.device = device
 
     def construct_orf(self, random_state=None):
         """
@@ -129,8 +135,11 @@ class NeuroExplainableOptimalFIT:
         if self.clf_type == "MORF":
             return PatchObliqueRandomForestClassifier(
                 n_estimators=1,
-                max_patch_dims=np.array((5, 2)),
-                data_dims=np.array((28, 28)),
+                #max_patch_dims=np.array((5, 2)), ((2,2))
+                #data_dims=np.array((32, 32)), # 1x128, 256, 512, 1024 2* (n_dim/2)
+                min_patch_dims=None,
+                max_patch_dims=None,
+                data_dims=None,
                 n_jobs=1,
                 max_features=self.max_features,
                 bootstrap=False,
@@ -174,10 +183,14 @@ class NeuroExplainableOptimalFIT:
             padded_oob_decisions: array-like of shape (n_samples, n_classes)
                 The OOB decisions.
         """
-        rng = np.random.default_rng(ii if self.random_state is None else self.random_state + ii)
-        bootstrap_idx = rng.choice(
-            len(X), size=len(X), replace=True
-        )  # make sure the bootstrap strategy is the consistent
+        # Original rng and bootstrap
+        # rng = np.random.default_rng(ii if self.random_state is None else self.random_state + ii)
+        # bootstrap_idx = rng.choice(
+        #     len(X), size=len(X), replace=True
+        # )  # make sure the bootstrap strategy is the consistent
+        # ends here
+        bootstrap_idx = self.numba_bootstrap_indices(len(X), seed=(self.random_state or 0) + ii)
+
 
         orf = self.construct_orf(random_state=ii)
         orf.fit(X[bootstrap_idx, :], y[bootstrap_idx])
@@ -224,6 +237,7 @@ class NeuroExplainableOptimalFIT:
         --------
         stat: array-like of shape (n_features,)
             The feature importance test statistic.
+        note: numba - compile python code to C
         """
         stat = np.zeros(ranks.shape[1])
 
@@ -249,6 +263,28 @@ class NeuroExplainableOptimalFIT:
 
         # return stat
 
+
+    @staticmethod
+    def gpu_perm_stats(ranks_np, n_permutations, n_estimators, device="cuda"):
+        ranks = torch.tensor(ranks_np, dtype=torch.float32, device=device)
+        n_total, n_features = ranks.shape
+
+        # Preallocate
+        stat_null = torch.zeros((n_permutations, n_features), device=device)
+
+        for i in range(n_permutations):
+            # Generate permutation indices
+            perm = torch.randperm(n_total, device=device)
+
+            r1 = ranks[perm[:n_estimators]]
+            r2 = ranks[perm[n_estimators:]]
+
+            # Compare and accumulate
+            stat_null[i] = (r2 > r1).float().mean(dim=0)
+
+        return stat_null.cpu().numpy()
+
+
     def perm_stat(self, ranks):
         """
         Helper function that calculates the null distribution.
@@ -262,9 +298,27 @@ class NeuroExplainableOptimalFIT:
         --------
         stat: array-like of shape (n_features,)
             The feature importance test statistic.
+
+        rng permutation - slow, 
+        rank computation in numba
+        sampling without replacement (floyds), instead of permutation
         """
-        rng = np.random.default_rng(self.random_state)
-        idx = rng.permutation(2 * self.n_estimators)
+        # rng = np.random.default_rng(self.random_state)
+        # idx = rng.permutation(2 * self.n_estimators)
+        # return self.statistics(ranks, idx)
+        n = self.n_estimators
+        total = 2 * n
+        seed = (self.random_state or 0) + np.random.randint(1e9)
+
+        idx_real = self.floyd_sample(total, n, seed)
+        mask = np.ones(total, dtype=np.bool_)
+        mask[idx_real] = False
+        idx_null = np.nonzero(mask)[0]
+
+        idx = np.empty(total, dtype=np.int64)
+        idx[:n] = idx_real
+        idx[n:] = idx_null
+
         return self.statistics(ranks, idx)
 
     def test(self, feature_importance):
@@ -289,26 +343,45 @@ class NeuroExplainableOptimalFIT:
         arXiv preprint arXiv:2310.19722 (2023).
         """
         # Precompute ranks once using the correct method
-        ranks = self.compute_ranks(feature_importance)
+        ranks = self.compute_ranks(feature_importance)  # (2*n_permutation, n_dim)
 
         # Compute actual statistic
-        start = time.time()        
+
         stat = self.statistics(ranks, np.arange(2 * self.n_estimators))
-        print(f"Time taken for statisitcs: {time.time() - start:.2f} seconds")
 
         start = time.time()
-        # Parallel computation of null distribution
-        null_stat = np.array(
-            Parallel(n_jobs=self.n_jobs)(
-                delayed(self.perm_stat)(ranks)
-                for _ in tqdm(
+
+        ##### replaced
+        if self.device=='cuda':
+            null_stat = self.gpu_perm_stats(
+                ranks_np=ranks,
+                n_permutations=self.n_permutations,
+                n_estimators=self.n_estimators,
+                device="cuda"  # or "cuda:0" if needed
+            )
+        else:
+            results = Parallel(n_jobs=self.n_jobs)(
+                delayed(self.perm_stat)(ranks) for _ in tqdm(
                     range(self.n_permutations),
                     desc="Calculating null distribution",
                     disable=not self.verbose,
                 )
             )
-        )
-        print(f"Time taken for statisitcs: {time.time() - start:.2f} seconds")
+            null_stat = np.array(results)
+
+        # def batched_perm_stats(ranks, batch_size):
+        #     return [self.statistics(ranks, np.random.permutation(2 * self.n_estimators))
+        #             for _ in range(batch_size)]
+        
+        # n_tasks, batch_size = self.get_batch_config(self.n_permutations, n_jobs=16)
+
+
+        elapsed = time.time() - start
+        print(f"Time taken for null_stat computation: {elapsed:.2f} seconds")
+        ##### end here
+
+        #print(f"Time taken for statisitcs: {time.time() - start:.2f} seconds")
+        #pdb.set_trace()
         ###################################
         # Precompute permutation indices
         # rng = np.random.default_rng(self.random_state)
@@ -458,3 +531,40 @@ class NeuroExplainableOptimalFIT:
         X_important = X[:, significant_features]
 
         return p_values, significant_features, X_important
+
+    @staticmethod
+    def get_batch_config(n_permutations, n_jobs, min_batch_size=1000):
+        import math
+        max_tasks = n_jobs * 4
+        n_tasks = min(n_permutations // min_batch_size, max_tasks)
+        n_tasks = max(1, n_tasks)
+        batch_size = math.ceil(n_permutations / n_tasks)
+        return n_tasks, batch_size
+
+    @staticmethod
+    @njit
+    def numba_bootstrap_indices(n, seed):
+        np.random.seed(seed)
+        out = np.empty(n, dtype=np.int64)
+        for i in range(n):
+            out[i] = np.random.randint(0, n)
+        return out
+
+    @staticmethod
+    @njit
+    def floyd_sample(n, k, seed):
+        np.random.seed(seed)
+        selected = set()
+        result = np.empty(k, dtype=np.int64)
+        i = n - k
+        j = 0
+        while i < n:
+            t = np.random.randint(0, i + 1)
+            if t in selected:
+                result[j] = i
+            else:
+                result[j] = t
+            selected.add(result[j])
+            i += 1
+            j += 1
+        return result
