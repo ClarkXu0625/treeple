@@ -8,6 +8,7 @@ import time
 import pdb
 import ydf
 import pandas as pd
+import torch
 
 #from treeple import ObliqueRandomForestClassifier, PatchObliqueRandomForestClassifier
 from treeple.ensemble._supervised_forest import (
@@ -223,8 +224,9 @@ class NeuroExplainableOptimalFIT_ydf:
 
         # Get feature importances
         fi = np.zeros(X.shape[1])
-        for feature_name, importance in model.variable_importances()["NUM_AS_ROOT"]:
+        for feature_name, importance in model.variable_importances()["SUM_SCORE"]:
             fi[int(feature_name)] = importance
+            #print(model.variable_importances().keys())
 
         # for v in model.variable_importances()["NUM_AS_ROOT"]:
         #     fi[int(v.feature.name)] = v.importance
@@ -355,40 +357,23 @@ class NeuroExplainableOptimalFIT_ydf:
 
         start = time.time()
         # Parallel computation of null distribution
-        null_stat = np.array(
-            Parallel(n_jobs=self.n_jobs)(
-                delayed(self.perm_stat)(ranks)
-                for _ in tqdm(
-                    range(self.n_permutations),
-                    desc="Calculating null distribution",
-                    disable=not self.verbose,
-                )
-            )
+        # null_stat = np.array(
+        #     Parallel(n_jobs=self.n_jobs)(
+        #         delayed(self.perm_stat)(ranks)
+        #         for _ in tqdm(
+        #             range(self.n_permutations),
+        #             desc="Calculating null distribution",
+        #             disable=not self.verbose,
+        #         )
+        #     )
+        # )
+        null_stat = self.gpu_perm_stats(
+            ranks_np=ranks,
+            n_permutations=self.n_permutations,
+            n_estimators=self.n_estimators,
+            device="cuda"  # or "cuda:0" if needed
         )
         print(f"Time taken for statisitcs: {time.time() - start:.2f} seconds")
-        ###################################
-        # Precompute permutation indices
-        # rng = np.random.default_rng(self.random_state)
-        # perm_indices = np.array([
-        #     rng.permutation(2 * self.n_estimators)
-        #     for _ in range(self.n_permutations)
-        # ])
-
-        # # Function to compute null stats for a batch
-        # def compute_batch(batch):
-        #     return np.array([self.statistics(ranks, idx) for idx in batch])
-
-        # # Split permutations into roughly equal batches for n_jobs
-        # batches = np.array_split(perm_indices, self.n_jobs)
-
-        # # Parallel compute null stats
-        # null_stats_batches = Parallel(n_jobs=self.n_jobs, backend='threading')(
-        #     delayed(compute_batch)(batch) for batch in batches
-        # )
-
-        # # Concatenate results
-        # null_stat = np.vstack(null_stats_batches)
-        #########################################
 
         # Compute p-values
         count = np.sum(null_stat >= stat, axis=0)
@@ -518,3 +503,23 @@ class NeuroExplainableOptimalFIT_ydf:
         X_important = X[:, significant_features]
 
         return p_values, significant_features, X_important
+
+    @staticmethod
+    def gpu_perm_stats(ranks_np, n_permutations, n_estimators, device="cuda"):
+        ranks = torch.tensor(ranks_np, dtype=torch.float32, device=device)
+        n_total, n_features = ranks.shape
+
+        # Preallocate
+        stat_null = torch.zeros((n_permutations, n_features), device=device)
+
+        for i in range(n_permutations):
+            # Generate permutation indices
+            perm = torch.randperm(n_total, device=device)
+
+            r1 = ranks[perm[:n_estimators]]
+            r2 = ranks[perm[n_estimators:]]
+
+            # Compare and accumulate
+            stat_null[i] = (r2 > r1).float().mean(dim=0)
+
+        return stat_null.cpu().numpy()
