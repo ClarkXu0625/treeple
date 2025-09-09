@@ -22,6 +22,7 @@ from .._lib.sklearn.tree._tree import BestFirstTreeBuilder, DepthFirstTreeBuilde
 from . import _oblique_splitter
 from ._neighbors import SimMatrixMixin
 from ._oblique_splitter import ObliqueSplitter
+from ._oblique_splitter import BestObliqueSplitter
 from ._oblique_tree import ObliqueTree
 from .manifold import _morf_splitter
 from .manifold._morf_splitter import PatchSplitter
@@ -999,6 +1000,15 @@ class ObliqueDecisionTreeClassifier(SimMatrixMixin, DecisionTreeClassifier):
             )
 
         builder.build(self.tree_, X, y, sample_weight, None)
+
+
+        
+        if isinstance(splitter, BestObliqueSplitter):
+            self.root_projection_matrix_ = splitter.get_root_projection_matrix()
+            self.first_best_split_       = splitter.get_first_best_split()
+        else:
+            self.root_projection_matrix_ = None
+            self.first_best_split_       = None
 
         if self.n_outputs_ == 1:
             self.n_classes_ = self.n_classes_[0]

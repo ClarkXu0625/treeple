@@ -110,6 +110,14 @@ cdef class BestObliqueSplitter(ObliqueSplitter):
         SplitRecord* split,
     ) except -1 nogil
 
+    cdef intp_t _first_best_pos
+    cdef float32_t _first_best_threshold
+    cdef bint _has_first_best
+
+    cdef bint _root_proj_captured
+    cdef vector[vector[float32_t]] _root_proj_weights
+    cdef vector[vector[intp_t]] _root_proj_indices
+
 
 cdef class RandomObliqueSplitter(ObliqueSplitter):
     cdef void find_min_max(

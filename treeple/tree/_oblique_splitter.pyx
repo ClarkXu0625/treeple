@@ -258,6 +258,8 @@ cdef class ObliqueSplitter(BaseObliqueSplitter):
             proj_mat_weights[proj_i].push_back(weight)  # Store weight of nonzero
 
 cdef class BestObliqueSplitter(ObliqueSplitter):
+    
+
     def __reduce__(self):
         """Enable pickling the splitter."""
         return (type(self),
@@ -271,6 +273,22 @@ cdef class BestObliqueSplitter(ObliqueSplitter):
                     self.feature_combinations,
                 ), self.__getstate__())
 
+    cdef int init(
+        self,
+        object X,
+        const float64_t[:, ::1] y,
+        const float64_t[:] sample_weight,
+        const uint8_t[::1] missing_values_in_feature_mask,
+    ) except -1:
+        cdef int rc = ObliqueSplitter.init(self, X, y, sample_weight, missing_values_in_feature_mask)
+        if rc != 0:
+            return rc
+        self._root_proj_captured = 0            # uses C fields declared in .pxd
+        self._root_proj_weights = vector[vector[float32_t]](self.max_features)
+        self._root_proj_indices = vector[vector[intp_t]](self.max_features)
+        return 0
+    
+
     cdef int node_split(
         self,
         ParentInfo* parent_record,
@@ -283,6 +301,13 @@ cdef class BestObliqueSplitter(ObliqueSplitter):
         """
         # typecast the pointer to an ObliqueSplitRecord
         cdef ObliqueSplitRecord* oblique_split = <ObliqueSplitRecord*>(split)
+
+        # --- ADDED: reset first-best trackers for this node ---
+        self._has_first_best = 0
+        self._first_best_pos = -1
+        self._first_best_threshold = 0.0
+        cdef intp_t __i
+        # --- END ADDED ---
 
         # Draw random splits and pick the best_split
         cdef intp_t[::1] samples = self.samples
@@ -311,6 +336,22 @@ cdef class BestObliqueSplitter(ObliqueSplitter):
 
         # Sample the projection matrix
         self.sample_proj_mat(self.proj_mat_weights, self.proj_mat_indices)
+
+        # --- ADDED: capture the ROOT projection matrix exactly once ---
+        if self._root_proj_captured == 0:
+            # Deep copy current proj_mat_* into dedicated root storage
+            # Safe in nogil: we're only using C++ vector operations.
+            self._root_proj_weights.clear()
+            self._root_proj_indices.clear()
+            self._root_proj_weights = vector[vector[float32_t]](self.max_features)
+            self._root_proj_indices = vector[vector[intp_t]](self.max_features)
+
+            
+            for __i in range(self.max_features):
+                self._root_proj_weights[__i] = self.proj_mat_weights[__i]   # vector copy
+                self._root_proj_indices[__i] = self.proj_mat_indices[__i]   # vector copy
+            self._root_proj_captured = 1
+        # --- END ADDED ---
 
         # For every vector in the projection matrix
         for feat_i in range(max_features):
@@ -375,6 +416,13 @@ cdef class BestObliqueSplitter(ObliqueSplitter):
                         ):
                             current_split.threshold = feature_values[p - 1]
 
+                        # --- ADDED: capture FIRST time we improve ---
+                        if self._has_first_best == 0:
+                            self._has_first_best = 1
+                            self._first_best_pos = current_split.pos
+                            self._first_best_threshold = current_split.threshold
+                        # --- END ADDED ---
+
                         best_split = current_split  # copy
 
         # Reorganize into samples[start:best_split.pos] + samples[best_split.pos:end]
@@ -416,7 +464,39 @@ cdef class BestObliqueSplitter(ObliqueSplitter):
 
         # XXX: Fix when we can track constants
         parent_record.n_constant_features = 0
+
         return 0
+
+    # --- ADDED: Python-visible getter for first best split ---
+    def get_first_best_split(self):
+        """
+        Returns (pos, threshold) of the first strictly-better split encountered
+        during the last node_split() call, or None if no valid split was found.
+        """
+        if self._has_first_best:
+            return int(self._first_best_pos), float(self._first_best_threshold)
+        return None
+    # --- END ADDED ---
+
+    def get_root_projection_matrix(self):
+        """
+        Returns (weights, indices) for the ROOT node’s sampled projection matrix.
+        Each is a list of length max_features; each inner list holds the nonzeros
+        for that projection vector (weights and matching column indices).
+        Returns None if no root capture occurred (e.g., no split attempted).
+        """
+        if not self._root_proj_captured:
+            return None
+
+        cdef Py_ssize_t i, j
+        cdef list W = [None] * self.max_features
+        cdef list I = [None] * self.max_features
+        for i in range(self.max_features):
+            W[i] = [float(self._root_proj_weights[i][j]) for j in range(self._root_proj_weights[i].size())]
+            I[i] = [int(self._root_proj_indices[i][j]) for j in range(self._root_proj_indices[i].size())]
+        return W, I
+
+
 
 cdef class RandomObliqueSplitter(ObliqueSplitter):
     def __reduce__(self):
