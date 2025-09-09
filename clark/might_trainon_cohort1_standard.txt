@@ -1,0 +1,35 @@
+================================================
+Running file 24: WiseCondorX.Wise-5
+
+Running model: might
+Model might finished in 2194.07 seconds
+
+Running model: rf
+Error while running rf: local variable 'tpr_s_kernel' referenced before assignment
+Model rf finished in 344.05 seconds
+
+Running model: knn
+Error while running knn: local variable 'tpr_s_kernel' referenced before assignment
+Model knn finished in 0.72 seconds
+
+Running model: svm
+Error while running svm: local variable 'tpr_s_kernel' referenced before assignment
+Model svm finished in 0.80 seconds
+
+Running model: lr
+Error while running lr: local variable 'tpr_s_kernel' referenced before assignment
+Model lr finished in 0.65 seconds
+
+=== Timing Summary ===
+might: 2194.07s
+rf: 344.05s
+knn: 0.72s
+svm: 0.80s
+lr: 0.65s
+
+=== TPR Summary ===
+might: TPR@FPR<0.02 (kernel) = 0.7157, average = 0.6961
+rf: failed to compute TPR
+knn: failed to compute TPR
+svm: failed to compute TPR
+lr: failed to compute TPR

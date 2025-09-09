@@ -57,4 +57,4 @@ __pycache__
 
 # Profiling
 profiling/
-*.prof
+*.profMiniconda3-*.sh

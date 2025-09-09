@@ -35,7 +35,7 @@ import argparse
 import contextlib
 import io
 
-n_estimators = 100000
+n_estimators = 100000 #100000
 MODEL_NAMES = {
     "might": {
         # "n_estimators": n_estimators,
@@ -232,9 +232,9 @@ def run_might(f1,cohort = cohort2,model_name='might',rep = 1):
             # est = HonestForestClassifier(**might_kwargs)
             # print('MORF')
             est = HonestForestClassifier(
-                n_estimators=100000,
+                n_estimators=100000, #modified, original is 100000,
                 max_samples=1.6,
-                max_features = 0.3, # modified, original is sqrt
+                max_features = 'sqrt', #0.3, # modified, original is sqrt
                 bootstrap=True,
                 stratify=True,
                 n_jobs=40,
@@ -399,7 +399,7 @@ log_fh = open(log_file, "w")
 sys.stdout = log_fh
 sys.stderr = log_fh
 
-file_list = [7]
+file_list = [24]
 model_list = ['might', 'rf', 'knn', 'svm', 'lr']
 
 for i in file_list:
