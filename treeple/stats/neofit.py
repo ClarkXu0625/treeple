@@ -1,6 +1,8 @@
 import numpy as np
 import numba
-from numba import njit
+from numba import cuda
+import numba.cuda.random as rnd
+from numba import njit, prange
 from joblib import Parallel, delayed
 from scipy import stats as ss
 from sklearn.utils import shuffle
@@ -16,6 +18,100 @@ from treeple.ensemble._supervised_forest import (
     PatchObliqueRandomForestClassifier,
 )
 
+
+
+@njit(parallel=True)
+def fast_cpu_perm_stat(ranks_np, n_permutations, n_estimators):
+    """
+    Fast CPU implementation of permutation-based null stats using Numba.
+    
+    Parameters:
+    -----------
+    ranks_np : ndarray, shape (2 * n_estimators, n_features)
+        Input rank matrix.
+    n_permutations : int
+        Number of permutations to generate.
+    n_estimators : int
+        Number of estimators (half of total rows).
+    
+    Returns:
+    --------
+    stat_null : ndarray, shape (n_permutations, n_features)
+        Null distribution of test statistics.
+    """
+    n_total, n_features = ranks_np.shape
+    stat_null = np.zeros((n_permutations, n_features), dtype=np.float32)
+
+    for i in prange(n_permutations):
+        perm = np.random.permutation(n_total)
+        for j in range(n_estimators):
+            for k in range(n_features):
+                if ranks_np[perm[n_estimators + j], k] > ranks_np[perm[j], k]:
+                    stat_null[i, k] += 1
+        for k in range(n_features):
+            stat_null[i, k] /= n_estimators
+
+    return stat_null
+
+
+@njit(parallel=True)
+def fast_cpu_perm_stat_paired(ranks_np, perms, n_estimators):
+    n_permutations, n_total = perms.shape
+    n_features = ranks_np.shape[1]
+    stat_null = np.zeros((n_permutations, n_features), dtype=np.float32)
+
+    for i in prange(n_permutations):
+        perm = perms[i]
+        for j in range(n_estimators):
+            idx_a = perm[j]
+            idx_b = perm[j + n_estimators]
+            for k in range(n_features):
+                if ranks_np[idx_b, k] > ranks_np[idx_a, k]:
+                    stat_null[i, k] += 1
+        for k in range(n_features):
+            stat_null[i, k] /= n_estimators
+
+    return stat_null
+
+
+def gpu_perm_stats(ranks_np, n_permutations, n_estimators, device="cuda"):
+        '''Using cuda torch to perform perm stat'''
+        ranks = torch.tensor(ranks_np, dtype=torch.float32, device=device)
+        n_total, n_features = ranks.shape
+
+        # Preallocate
+        stat_null = torch.zeros((n_permutations, n_features), device=device)
+
+        for i in range(n_permutations):
+            # Generate permutation indices
+            perm = torch.randperm(n_total, device=device)
+
+            r1 = ranks[perm[:n_estimators]]
+            r2 = ranks[perm[n_estimators:]]
+
+            # Compare and accumulate
+            stat_null[i] = (r2 > r1).float().mean(dim=0)
+
+        return stat_null.cpu().numpy()
+
+def gpu_perm_stats_exact(ranks_np, perms_np, n_estimators, device="cuda"):
+    ranks = torch.tensor(ranks_np, dtype=torch.float32, device=device)
+    perms = torch.tensor(perms_np, dtype=torch.long, device=device)
+    n_permutations, n_total = perms.shape
+    n_features = ranks.shape[1]
+
+    stat_null = torch.zeros((n_permutations, n_features), device=device)
+
+    for i in range(n_permutations):
+        perm = perms[i]
+        stat = torch.zeros(n_features, dtype=torch.float32, device=device)
+        for j in range(n_estimators):
+            r = ranks[perm[j]]
+            r_0 = ranks[perm[n_estimators + j]]
+            stat += (r_0 > r).float()
+        stat_null[i] = stat / n_estimators
+
+    return stat_null.cpu().numpy()
 
 
 class NeuroExplainableOptimalFIT:
@@ -108,12 +204,15 @@ class NeuroExplainableOptimalFIT:
         n_estimators=100,
         max_features="sqrt",
         n_jobs=-1,
-        random_state=None,
+        random_state=42,
         verbose=1,
         n_permutations=5000,
         clf_type="SPORF",
         alpha=0.05,
         device='cuda',
+        max_patch_dims=None,
+        min_patch_dims=None,
+        data_dims=None,
         
     ):
         self.n_estimators = n_estimators
@@ -125,6 +224,9 @@ class NeuroExplainableOptimalFIT:
         self.clf_type = clf_type
         self.alpha = alpha
         self.device = device
+        self.max_patch_dims = max_patch_dims
+        self.min_patch_dims = min_patch_dims
+        self.data_dims = data_dims
 
     def construct_orf(self, random_state=None):
         """
@@ -137,9 +239,9 @@ class NeuroExplainableOptimalFIT:
                 n_estimators=1,
                 #max_patch_dims=np.array((5, 2)), ((2,2))
                 #data_dims=np.array((32, 32)), # 1x128, 256, 512, 1024 2* (n_dim/2)
-                min_patch_dims=None,
-                max_patch_dims=None,
-                data_dims=None,
+                min_patch_dims=self.min_patch_dims,
+                max_patch_dims=self.max_patch_dims,
+                data_dims=self.data_dims,
                 n_jobs=1,
                 max_features=self.max_features,
                 bootstrap=False,
@@ -184,12 +286,12 @@ class NeuroExplainableOptimalFIT:
                 The OOB decisions.
         """
         # Original rng and bootstrap
-        # rng = np.random.default_rng(ii if self.random_state is None else self.random_state + ii)
-        # bootstrap_idx = rng.choice(
-        #     len(X), size=len(X), replace=True
-        # )  # make sure the bootstrap strategy is the consistent
+        rng = np.random.default_rng(ii if self.random_state is None else self.random_state + ii)
+        bootstrap_idx = rng.choice(
+            len(X), size=len(X), replace=True
+        )  # make sure the bootstrap strategy is the consistent
         # ends here
-        bootstrap_idx = self.numba_bootstrap_indices(len(X), seed=(self.random_state or 0) + ii)
+        #bootstrap_idx = gpu_bootstrap_indices(len(X), seed=(self.random_state or 0) + ii)
 
 
         orf = self.construct_orf(random_state=ii)
@@ -245,47 +347,34 @@ class NeuroExplainableOptimalFIT:
             r = ranks[idx[ii]]  # (4096,)
             r_0 = ranks[idx[self.n_estimators + ii]]
             stat += (r_0 > r) * 1  # Boolean Comparison
-            #pdb.set_trace()
 
         stat /= self.n_estimators
         return stat
 
-        # # vectorized version
-        # n = self.n_estimators
-        # ranks_a = ranks[idx[:n]]        # shape (n, 4096)
-        # ranks_b = ranks[idx[n:]]        # shape (n, 4096)
 
-        # # Compare all at once: result is (n, 4096) of booleans
-        # comparisons = (ranks_b > ranks_a)
+    # @staticmethod
+    # def gpu_perm_stats(ranks_np, n_permutations, n_estimators, device="cuda"):
+    #     '''Using cuda torch to perform perm stat'''
+    #     ranks = torch.tensor(ranks_np, dtype=torch.float32, device=device)
+    #     n_total, n_features = ranks.shape
 
-        # # Sum over estimators, divide to get average "win rate"
-        # stat = comparisons.sum(axis=0) / n
+    #     # Preallocate
+    #     stat_null = torch.zeros((n_permutations, n_features), device=device)
 
-        # return stat
+    #     for i in range(n_permutations):
+    #         # Generate permutation indices
+    #         perm = torch.randperm(n_total, device=device)
 
+    #         r1 = ranks[perm[:n_estimators]]
+    #         r2 = ranks[perm[n_estimators:]]
 
-    @staticmethod
-    def gpu_perm_stats(ranks_np, n_permutations, n_estimators, device="cuda"):
-        ranks = torch.tensor(ranks_np, dtype=torch.float32, device=device)
-        n_total, n_features = ranks.shape
+    #         # Compare and accumulate
+    #         stat_null[i] = (r2 > r1).float().mean(dim=0)
 
-        # Preallocate
-        stat_null = torch.zeros((n_permutations, n_features), device=device)
-
-        for i in range(n_permutations):
-            # Generate permutation indices
-            perm = torch.randperm(n_total, device=device)
-
-            r1 = ranks[perm[:n_estimators]]
-            r2 = ranks[perm[n_estimators:]]
-
-            # Compare and accumulate
-            stat_null[i] = (r2 > r1).float().mean(dim=0)
-
-        return stat_null.cpu().numpy()
+    #     return stat_null.cpu().numpy()
 
 
-    def perm_stat(self, ranks):
+    def perm_stat(self, ranks, random_state):
         """
         Helper function that calculates the null distribution.
 
@@ -303,23 +392,72 @@ class NeuroExplainableOptimalFIT:
         rank computation in numba
         sampling without replacement (floyds), instead of permutation
         """
-        # rng = np.random.default_rng(self.random_state)
-        # idx = rng.permutation(2 * self.n_estimators)
-        # return self.statistics(ranks, idx)
-        n = self.n_estimators
-        total = 2 * n
-        seed = (self.random_state or 0) + np.random.randint(1e9)
-
-        idx_real = self.floyd_sample(total, n, seed)
-        mask = np.ones(total, dtype=np.bool_)
-        mask[idx_real] = False
-        idx_null = np.nonzero(mask)[0]
-
-        idx = np.empty(total, dtype=np.int64)
-        idx[:n] = idx_real
-        idx[n:] = idx_null
-
+        # original
+        #rng = np.random.default_rng(self.random_state)
+        rng = np.random.default_rng(random_state)
+        idx = rng.permutation(2 * self.n_estimators)
         return self.statistics(ranks, idx)
+
+        # first version
+        # n = self.n_estimators
+        # total = 2 * n
+        # seed = (self.random_state or 0) + np.random.randint(1e9)
+
+        # idx_real = self.floyd_sample(total, n, seed)
+        # mask = np.ones(total, dtype=np.bool_)
+        # mask[idx_real] = False
+        # idx_null = np.nonzero(mask)[0]
+
+        # idx = np.empty(total, dtype=np.int64)
+        # idx[:n] = idx_real
+        # idx[n:] = idx_null
+
+        # return self.statistics(ranks, idx)
+        
+        # second:
+        # n_total = 2 * self.n_estimators
+        # idx = gpu_sample_without_replacement(n_total, n_total, seed=self.random_state)
+        # return self.statistic(ranks, idx, self.n_estimators)
+
+        # third:
+        # n_total = 2 * self.n_estimators
+        # seed = self.random_state or 0
+        # idx = permute_indices(seed, n_total)
+        # return self.statistics(ranks, idx)
+    
+
+    def cpu_perm_stat(ranks_np, n_permutations, n_estimators, seed=0):
+        """
+        Vectorized CPU implementation of permutation-based null stats.
+        
+        Parameters:
+        -----------
+        ranks_np : ndarray, shape (2 * n_estimators, n_features)
+            Input rank matrix.
+        n_permutations : int
+            Number of permutations to generate.
+        n_estimators : int
+            Half the number of rows in `ranks_np`.
+        seed : int
+            Random seed.
+        
+        Returns:
+        --------
+        stat_null : ndarray, shape (n_permutations, n_features)
+            Null distribution of test statistics.
+        """
+        np.random.seed(seed)
+        n_total, n_features = ranks_np.shape
+        stat_null = np.zeros((n_permutations, n_features), dtype=np.float32)
+
+        for i in range(n_permutations):
+            perm = np.random.permutation(n_total)
+            r1 = ranks_np[perm[:n_estimators]]
+            r2 = ranks_np[perm[n_estimators:]]
+            stat_null[i] = np.mean((r2 > r1), axis=0)
+
+        return stat_null
+
 
     def test(self, feature_importance):
         """
@@ -353,58 +491,41 @@ class NeuroExplainableOptimalFIT:
 
         ##### replaced
         if self.device=='cuda':
-            null_stat = self.gpu_perm_stats(
+            null_stat = gpu_perm_stats(
                 ranks_np=ranks,
                 n_permutations=self.n_permutations,
                 n_estimators=self.n_estimators,
                 device="cuda"  # or "cuda:0" if needed
             )
+        elif self.device=='cuda_exact':
+            rng = np.random.default_rng(self.random_state)
+            perms = np.stack([rng.permutation(2 * self.n_estimators) for _ in range(self.n_permutations)])
+            null_stat = gpu_perm_stats_exact(ranks, perms, self.n_estimators)
+            
+        elif self.device=='cpu_numba':
+            null_stat = fast_cpu_perm_stat(ranks_np=ranks,
+                n_permutations=self.n_permutations,
+                n_estimators=self.n_estimators,)
+            
+        elif self.device=='cpu_numba_paired':
+            rng = np.random.default_rng(self.random_state)
+            perms = np.stack([rng.permutation(2 * self.n_estimators) for _ in range(self.n_permutations)])
+            null_stat = fast_cpu_perm_stat_paired(ranks, perms, self.n_estimators)
         else:
+            # original
             results = Parallel(n_jobs=self.n_jobs)(
-                delayed(self.perm_stat)(ranks) for _ in tqdm(
+                delayed(self.perm_stat)(ranks,ii) for ii in tqdm(
                     range(self.n_permutations),
                     desc="Calculating null distribution",
                     disable=not self.verbose,
                 )
             )
+            # results = [self.perm_stat(ranks) for _ in range(self.n_permutations)]
             null_stat = np.array(results)
-
-        # def batched_perm_stats(ranks, batch_size):
-        #     return [self.statistics(ranks, np.random.permutation(2 * self.n_estimators))
-        #             for _ in range(batch_size)]
-        
-        # n_tasks, batch_size = self.get_batch_config(self.n_permutations, n_jobs=16)
 
 
         elapsed = time.time() - start
         print(f"Time taken for null_stat computation: {elapsed:.2f} seconds")
-        ##### end here
-
-        #print(f"Time taken for statisitcs: {time.time() - start:.2f} seconds")
-        #pdb.set_trace()
-        ###################################
-        # Precompute permutation indices
-        # rng = np.random.default_rng(self.random_state)
-        # perm_indices = np.array([
-        #     rng.permutation(2 * self.n_estimators)
-        #     for _ in range(self.n_permutations)
-        # ])
-
-        # # Function to compute null stats for a batch
-        # def compute_batch(batch):
-        #     return np.array([self.statistics(ranks, idx) for idx in batch])
-
-        # # Split permutations into roughly equal batches for n_jobs
-        # batches = np.array_split(perm_indices, self.n_jobs)
-
-        # # Parallel compute null stats
-        # null_stats_batches = Parallel(n_jobs=self.n_jobs, backend='threading')(
-        #     delayed(compute_batch)(batch) for batch in batches
-        # )
-
-        # # Concatenate results
-        # null_stat = np.vstack(null_stats_batches)
-        #########################################
 
         # Compute p-values
         count = np.sum(null_stat >= stat, axis=0)
@@ -531,40 +652,3 @@ class NeuroExplainableOptimalFIT:
         X_important = X[:, significant_features]
 
         return p_values, significant_features, X_important
-
-    @staticmethod
-    def get_batch_config(n_permutations, n_jobs, min_batch_size=1000):
-        import math
-        max_tasks = n_jobs * 4
-        n_tasks = min(n_permutations // min_batch_size, max_tasks)
-        n_tasks = max(1, n_tasks)
-        batch_size = math.ceil(n_permutations / n_tasks)
-        return n_tasks, batch_size
-
-    @staticmethod
-    @njit
-    def numba_bootstrap_indices(n, seed):
-        np.random.seed(seed)
-        out = np.empty(n, dtype=np.int64)
-        for i in range(n):
-            out[i] = np.random.randint(0, n)
-        return out
-
-    @staticmethod
-    @njit
-    def floyd_sample(n, k, seed):
-        np.random.seed(seed)
-        selected = set()
-        result = np.empty(k, dtype=np.int64)
-        i = n - k
-        j = 0
-        while i < n:
-            t = np.random.randint(0, i + 1)
-            if t in selected:
-                result[j] = i
-            else:
-                result[j] = t
-            selected.add(result[j])
-            i += 1
-            j += 1
-        return result
