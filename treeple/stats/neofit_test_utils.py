@@ -14,41 +14,66 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-
-def test_neofit(dim_range, 
+def time_neofit(dim_range, 
               sample_range, 
               clf_type="SPORF", 
               n_permutations=10000,
               n_estimators=5000,
-              device1='cuda',
+              devices=['cuda', 'cpu'],
+              max_patch_dims=None,
+              min_patch_dims=None,
+              data_dims=None,
               save_result=True,
               result_path="results/neofit_device_compare.csv"):
-    '''Simple test on neofit functionality'''
+    '''Compare neofit running time under different devices'''
     
     records = []
-    for dim in dim_range:
+    pvals = []
+
+    for i in range(len(dim_range)):
+        dim = dim_range[i]
+        data_dim = data_dims[i] if data_dims is not None else None  # used for MORF neofit only
+
         for sample in sample_range:
             X, y = make_trunk_classification(n_samples=sample, n_dim=dim, n_informative=min(dim, 600), seed=1)
             X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=0)
             X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=2)
 
-            # Run on device1
-            model1 = NeuroExplainableOptimalFIT(n_estimators=n_estimators,
-                                                n_permutations=n_permutations,
-                                                clf_type=clf_type,
-                                                alpha=0.05,
-                                                verbose=False,
-                                                device=device1)
-            start1 = time.time()
-            pval1, imp1, _ = model1.get_significant_features(X_train, y_train)
-            end1 = time.time()
+            results = []
 
-            records.append({
-                "dim": dim,
-                "sample": sample,
-                "time": end1 - start1,
-                "type": f"{clf_type}_{device1}"
-            })
+            for device in devices:
+
+                print(f"Training on device: {device} with {dim} features and {sample} samples")
+
+                model = NeuroExplainableOptimalFIT(
+                    n_estimators=n_estimators,
+                    n_permutations=n_permutations,
+                    clf_type=clf_type,
+                    alpha=0.05,
+                    verbose=False,
+                    device=device,
+                    max_patch_dims=max_patch_dims,
+                    min_patch_dims=min_patch_dims,
+                    data_dims=data_dim
+                )
+                start = time.time()
+                pval, imp, _ = model.get_significant_features(X_train, y_train)
+                end = time.time()
+                pvals.append(pval)
+
+                records.append({
+                    "dim": dim,
+                    "sample": sample,
+                    "time": end - start,
+                    "type": f"{clf_type}_{device}",
+                    "n_significant": int(np.sum(pval < 0.05))
+                })
+                results.append(imp)
+
+            # imp_ref = results[0]
+            # for j in range(1, len(results)):
+            #     diff = np.sum(results[j].astype(int) - imp_ref.astype(int))
+            #     print(f"Feature diff (model {j} - model 0) for dim={dim}, sample={sample}: {diff}")
 
     results_df = pd.DataFrame.from_records(records)
 
@@ -57,6 +82,7 @@ def test_neofit(dim_range,
         results_df.to_csv(result_path, index=False)
 
     return results_df
+
     
 
 
@@ -69,11 +95,21 @@ def time_test(dim_range,
               n_estimators=5000,
               device1='cuda',
               device2='cpu',
+              max_patch_dims=None,
+              min_patch_dims=None,
+              data_dims=None,
               save_result=True,
               result_path="results/neofit_device_compare.csv"):
+    '''Compare running time of two Neofit models under selected devices'''
     records = []
+    
+    for i in range(len(dim_range)): #dim in dim_range:
+        dim = dim_range[i]
+        if data_dims is not None:
+            data_dim = data_dims[i]
+        else:
+            data_dim = None
 
-    for dim in dim_range:
         for sample in sample_range:
             X, y = make_trunk_classification(n_samples=sample, n_dim=dim, n_informative=min(dim, 600), seed=1)
             X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=0)
@@ -85,7 +121,10 @@ def time_test(dim_range,
                                                 clf_type=clf_type,
                                                 alpha=0.05,
                                                 verbose=False,
-                                                device=device1)
+                                                device=device1,
+                                                max_patch_dims = max_patch_dims,
+                                                min_patch_dims = min_patch_dims,
+                                                data_dims = data_dim,)
             start1 = time.time()
             pval1, imp1, _ = model1.get_significant_features(X_train, y_train)
             end1 = time.time()
@@ -103,7 +142,10 @@ def time_test(dim_range,
                                                 clf_type=clf_type,
                                                 alpha=0.05,
                                                 verbose=False,
-                                                device=device2)
+                                                device=device2,
+                                                max_patch_dims = max_patch_dims,
+                                                min_patch_dims = min_patch_dims,
+                                                data_dims = data_dim,)
             start2 = time.time()
             pval2, imp2, _ = model2.get_significant_features(X_train, y_train)
             end2 = time.time()
@@ -137,6 +179,7 @@ def compare_original(dim_range,
               device2='cpu',
               save_result=True,
               result_path="results/neofit_device_compare.csv"):
+    '''Device2 uses original neofit (on cpu)'''
     records = []
 
     for dim in dim_range:
@@ -160,7 +203,7 @@ def compare_original(dim_range,
                 "dim": dim,
                 "sample": sample,
                 "time": end1 - start1,
-                "type": f"{clf_type}_{device1}"
+                "type": f"{clf_type}_{device1}_numba"
             })
 
             # Run on device2
@@ -178,8 +221,9 @@ def compare_original(dim_range,
                 "dim": dim,
                 "sample": sample,
                 "time": end2 - start2,
-                "type": f"{clf_type}_{device2}"
+                "type": f"{clf_type}_{device2}_original"
             })
+            pdb.set_trace()
 
             # Print mismatch if any
             diff = np.sum(imp2.astype(int) - imp1.astype(int))
@@ -270,3 +314,84 @@ def plot_runtime_heatmaps(
         print(f"Saved plot to: {save_path}")
 
     plt.show()
+
+
+def plot_feature_significance(p_values, alpha=0.05, figsize=(18, 10)):
+    """Visualize the feature significance of a sample image in trunk"""
+    log_p = -np.log10(p_values)
+    significant = p_values < alpha
+    
+    plt.figure(figsize=figsize)
+    
+    plt.scatter(np.arange(len(p_values))[~significant], 
+               log_p[~significant], 
+               c='gray', alpha=0.5, 
+               label='non-significant features')
+    plt.scatter(np.arange(len(p_values))[significant], 
+               log_p[significant], 
+               c='red', alpha=0.7,
+               label='significant features (p < 0.05)')
+    
+    threshold = -np.log10(alpha)
+    plt.axhline(y=threshold, color='k', linestyle='--', 
+                label=f'significant threshold (α = {alpha})')
+    
+    plt.xlabel('feature index')
+    plt.ylabel('-log10(p-value)')
+    plt.title('feature importance distribution')
+    
+    plt.legend()
+    
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+
+
+def plot_multiple_feature_significance(p_values_list, titles, alpha=0.05, ncols=2, figsize=(18, 10)):
+    """
+    Visualize feature significance for multiple sets of p-values.
+
+    Parameters:
+    - p_values_list: list of arrays/lists of p-values
+    - titles: list of titles for each subplot
+    - alpha: significance threshold
+    - ncols: number of columns in subplot grid
+    - figsize: size of the overall figure
+    """
+    n = len(p_values_list)
+    nrows = (n + ncols - 1) // ncols
+
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=figsize)
+    axes = np.array(axes).reshape(-1)  # Flatten for easy indexing
+
+    for i, (p_values, title) in enumerate(zip(p_values_list, titles)):
+        ax = axes[i]
+        log_p = -np.log10(p_values)
+        significant = p_values < alpha
+        threshold = -np.log10(alpha)
+
+        ax.scatter(np.arange(len(p_values))[~significant], 
+                   log_p[~significant], 
+                   c='gray', alpha=0.5, 
+                   label='non-significant')
+        ax.scatter(np.arange(len(p_values))[significant], 
+                   log_p[significant], 
+                   c='red', alpha=0.7,
+                   label='significant (p < {:.2g})'.format(alpha))
+        ax.axhline(y=threshold, color='k', linestyle='--', 
+                   label='threshold (α = {:.2g})'.format(alpha))
+
+        ax.set_title(title)
+        ax.set_xlabel('Feature index')
+        ax.set_ylabel('-log10(p-value)')
+        ax.grid(True, alpha=0.3)
+        ax.legend()
+
+    # Turn off unused axes
+    for j in range(n, len(axes)):
+        fig.delaxes(axes[j])
+
+    plt.tight_layout()
+    plt.show()
+
