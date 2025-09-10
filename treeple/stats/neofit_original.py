@@ -124,8 +124,6 @@ class NeuroExplainableOptimalFIT_original:
     def construct_orf(self, random_state=None):
         """
         Construct the estimator based on the type chose in the params.
-
-
         """
         if self.clf_type == "MORF":
             return PatchObliqueRandomForestClassifier(
