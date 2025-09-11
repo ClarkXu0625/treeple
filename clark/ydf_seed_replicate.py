@@ -9,7 +9,7 @@ from treeple.ensemble import ObliqueRandomForestClassifier
 def process_seed(j):
     print("Processing seed", j)
     in_bags = pd.read_csv(
-        f"/home/hao/ydf/ydf_bags_300/seed_{j}.csv",
+        f"result/cleaned/seed_{j}.csv",
         header=None,
     ).to_numpy()
 
