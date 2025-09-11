@@ -37,6 +37,7 @@ html/
 results/
 scikit-learn/
 benchmarks/cache/
+result/ydf_bag/
 
 # Pycharm
 .idea/
