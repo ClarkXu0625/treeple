@@ -62,3 +62,5 @@ data/
 
 vtune*
 *.npy
+clark/result/cleaned/
+clark/result/ydf_bag
