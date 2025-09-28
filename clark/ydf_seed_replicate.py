@@ -31,7 +31,7 @@ def process_seed(j):
     average_label = [int(p >= 0.5) for p in average_oob]
     acc = accuracy_score(average_label, y)
 
-    return acc, np.array(predict_l)
+    return acc, np.array(predict_l), model
 
 
 # Load processed wise-1 dataset
@@ -43,7 +43,7 @@ y = df.iloc[:, -1]
 results = Parallel(n_jobs=-1)(delayed(process_seed)(j) for j in range(21, 321, 1))
 
 # Unpack
-obq_ydf_seed_acc_l, obq_ydf_seed_predict_l = zip(*results)
+obq_ydf_seed_acc_l, obq_ydf_seed_predict_l, model = zip(*results)
 
 # --- Save results ---
 
